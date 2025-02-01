@@ -10,16 +10,16 @@ const userModel = await model.userModel();
 export default {
 	/**
 	 * Create a new user
-	 * @param {*} userInfo -> New user DNI or email
+	 * @param {*} userInfo -> New user username or email
 	 * @param {*} data -> new user data
-	 * @returns {Object} newUser -> New user created
+	 * @returns newUser -> New user created
 	 */
 	createNewUser: async (userInfo, data) => {
 		try {
 			const user = await userModel.findOne({
 				where: {
 					[Op.or]: [
-						{ dni: userInfo },
+						{ username: userInfo },
 						{ email: userInfo }
 					]
 				}
@@ -40,7 +40,7 @@ export default {
 
 	/**
 	 * Read (all students)
-	 * @returns {Array} -> listado de estudiantes
+	 * @returns -> listado de estudiantes
 	 */
 	getAllUsers: async () => {
 		try {
@@ -54,9 +54,9 @@ export default {
 	},
 
 	/**
-	 * Buscar un estudiante por DNI o email
-	 * @param {Object} userInfo -> DNI o email + password
-	 * @returns {Object} user -> usuario encontrado
+	 * Buscar un estudiante por username o email
+	 * @param userInfo -> username o email + password
+	 * @returns user -> usuario encontrado
 	 */
 	getOneUser: async (userInfo) => {
 		try {
@@ -66,14 +66,14 @@ export default {
 						{ isVisible: 1 }
 					],
 					[Op.or]: [
-						{ dni: userInfo },
+						{ username: userInfo },
 						{ email: userInfo }
 					]
 				}
 			});
 
 			if (!user) {
-				console.log(`Usuario con DNI o email "${userInfo}" no encontrado.`);
+				console.log(`Usuario con username o email "${userInfo}" no encontrado.`);
 				return null;
 			}
 
@@ -81,23 +81,23 @@ export default {
 			return user;
 
 		} catch (error) {
-			console.error(`Error al buscar usuario con DNI o email "${userInfo}":`, error.message);
+			console.error(`Error al buscar usuario con username o email "${userInfo}":`, error.message);
 			throw new Error('Error al consultar la base de datos.');
 		}
 	},
 
 	/**
 	 * Update one user
-	 * @param {String} userInfo -> DNI or email
-	 * @param {Object} newData -> data to be update
-	 * @returns {Object} user -> User updated
+	 * @param {String} userInfo -> username or email
+	 * @param  newData -> data to be update
+	 * @returns  user -> User updated
 	 */
 	updateOneUser: async (userInfo, newData) => {
 		try {
 			const user = await userModel.findOne({
 				where: {
 					[Op.or]: [
-						{ dni: userInfo },
+						{ username: userInfo },
 						{ email: userInfo }
 					]
 				}
@@ -118,15 +118,15 @@ export default {
 
 	/**
 	 * Delete (set isVisible = 0) an user
-	 * @param {*} userInfo -> DNI or email from user
-	 * @returns {Object} user -> user modified (deleted)
+	 * @param {*} userInfo -> username or email from user
+	 * @returns  user -> user modified (deleted)
 	 */
 	deleteUser: async (userInfo) => {
 		try {
 			const user = await userModel.findOne({
 				where: {
 					[Op.or]: [
-						{ dni: userInfo },
+						{ username: userInfo },
 						{ email: userInfo }
 					]
 				}

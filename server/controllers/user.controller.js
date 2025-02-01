@@ -37,18 +37,17 @@ export default {
 		}
 	},
 
-	newUser: async (req, res) => {
+	registerUser: async (req, res) => {
 		try {
-			const { name, lastnames, address, phone, email, dni, pass } = req.body;
+			const { username, first_name, last_names, email, pass, address } = req.body;
 			const data = {
-				isRegistered: false,
-				name,
-				lastnames,
-				address,
-				phone,
+				username,
+				first_name,
+				last_names,
 				email,
-				dni,
 				pass,
+				address,
+				isRegistered: false,
 				isVisible: true
 			};
 			const newUser = await query.createNewUser(dni, data);

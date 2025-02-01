@@ -4,27 +4,31 @@ import { getSequelizeConf } from '../database/mysql.connection.js';
 const connection = getSequelizeConf();
 
 export default {
+    /**
+     * Función que define un modelo User
+     * @returns User -> modelo del usuario
+     */
     userModel: async () => {
 
-        // Definición del modelo Student
+        // Definición del modelo User
         const User = connection.define('User', {
             id_user: {
                 type: DataTypes.INTEGER,
                 primaryKey: true,
                 autoIncrement: true
             },
-            name: {
+            username: {
+                type: DataTypes.STRING(100),
+                allowNull: false,
+                unique: true
+            },
+            first_name: {
                 type: DataTypes.STRING(100),
                 allowNull: false
             },
-            lastnames: {
+            last_names: {
                 type: DataTypes.STRING(200),
                 allowNull: false
-            },
-            dni: {
-                type: DataTypes.STRING(9),
-                allowNull: false,
-                unique: true
             },
             email: {
                 type: DataTypes.STRING(100),
@@ -37,10 +41,6 @@ export default {
             },
             address: {
                 type: DataTypes.STRING(200),
-                allowNull: false
-            },
-            phone: {
-                type: DataTypes.STRING(15),
                 allowNull: false
             },
             isRegistered: {

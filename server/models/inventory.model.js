@@ -16,10 +16,18 @@ export default {
             user_id: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
+                references: {
+                    model: 'users', // Nombre de la tabla de users
+                    key: 'id_user'   // Clave primaria en la tabla de users
+                }
             },
             product_id: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
+                references: {
+                    model: 'products', // Nombre de la tabla de products
+                    key: 'id_product'   // Clave primaria en la tabla de products
+                }
             },
             quantity: {
                 type: DataTypes.INTEGER,
@@ -29,7 +37,7 @@ export default {
                 type: DataTypes.BOOLEAN,
                 allowNull: false,
                 defaultValue: true
-            },
+            }
         }, {
             tableName: 'inventories', 
             timestamps: false
