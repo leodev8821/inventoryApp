@@ -1,10 +1,8 @@
 import { Op } from 'sequelize';
-import model from '../models/user.model.js';
+import User from '../models/user.model.js';
 import mysqlConnection from '../database/mysql.connection.js';
 
-const conectiondb = mysqlConnection.connection();
-
-const userModel = await model.userModel();
+await mysqlConnection.connection();
 
 /* --------- CRUD -----------*/
 export default {
@@ -16,37 +14,32 @@ export default {
 	 */
 	createNewUser: async (userInfo, data) => {
 		try {
-			const user = await userModel.findOne({
+			const user = await User.findOne({
 				where: {
-					[Op.or]: [
-						{ username: userInfo },
-						{ email: userInfo }
-					]
+					[Op.or]: userInfo.map((field) => ({ [field]: data[field] }))
 				}
 			});
 			if (user) {
-				console.error("Usuario ya existe en la BD");
+				console.error(`Usuario con ${userInfo} "${data[userInfo]}" ya existe.`);
 				return null;
 			}
 
-			const newUser = await userModel.create(data);
-			console.log('Estudiante creado:', newUser.toJSON());
+			const newUser = await User.create(data);
+			console.log(`¡Usuario ${userInfo} creado!`, newUser.toJSON());
 			return newUser;
 
 		} catch (error) {
-			console.error('Error al crear estudiante:', error);
+			console.error('Error al crear Usuario:', error);
 		}
 	},
 
 	/**
 	 * Read (all students)
-	 * @returns -> listado de estudiantes
+	 * @returns -> listado de Usuarios
 	 */
 	getAllUsers: async () => {
 		try {
-			const users = await userModel.findAll();
-			//console.log('Todos los usuarios:', JSON.stringify(students));
-			return users;
+			await User.findAll();
 		} catch (error) {
 			console.error('Error al obtener usuarios:', error);
 			throw new Error('Error al consultar la base de datos.');
@@ -54,21 +47,18 @@ export default {
 	},
 
 	/**
-	 * Buscar un estudiante por username o email
+	 * Buscar un Usuario por username o email
 	 * @param userInfo -> username o email + password
 	 * @returns user -> usuario encontrado
 	 */
 	getOneUser: async (userInfo) => {
 		try {
-			const user = await userModel.findOne({
+			const user = await User.findOne({
 				where: {
 					[Op.and]: [
 						{ isVisible: 1 }
 					],
-					[Op.or]: [
-						{ username: userInfo },
-						{ email: userInfo }
-					]
+					[Op.or]: userInfo.map((field) => ({ [field]: data[field] }))
 				}
 			});
 
@@ -76,8 +66,6 @@ export default {
 				console.log(`Usuario con username o email "${userInfo}" no encontrado.`);
 				return null;
 			}
-
-			//console.log('Usuario encontrado:', student.toJSON());
 			return user;
 
 		} catch (error) {
@@ -94,21 +82,24 @@ export default {
 	 */
 	updateOneUser: async (userInfo, newData) => {
 		try {
-			const user = await userModel.findOne({
+			const user = await User.findOne({
 				where: {
-					[Op.or]: [
-						{ username: userInfo },
-						{ email: userInfo }
-					]
+					[Op.or]: userInfo.map((field) => ({ [field]: data[field] }))
 				}
 			});
+
 			if (!user) {
 				console.log('Usuario no encontrado');
 				throw new Error('Usuario no encontrado');
 			}
 
-			await userModel.update(newData);
-			console.log('Usuario actualizado:', user.toJSON());
+			await User.update(newData, {
+				where: {
+					[Op.or]: userInfo.map((field) => ({ [field]: data[field] }))
+				}
+			});
+
+			console.log(`Usuario ${userInfo} actualizado`, user.toJSON());
 			return user;
 		} catch (error) {
 			console.error('Error al actualizar usuario:', error);
@@ -123,26 +114,24 @@ export default {
 	 */
 	deleteUser: async (userInfo) => {
 		try {
-			const user = await userModel.findOne({
+			const user = await User.findOne({
 				where: {
-					[Op.or]: [
-						{ username: userInfo },
-						{ email: userInfo }
-					]
+					[Op.or]: userInfo.map((field) => ({ [field]: data[field] }))
 				}
 			});
 			if (!user) {
-				console.log('Estudiante no encontrado');
+				console.log('Usuario no encontrado');
 				throw new Error('Usuario no encontrado');
 
 			}
 
-			await userModel.update({ isVisible: 0 });
-			console.log('Estudiante eliminado:', user.toJSON());
+			user.isVisible = false;
+			await user.save();
+			console.log(`¡Usuario ${userInfo} eliminado!`, user.toJSON());
 			return user;
 		} catch (error) {
-			console.error('Error al eliminar el estudiante:', error);
-			throw new Error('Error al eliminar el estudiante');
+			console.error(`Error al eliminar el usuario ${userInfo}`, error);
+			throw new Error('Error al eliminar el Usuario');
 		}
 	}
 

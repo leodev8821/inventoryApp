@@ -1,9 +1,8 @@
 import jwt from 'jsonwebtoken';
-import crudMysql from '../utils/crudMySQL.js';
+import query from '../utils/crudMySQL.js';
 import serverResponse from '../utils/serverResponse.js';
 
 const resp = serverResponse;
-const query = crudMysql;
 const { sign } = jwt;
 
 /* ------------- FUNCTIONS ----------------*/
