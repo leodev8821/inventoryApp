@@ -1,8 +1,6 @@
 import jwt from 'jsonwebtoken';
-import query from '../utils/crudMySQL.js';
-import serverResponse from '../utils/serverResponse.js';
+import query from '../utils/user.crud.js';
 
-const resp = serverResponse;
 const { sign } = jwt;
 
 /* ------------- FUNCTIONS ----------------*/
@@ -10,8 +8,8 @@ const { sign } = jwt;
 export default {
 	loginUser: async (req, res) => {
 		try {
-			const { loginData, password } = req.body;
-			const user = await query.getOneUser(loginData);
+			const { login_data, password } = req.body;
+			const user = await query.getOneUser(login_data);
 
 			//verificar usuario
 			if (!user) {
@@ -19,16 +17,20 @@ export default {
 			}
 
 			//Verificar contraseña
-			if (user.dataValues.pass != password) {
+			if (user.pass != password) {
 				return res.status(401).json({ error: 'Credenciales incorrectas' });
 			}
 
 			//Generar token de autenticación
-			sign(user.dataValues, 'secretkey', { expiresIn: '1000s' }, (err, token) => {
+			sign(user, 'secretkey', { expiresIn: '1000s' }, (err, token) => {
 				if (err) {
 					return res.status(500).json({ error: 'Error al generar el token' });
 				}
-				res.status(200).json(resp.tokenGen(user.dataValues, token));
+				res.status(200).json({
+					user: user.email,
+					message: "Usuario autenticado correctamente.",
+					token: `Bearer ${token}`
+				});
 			})
 
 		} catch (error) {
@@ -49,13 +51,19 @@ export default {
 				isRegistered: false,
 				isVisible: true
 			};
-			const newUser = await query.createNewUser(dni, data);
+			const newUser = await query.createNewUser(data);
 
 			if(!newUser){
-				return res.status(501).json({ message: 'Usuario ya existe'});
+				return res.status(409).json({ message: 'Usuario ya existe en la BD'});
 			}
 
-			res.status(201).json(resp.user(newUser, 'Nuevo estudiante creado'));
+			res.status(201).json({
+				message: 'Nuevo usuario creado',
+				full_name: (`${newUser.name} ${newUser.lastnames}`),
+				dni: newUser.dni,
+				phone: newUser.phone,
+				email: newUser.email
+			});
 		} catch (error) {
 			res.status(500).json({ message: 'Error al listar usuarios', error })
 		}
@@ -64,8 +72,17 @@ export default {
 	allUsers: async (req, res) => {
 		try {	
 			const users = await query.getAllUsers();
+
+			const resp = users.map((user, i) => ({
+				user: `${i+1}`,
+				username: `${user.dataValues.username}`,
+				full_name: (`${user.dataValues.first_name} ${user.dataValues.last_names}`),
+				address: user.dataValues.address,
+				email: user.dataValues.email
+			}));
+
 			// Enviar la respuesta combinada
-			res.status(201).json(resp.user(users.dataValues, "Usuarios encontrados"))
+			res.status(201).json(resp)
 
 		} catch (error) {
 			res.status(500).json({ message: 'Error al listar usuarios', error })
@@ -75,10 +92,17 @@ export default {
 	oneUser: async (req, res) => {
 		try {
 			// Obtener los datos del cuerpo de la solicitud
-			const { logData } = req.body
-			const user = await query.getOneUser(logData);
+			const { login_data } = req.body
+			const user = await query.getOneUser(login_data);
+
 			// Enviar la respuesta combinada
-			res.status(201).json(resp.user(user.dataValues, "Usuario encontrado"))
+			res.status(201).json({
+				message: 'Usuario encontrado',
+				username: `${user.username}`,
+				full_name: (`${user.first_name} ${user.last_names}`),
+				address: user.address,
+				email: user.email
+			})
 		} catch (error) {
 			res.status(500).json({ message: 'Error al listar el usuario', error })
 		}

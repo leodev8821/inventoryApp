@@ -6,10 +6,15 @@ import Category from '../models/category.model.js';
 import associations from '../models/associations.js';
 
 export function getSequelizeConf() {
-	return new Sequelize('inventory_app_db', 'leodev', 'leodev1721', {
-		host: "localhost",
+	const my_db = 'inventoryApp';
+	const my_user = 'leodev';
+	const my_pass = 'leodev1721';
+	const my_host = 'localhost';
+	const my_port = 3306;
+	return new Sequelize(my_db, my_user, my_pass, {
+		host: my_host,
 		dialect: 'mysql',
-		port: 3306,
+		port: my_port,
 		logging: false // Desactiva los logs SQL
 	});
 }
