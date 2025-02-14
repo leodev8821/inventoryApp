@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken';
-import query from '../utils/user.crud.js';
+import { getOneUser, createNewUser, getAllUsers, updateOneUser, deleteUser } from '../models/user.model.js';
 
 const { sign } = jwt;
 
@@ -9,7 +9,7 @@ export default {
 	loginUser: async (req, res) => {
 		try {
 			const { login_data, password } = req.body;
-			const user = await query.getOneUser(login_data);
+			const user = await getOneUser(login_data);
 
 			//verificar usuario
 			if (!user) {
@@ -51,10 +51,10 @@ export default {
 				isRegistered: false,
 				isVisible: true
 			};
-			const newUser = await query.createNewUser(data);
+			const newUser = await createNewUser(data);
 
-			if(!newUser){
-				return res.status(409).json({ message: 'Usuario ya existe en la BD'});
+			if (!newUser) {
+				return res.status(409).json({ message: 'Usuario ya existe en la BD' });
 			}
 
 			res.status(201).json({
@@ -70,11 +70,11 @@ export default {
 	},
 
 	allUsers: async (req, res) => {
-		try {	
-			const users = await query.getAllUsers();
+		try {
+			const users = await getAllUsers();
 
 			const resp = users.map((user, i) => ({
-				user: `${i+1}`,
+				user: `${i + 1}`,
 				username: `${user.dataValues.username}`,
 				full_name: (`${user.dataValues.first_name} ${user.dataValues.last_names}`),
 				address: user.dataValues.address,
@@ -93,7 +93,7 @@ export default {
 		try {
 			// Obtener los datos del cuerpo de la solicitud
 			const { login_data } = req.body
-			const user = await query.getOneUser(login_data);
+			const user = await getOneUser(login_data);
 
 			// Enviar la respuesta combinada
 			res.status(201).json({
@@ -117,7 +117,7 @@ export default {
 				phone,
 				email
 			};
-			const user = await query.updateOneUser(dni, newData);
+			const user = await updateOneUser(dni, newData);
 			return res.status(201).json({
 				data: user,
 				message: "Datos del usuario modificado"
@@ -130,7 +130,7 @@ export default {
 	deleteUser: async (req, res) => {
 		try {
 			const { dni } = req.body;
-			const user = await query.deleteUser(dni);
+			const user = await deleteUser(dni);
 			return res.status(201).json({
 				data: user,
 				message: "El usuario ha sido eliminado"

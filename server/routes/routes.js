@@ -1,28 +1,28 @@
 import { Router } from 'express';
-import address from '../controllers/address.controller.js';
-import comms from '../controllers/comms.controller.js';
+//import address from '../controllers/address.controller.js';
+//import comms from '../controllers/comms.controller.js';
 import user from '../controllers/user.controller.js'
-import token from '../utils/verifyToken.js';
+//import token from '../utils/verifyToken.js';
 
 const router = Router();
 
 
 // BBDD MongoDB
-//Address
+/* //Address
 router.get('/inventory-app/v1/address/all-types', address.getTypeAddress)
 router.get('/inventory-app/v1/address/all-towns', address.getTowns)
 //Comms
 router.get('/inventory-app/v1/comms/all-comms', comms.getComms)
 router.post('/inventory-app/v1/comms/new-comm', comms.postComms)
 //LOPD
-router.get('/inventory-app/v1/generic/lopd', comms.lopdGet)
+router.get('/inventory-app/v1/generic/lopd', comms.lopdGet) */
 
 // BBDD MySQL
-router.post('/inventory-app/v1/user/login', user.loginUser);
+/* router.post('/inventory-app/v1/user/login', user.loginUser);
 
 router.get('/inventory-app/v1/user/all-users', user.allUsers);
 
-router.post('/inventory-app/v1/user/one-user', user.oneUser);
+router.post('/inventory-app/v1/user/one-user', user.oneUser); */
 
 router.post('/inventory-app/v1/user/create-new-user', user.registerUser);
 /* {

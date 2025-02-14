@@ -1,31 +1,17 @@
 import { DataTypes } from 'sequelize';
-import { getSequelizeConf } from '../database/mysql.connection.js';
+import { getSequelizeConf } from '../database/mysql.js';
+import { getOneUser, User } from './user.model.js';
+import { getOneProduct, Product } from './product.model.js';
 
 const connection = getSequelizeConf();
 
 
 // Definición del modelo Student
-const Inventory = connection.define('Inventory', {
-    id_inventory: {
+export const Inventory = connection.define('Inventory', {
+    id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true
-    },
-    user_id: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        references: {
-            model: 'users', // Nombre de la tabla de users
-            key: 'id_user'   // Clave primaria en la tabla de users
-        }
-    },
-    product_id: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        references: {
-            model: 'products', // Nombre de la tabla de products
-            key: 'id_product'   // Clave primaria en la tabla de products
-        }
     },
     quantity: {
         type: DataTypes.INTEGER,
@@ -41,4 +27,24 @@ const Inventory = connection.define('Inventory', {
     timestamps: false
 });
 
-export default Inventory;
+// Relación Many-To-many
+User.belongsToMany(Product, { through: Inventory });
+Product.belongsToMany(User, { through: Inventory });
+
+// CRUD Operations
+// Create
+export async function newProductByUser(username, product_barcode, quantity) {
+    try {
+        const registerUser = await getOneUser(username);
+        const product = await getOneProduct(product_barcode);
+
+        if (registerUser && product) {
+            const newStoredProduct = await Inventory.create({ user_id: [registerUser.dataValues.id], product_id: [product.dataValues.id], quantity });
+            return { newStoredProduct, registerUser, product };
+        }
+
+    } catch (error) {
+        console.error('Error al crear Producto:', error);
+        return null;
+    }
+}
