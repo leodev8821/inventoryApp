@@ -3,7 +3,6 @@ import { getSequelizeConf } from '../database/mysql.js';
 
 const connection = getSequelizeConf();
 
-
 // Category model definition
 export const Category = connection.define('Category', {
     id: {
@@ -34,12 +33,11 @@ export async function createNewCategory(data) {
         if (existCategory) {
             return null;
         }
-
         const newCategory = await Category.create(data);
         return newCategory.dataValues;
-
     } catch (error) {
         console.error('Error al crear Usuario:', error);
+        throw new Error('Error al consultar la base de datos.');
     }
 };
 
@@ -66,13 +64,10 @@ export async function getOneCategory(data) {
         const category = await Category.findOne({
             where: { [Op.or]: [{ category: data }] }
         });
-
         if (!category) {
-            console.error(`Categoría "${data}" no encontrada.`);
             return null;
         }
         return category.dataValues;
-
     } catch (error) {
         console.error(`Error al buscar la categoría "${data}":`, error.message);
         throw new Error('Error al consultar la base de datos.');
@@ -93,7 +88,6 @@ export async function deleteCategory(data) {
             await category.destroy();
             return true;
         } else {
-            console.error('Categoría no encontrada');
             return false;
         }
     } catch (error) {

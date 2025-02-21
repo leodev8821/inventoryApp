@@ -75,10 +75,10 @@ export default {
 
 			const resp = users.map((user, i) => ({
 				user: `${i + 1}`,
-				username: `${user.dataValues.username}`,
-				full_name: (`${user.dataValues.first_name} ${user.dataValues.last_names}`),
-				address: user.dataValues.address,
-				email: user.dataValues.email
+				username: `${user.username}`,
+				full_name: (`${user.first_name} ${user.last_names}`),
+				address: user.address,
+				email: user.email
 			}));
 
 			// Enviar la respuesta combinada

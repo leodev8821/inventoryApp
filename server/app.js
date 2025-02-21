@@ -1,7 +1,6 @@
 import express, { json, urlencoded } from 'express';
 import cors from 'cors';
 import mysql from './database/mysql.js'
-
 import { router } from './routes/routes.js';
 
 //conexión de sequelize con la BD

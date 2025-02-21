@@ -68,10 +68,8 @@ export async function createNewUser(data) {
         if (user) {
             return null;
         }
-
         const newUser = await User.create(data);
         return newUser.dataValues;
-
     } catch (error) {
         console.error('Error al crear Usuario:', error);
     }
@@ -98,7 +96,7 @@ export async function getAllUsers() {
 export async function getOneUser(data) {
     try {
         const fields = ["username", "email"];
-        const searchValue = data.trim(); // Asegura que no tenga espacios en blanco
+        const searchValue = data.trim();
         const user = await User.findOne({
             where: {
                 [Op.and]: [
@@ -107,13 +105,10 @@ export async function getOneUser(data) {
                 [Op.or]: fields.map((field) => ({ [field]: searchValue }))
             }
         });
-
         if (!user) {
-            console.log(`Usuario con username o email "${data}" no encontrado.`);
             return null;
         }
         return user.dataValues;
-
     } catch (error) {
         console.error(`Error al buscar usuario con username o email "${data}":`, error.message);
         throw new Error('Error al consultar la base de datos.');
@@ -133,19 +128,14 @@ export async function updateOneUser(userInfo, newData) {
                 [Op.or]: userInfo.map((field) => ({ [field]: data[field] }))
             }
         });
-
         if (!user) {
-            console.log('Usuario no encontrado');
-            throw new Error('Usuario no encontrado');
+            return null;
         }
-
         await User.update(newData, {
             where: {
                 [Op.or]: userInfo.map((field) => ({ [field]: data[field] }))
             }
         });
-
-        console.log(`Usuario ${userInfo} actualizado`, user.toJSON());
         return user.dataValues;
     } catch (error) {
         console.error('Error al actualizar usuario:', error);
@@ -166,14 +156,10 @@ export async function deleteUser(userInfo) {
             }
         });
         if (!user) {
-            console.log('Usuario no encontrado');
-            throw new Error('Usuario no encontrado');
-
+            return null;
         }
-
         user.isVisible = false;
         await user.save();
-        console.log(`¡Usuario ${userInfo} eliminado!`, user.toJSON());
         return user;
     } catch (error) {
         console.error(`Error al eliminar el usuario ${userInfo}`, error);

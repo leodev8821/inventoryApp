@@ -71,13 +71,10 @@ export async function createNewProduct(data) {
             }
         });
         if (product) {
-            console.error(`El producto ${data.product_name} ya existe en la BD`);
             return null;
         }
-
         const newProduct = await Product.create(data);
         return newProduct.dataValues;
-
     } catch (error) {
         console.error('Error al crear producto:', error);
     }
@@ -112,7 +109,6 @@ export async function getOneProduct(data) {
         });
 
         if (!product) {
-            console.log(`Producto "${data}" no encontrado.`);
             return null;
         }
         return product.dataValues;
@@ -139,7 +135,6 @@ export async function updateOneProduct(productInfo, newData) {
         });
 
         if (!product) {
-            console.error('producto no encontrado');
             throw new Error('producto no encontrado');
         }
 
@@ -148,8 +143,6 @@ export async function updateOneProduct(productInfo, newData) {
                 [Op.or]: productInfo.map((field) => ({ [field]: newData[field] }))
             }
         });
-
-        console.log(`producto ${productInfo} actualizado`, product.toJSON());
         return product.dataValues;
     } catch (error) {
         console.error('Error al actualizar producto:', error);
@@ -170,16 +163,13 @@ export async function deleteClient(productInfo) {
                 [Op.or]: fields.map((field) => ({ [field]: productInfo }))
             }
         });
-
         if (product) {
             await Product.destroy();
             return true;
         } else {
-            console.error('Producto no encontrado');
             return false;
         }
     } catch (error) {
         console.error('Error al eliminar producto:', error);
     }
 }
-

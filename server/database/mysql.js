@@ -1,21 +1,42 @@
 import { Sequelize } from 'sequelize';
+//import { configDotenv } from 'dotenv';
+import dotenv from 'dotenv';
+import { join, dirname } from 'path';
+import { fileURLToPath } from 'url';
+//import 'dotenv/config';
 import { User } from '../models/user.model.js';
 import { Product } from '../models/product.model.js';
 import { Inventory } from '../models/inventory.model.js';
 import { Category } from '../models/category.model.js';
-//import associations from '../models/associations.js';
+
+
 
 export function getSequelizeConf() {
-	const my_db = 'inventoryApp';
-	const my_user = 'root';
-	//const my_pass = 'leodev1721';
-	const my_pass = 'root';
+	// Obtener la ruta absoluta del directorio del proyecto
+	const __dirname = dirname(fileURLToPath(import.meta.url));
+	const envPath = join(__dirname, '../../.env'); // Subir un nivel hasta 'project/.env'
+
+	// Cargar el archivo .env manualmente
+	dotenv.config({ path: envPath });
+
+	// Configuración de las variables de entorno
+	//configDotenv();
+
+	// Usar variables de entorno
+	const MY_DB = process.env.MY_DB;
+	const MY_USER = process.env.MY_USER;
+	const MY_PASS = process.env.MY_PASS;
+	const MY_HOST = process.env.MY_HOST;
+	const MY_PORT = parseInt(process.env.MY_PORT, 10) || 3306;
+	/* const my_db = 'inventory_app_db';
+	const my_user = 'leodev';
+	const my_pass = 'leodev1721';
 	const my_host = 'localhost';
-	const my_port = 3306;
-	return new Sequelize(my_db, my_user, my_pass, {
-		host: my_host,
+	const my_port = 3306; */
+	return new Sequelize(MY_DB, MY_USER, MY_PASS, {
+		host: MY_HOST,
 		dialect: 'mysql',
-		port: my_port,
+		port: MY_PORT,
 		logging: false // Desactiva los logs SQL
 	});
 }
