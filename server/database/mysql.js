@@ -1,13 +1,11 @@
 import { Sequelize } from 'sequelize';
-//import { configDotenv } from 'dotenv';
 import dotenv from 'dotenv';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
-//import 'dotenv/config';
-import { User } from '../models/user.model.js';
-import { Product } from '../models/product.model.js';
-import { Inventory } from '../models/inventory.model.js';
-import { Category } from '../models/category.model.js';
+import { User } from '../models/sequelize/user.model.js';
+import { Product } from '../models/sequelize/product.model.js';
+import { Inventory } from '../models/sequelize/inventory.model.js';
+import { Category } from '../models/sequelize/category.model.js';
 
 
 
@@ -19,20 +17,17 @@ export function getSequelizeConf() {
 	// Cargar el archivo .env manualmente
 	dotenv.config({ path: envPath });
 
-	// Configuración de las variables de entorno
+	// Configuración de las variables de entorno desde la misma carpeta raíz del proyecto
+	//import { configDotenv } from 'dotenv';
 	//configDotenv();
 
 	// Usar variables de entorno
-	const MY_DB = process.env.MY_DB;
-	const MY_USER = process.env.MY_USER;
-	const MY_PASS = process.env.MY_PASS;
-	const MY_HOST = process.env.MY_HOST;
-	const MY_PORT = parseInt(process.env.MY_PORT, 10) || 3306;
-	/* const my_db = 'inventory_app_db';
-	const my_user = 'leodev';
-	const my_pass = 'leodev1721';
-	const my_host = 'localhost';
-	const my_port = 3306; */
+	const MY_DB = process.env.MYSQL_DB;
+	const MY_USER = process.env.MYSQL_USER;
+	const MY_PASS = process.env.MYSQL_PASS;
+	const MY_HOST = process.env.MYSQL_HOST;
+	const MY_PORT = parseInt(process.env.MYSQL_PORT, 10) || 3306;
+
 	return new Sequelize(MY_DB, MY_USER, MY_PASS, {
 		host: MY_HOST,
 		dialect: 'mysql',

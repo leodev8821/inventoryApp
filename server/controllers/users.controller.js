@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken';
-import { getOneUser, createNewUser, getAllUsers, updateOneUser, deleteUser } from '../models/user.model.js';
+import { getOneUser, createNewUser, getAllUsers, updateOneUser, deleteUser } from '../models/sequelize/user.model.js';
 
 const { sign } = jwt;
 

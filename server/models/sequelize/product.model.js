@@ -1,5 +1,5 @@
 import { DataTypes } from 'sequelize';
-import { getSequelizeConf } from '../database/mysql.js';
+import { getSequelizeConf } from '../../database/mysql.js';
 import { Category } from './category.model.js';
 
 const connection = getSequelizeConf();
@@ -49,7 +49,7 @@ export const Product = connection.define('Product', {
 },
     {
         tableName: 'products',
-        timestamps: false
+        timestamps: true
     });
 
 // Relación Many-To-many

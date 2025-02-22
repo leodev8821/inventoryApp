@@ -1,5 +1,5 @@
 import { DataTypes } from 'sequelize';
-import { getSequelizeConf } from '../database/mysql.js';
+import { getSequelizeConf } from '../../database/mysql.js';
 
 const connection = getSequelizeConf();
 

@@ -1,13 +1,15 @@
 import { Router } from 'express';
 //import address from '../controllers/address.controller.js';
 //import comms from '../controllers/comms.controller.js';
-import user from '../controllers/user.controller.js'
+import address from '../controllers/address.controller.js';
+import user from '../controllers/users.controller.js'
 //import token from '../utils/verifyToken.js';
 
 const router = Router();
 
 
 // BBDD MongoDB
+router.get('/inventory-app/v1/address/create-all-towns', address.createAllTowns);
 /* //Address
 router.get('/inventory-app/v1/address/all-types', address.getTypeAddress)
 router.get('/inventory-app/v1/address/all-towns', address.getTowns)
