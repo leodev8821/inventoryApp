@@ -6,7 +6,7 @@ import puppeteer from 'puppeteer';
  * @async
  * @function getTownsInfo
  * @param {string} link - URL de la página que contiene la tabla con la información de los municipios.
- * @returns {Promise<Array<{ municipio: string, provincia: string, cod_INE: string }>>} - Una promesa que resuelve en un array de objetos, donde cada objeto contiene el nombre del municipio, la provincia y el código INE.
+ * @returns {Promise<Array<{ town: string, province: string, INE_code: string }>>} - Una promesa que resuelve en un array de objetos, donde cada objeto contiene el nombre del municipio, la provincia y el código INE.
  *
  * @throws {Error} - Lanza un error si ocurre un problema durante el proceso de scraping o si la estructura de la página no coincide con lo esperado.
  *
@@ -14,9 +14,9 @@ import puppeteer from 'puppeteer';
  * const townsInfo = await getTownsInfo('https://www.ign.es/web/ane-datos-geograficos/-/datos-geograficos/datosPoblacion?tipoBusqueda=municipios');
  * console.log(townsInfo);
  * // [
- * //   { municipio: 'Abengibre', provincia: 'Albacete', cod_INE: '02001' },
- * //   { municipio: 'Alatoz', provincia: 'Albacete', cod_INE: '02002' },
- * //   { municipio: 'Albacete', provincia: 'Albacete', cod_INE: '02003' },
+ * //   { town: 'Abengibre', province: 'Albacete', INE_code: '02001' },
+ * //   { town: 'Alatoz', province: 'Albacete', INE_code: '02002' },
+ * //   { town: 'Albacete', province: 'Albacete', INE_code: '02003' },
  * //   ...
  * // ]
  */
@@ -40,9 +40,9 @@ const getTownsInfo = async (link) => {
             return Array.from(rows).map(row => {
                 const cells = row.querySelectorAll('td');
                 return {
-                    municipio: cells.length > 1 ? cells[1]?.textContent.trim() || "Nombre no disponible" : "Nombre no disponible",
-                    provincia: cells.length > 5 ? cells[5]?.textContent.trim() || "Provincia no disponible" : "Provincia no disponible",
-                    cod_INE: cells.length > 0 ? cells[0]?.textContent.trim() || "Código INE no disponible" : "Código INE no disponible"
+                    town: cells.length > 1 ? cells[1]?.textContent.trim() || "Nombre no disponible" : "Nombre no disponible",
+                    province: cells.length > 5 ? cells[5]?.textContent.trim() || "Provincia no disponible" : "Provincia no disponible",
+                    INE_code: cells.length > 0 ? cells[0]?.textContent.trim() || "Código INE no disponible" : "Código INE no disponible"
                 };
             });
         });
@@ -80,22 +80,38 @@ const getTownsInfo = async (link) => {
  * //   ...
  * // ]
  */
-export async function scrapeSpainsTowns() {
+export async function scrapeSpainsTownsAndProvinces() {
     try {
+        let province_counter = 1;
         let allTowns = [];
+        let provinces = [];
+        let uniqueProvinces = new Set(); // Usamos un Set para asegurar provincias únicas fácilmente
 
         console.log("Obteniendo información de las provincias y sus municipios...");
 
-
         const towns = await getTownsInfo('https://www.ign.es/web/ane-datos-geograficos/-/datos-geograficos/datosPoblacion?tipoBusqueda=municipios');
-        //console.log(`pueblos: ${towns}`);
         allTowns = allTowns.concat(towns);
+
+        // Extraer provincias únicas
+        allTowns.forEach(town => {
+            if (town.province && !uniqueProvinces.has(town.province)) {
+                let format = {
+                    province: town.province,
+                    INE_code: province_counter++
+                };
+                uniqueProvinces.add(town.province);
+                provinces.push(format);
+            }
+        });
 
         console.log("Información de las provincias y sus municipios obtenida correctamente.");
 
-        return allTowns;
+        return {
+            towns: allTowns,
+            provinces: provinces
+        };
     } catch (e) {
-        console.error("Error en scrapeSpainsTowns:", e);
-        throw new Error('Error en la función scrapeSpainsTowns');
+        console.error("Error en scrapeSpainsTownsAndProvinces:", e);
+        throw new Error('Error en la función scrapeSpainsTownsAndProvinces');
     }
 }

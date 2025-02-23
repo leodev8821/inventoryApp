@@ -1,14 +1,13 @@
 import mongoose from "mongoose";
 
-
 // Definición del esquema y modelo
 export const spainTownSchema = new mongoose.Schema({
-    municipio: String,
-    provincia: String,
-    cod_INE: String
+    town: String,
+    province: String,
+    INE_code: String
 });
 
-const spainTown = mongoose.model('SpainTowns', spainTownSchema);
+const spainTown = mongoose.model('Spain_Towns', spainTownSchema);
 
 // Operaciones CRUD
 
@@ -29,7 +28,7 @@ export async function getAllSpainTowns() {
         const spainTowns = await spainTown.find();
         return spainTowns;
     } catch (error) {
-        console.error('Error al obtener usuarios:', error);
+        console.error('Error al obtener Municipios:', error);
     }
 }
 
@@ -41,11 +40,11 @@ export async function getSpainTownByEmail(abr) {
         if (spainTown) {
             return spainTown;
         } else {
-            console.log('Usuario no encontrado');
+            console.log('Municipio no encontrado');
             return null;
         }
     } catch (error) {
-        console.error('Error al buscar usuario:', error);
+        console.error('Error al buscar Municipio:', error);
     }
 }
 
@@ -56,10 +55,10 @@ export async function updateSpainTown(id, updateData) {
         if (updatedspainTown) {
             return updatedspainTown;
         } else {
-            console.log('Usuario no encontrado');
+            console.log('Municipio no encontrado');
         }
     } catch (error) {
-        console.error('Error al actualizar usuario:', error);
+        console.error('Error al actualizar Municipio:', error);
     }
 }
 
@@ -70,10 +69,10 @@ export async function deleteSpainTown(id) {
         if (deletedspainTown) {
             return true;
         } else {
-            console.log('Usuario no encontrado');
+            console.log('Municipio no encontrado');
             return false;
         }
     } catch (error) {
-        console.error('Error al eliminar usuario:', error);
+        console.error('Error al eliminar Municipio:', error);
     }
 }
