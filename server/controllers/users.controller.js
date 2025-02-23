@@ -3,6 +3,7 @@ import { getOneUser, createNewUser, getAllUsers, updateOneUser, deleteUser } fro
 import dotenv from 'dotenv';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
+import bcrypt from 'bcryptjs';
 
 // Obtener la ruta absoluta del directorio del proyecto
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -39,7 +40,9 @@ export default {
 			}
 
 			//Verificar contraseña
-			if (user.pass != password) {
+			const validPass = await bcrypt.compare(password, user.pass);
+
+			if (!validPass) {
 				return res.status(401).json({ error: 'Credenciales incorrectas' });
 			}
 
@@ -83,7 +86,7 @@ export default {
 
 			res.status(201).json({
 				message: 'Nuevo usuario creado',
-				full_name: (`${newUser.name} ${newUser.lastnames}`),
+				full_name: (`${newUser.first_name} ${newUser.last_names}`),
 				dni: newUser.dni,
 				phone: newUser.phone,
 				email: newUser.email

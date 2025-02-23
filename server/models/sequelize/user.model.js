@@ -1,4 +1,5 @@
 import { DataTypes, Op } from 'sequelize';
+import bcrypt from 'bcryptjs';
 import { getSequelizeConf } from '../../database/mysql.js';
 
 const connection = getSequelizeConf();
@@ -48,7 +49,16 @@ export const User = connection.define('User', {
     },
 }, {
     tableName: 'users',
-    timestamps: false
+    timestamps: false,
+    hooks: { // Añade la sección de hooks
+        beforeValidate: async (user) => { // Hook beforeValidate que se ejecuta antes de validar el modelo
+            if (user.changed('pass')) { // Verifica si el campo 'pass' ha sido modificado
+                const saltRounds = 10; // Número de rondas de hashing (ajusta según seguridad vs. rendimiento)
+                const hashedPassword = await bcrypt.hash(user.pass, saltRounds); // Hashea la contraseña de forma asíncrona
+                user.pass = hashedPassword; // Reemplaza la contraseña en texto plano con el hash
+            }
+        }
+    }
 });
 
 // CRUD Operations
