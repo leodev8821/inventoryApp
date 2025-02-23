@@ -1,25 +1,35 @@
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import { AuthProvider } from "./utils/context/AuthContext";
+import { RouteProvider } from "./utils/context/RouteContext";
+import Login from "./pages/Login";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
-function App() {
+const App = () => {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <RouteProvider>
+      <Router>
+        <AuthProvider>
+          <Routes>
+            <Route path="/" element={<Login />} />
+            {/* 
+            <Route path="/lopd" element={<Lopd />} />
+            <Route path="/recuperar-contrasena" element={<PassRecoveryForm />} />
+                <Route path="/confirma-contrasena/:token" element={<PassConfirmation />} />
+                <Route path="/informaciones" element={<SideMenu />} />
+                <Route path="/denegado" element={<Denied />} />
+                <Route path="/error" element={<ErrorPage />} />
+                <Route path="error/:errorCode" element={<ErrorPage />} />
+                <Route path='/contacto' element={<Contact />} />
+                <Route path="/matricula" element={<UserProfile />} />
+                <Route path="/mostrar-documentos" element={<ShowDocs />} />
+                <Route path="/info-alumno" element={<StudentsInfo />} />
+                <Route path="/nomina" element={<NomineTable />} />
+                <Route path="/documento" element={<DocumentTable />} /> */}
+          </Routes>
+        </AuthProvider>
+      </Router>
+    </RouteProvider>
   );
-}
+};
 
 export default App;

@@ -1,0 +1,50 @@
+import { useState, useContext } from "react";
+import { jwtDecode } from "jwt-decode";
+import useFetch from "./useFetch";
+import useNavigation from "./useNavigation";
+import { AuthContext } from "../context/AuthContext";
+
+const useLogin = () => {
+    const { fetchData } = useFetch();
+    const { navigate } = useNavigation();
+    const { setUser } = useContext(AuthContext); // Accede al contexto de autenticación
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
+
+    const login = async (login_data, password) => {
+        if (!login_data || !password) {
+            setError("Please enter both login and password.");
+            return;
+        }
+
+        setLoading(true);
+        setError(null);
+
+        try {
+            const response = await fetchData({
+                endpoint: "/inventory-app/v1/user/login",
+                method: "POST",
+                body: { login_data, password },
+            });
+
+            if (response?.token) {
+                sessionStorage.setItem("authToken", response.token);
+                const decodedToken = jwtDecode(response.token);
+                setUser(decodedToken); // Almacena el usuario en el contexto de autenticación
+                
+                navigate("/dashboard");
+            } else {
+                setError("Invalid login credentials.");
+            }
+        } catch (err) {
+            console.error("Login failed:", err);
+            setError("An error occurred during login.");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    return { login, loading, error };
+};
+
+export default useLogin;
