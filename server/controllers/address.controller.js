@@ -6,18 +6,18 @@ import { createProvince } from '../models/mongoose/spainProvinces.model.js';
 export default {
 
 	/**
-	 * Crea todos los municipios en la base de datos MongoDB, obteniendo la información
-	 * desde la página del IGN mediante scraping.
-	 *
-	 * @async
-	 * @function createAllTowns
-	 * @param {Object} req - Objeto de solicitud de Express.
-	 * @param {Object} res - Objeto de respuesta de Express.
-	 * @returns {Promise<void>} - Una promesa que resuelve cuando todos los municipios han sido creados en la base de datos.
-	 *
-	 * @throws {Error} - Lanza un error si ocurre un problema durante el proceso de scraping, la conexión a MongoDB,
-	 * o la creación de los municipios en la base de datos.
-	*/
+     * Crea todos los municipios y provincias en la base de datos MongoDB, obteniendo la información
+     * desde la página del IGN mediante scraping.
+     *
+     * @async
+     * @function createAllTownsAndProvinces
+     * @param {Object} req - Objeto de solicitud de Express.
+     * @param {Object} res - Objeto de respuesta de Express.
+     * @returns {Promise<void>} - Una promesa que resuelve cuando todos los municipios y provincias han sido creados en la base de datos.
+     *
+     * @throws {Error} - Lanza un error si ocurre un problema durante el proceso de scraping, la conexión a MongoDB,
+     * o la creación de los municipios o provincias en la base de datos.
+    */
 	createAllTownsAndProvinces: async (req, res) => {
 
 		try {

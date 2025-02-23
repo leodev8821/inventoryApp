@@ -20,8 +20,7 @@ router.post('/inventory-app/v1/comms/new-comm', comms.postComms)
 router.get('/inventory-app/v1/generic/lopd', comms.lopdGet) */
 
 // BBDD MySQL
-/* router.post('/inventory-app/v1/user/login', user.loginUser);
-
+/* 
 router.get('/inventory-app/v1/user/all-users', user.allUsers);
 
 router.post('/inventory-app/v1/user/one-user', user.oneUser); */
@@ -35,6 +34,8 @@ router.post('/inventory-app/v1/user/create-new-user', user.registerUser);
 	"pass" : "miPass1",
 	"address" : "Calle Falsa 123"
 }*/
+
+router.post('/inventory-app/v1/user/login', user.loginUser);
 
 //router.post('/inventory-app/v1/user/update-pass', user.updatePass);
 

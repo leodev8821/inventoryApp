@@ -1,14 +1,36 @@
-import jwt from 'jsonwebtoken';
+import tokenUtils from '../utils/tokenUtils.js';
 import { getOneUser, createNewUser, getAllUsers, updateOneUser, deleteUser } from '../models/sequelize/user.model.js';
+import dotenv from 'dotenv';
+import { join, dirname } from 'path';
+import { fileURLToPath } from 'url';
 
-const { sign } = jwt;
+// Obtener la ruta absoluta del directorio del proyecto
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const envPath = join(__dirname, '../../.env'); // Subir un nivel hasta 'inventoryApp/.env'
+
+// Cargar el archivo .env manualmente
+dotenv.config({ path: envPath });
+
+// Usar variables de entorno
+const SECRET_KEY = process.env.SECRET_KEY;
 
 /* ------------- FUNCTIONS ----------------*/
 
 export default {
+	/**
+	 * Login de usuario
+	 * @param {*} req --> Request
+	 * @param {*} res --> Response
+	 * @returns {*} --> Mensaje de éxito o error
+	 */
 	loginUser: async (req, res) => {
 		try {
 			const { login_data, password } = req.body;
+
+			if(!login_data || !password){
+				return res.status(400).json({ error: 'Faltan credenciales' });
+			}
+
 			const user = await getOneUser(login_data);
 
 			//verificar usuario
@@ -21,20 +43,22 @@ export default {
 				return res.status(401).json({ error: 'Credenciales incorrectas' });
 			}
 
-			//Generar token de autenticación
-			sign(user, 'secretkey', { expiresIn: '1000s' }, (err, token) => {
-				if (err) {
-					return res.status(500).json({ error: 'Error al generar el token' });
-				}
+			//Generar token de autenticación utilizando tokenUtils.signJwt
+			try {
+				const tokenResponse = await tokenUtils.signJwt(user);
 				res.status(200).json({
 					user: user.email,
-					message: "Usuario autenticado correctamente.",
-					token: `Bearer ${token}`
+					message: tokenResponse.message,
+					token: tokenResponse.token
 				});
-			})
+			} catch (error) {
+				console.error('Error al generar el token:', error);
+				return res.status(500).json({ error: 'Error al generar el token', details: error });
+			}
 
 		} catch (error) {
-			res.status(500).json({ message: 'Error interno del servidor.', error: error.message });
+			console.error('Error en loginUser:', error);
+			res.status(500).json({ message: 'Error en loginUser', error: error.message });
 		}
 	},
 
