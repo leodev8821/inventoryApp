@@ -28,7 +28,7 @@ export default {
 		try {
 			const { login_data, password } = req.body;
 
-			if(!login_data || !password){
+			if (!login_data || !password) {
 				return res.status(400).json({ error: 'Faltan credenciales' });
 			}
 
@@ -46,11 +46,19 @@ export default {
 				return res.status(401).json({ error: 'Credenciales incorrectas' });
 			}
 
-			//Generar token de autenticación utilizando tokenUtils.signJwt
+			// Datos que irán en el token
+			const payload = {
+				username: user.username,
+				email: user.email,
+				first_name: user.first_name,
+				last_names: user.last_names
+			};
+
+			// Generar token de autenticación
 			try {
-				const tokenResponse = await tokenUtils.signJwt(user);
+				const tokenResponse = await tokenUtils.signJwt(payload);
 				res.status(200).json({
-					user: user.email,
+					user: payload,
 					message: tokenResponse.message,
 					token: tokenResponse.token
 				});
