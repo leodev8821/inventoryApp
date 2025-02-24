@@ -1,5 +1,5 @@
 // 1. Conexión al servidor Socket.IO
-const socket = io('http://localhost:3001'); // Reemplaza con la URL de tu servidor si es diferente
+const socket = io('http://localhost:3001');
 
 // 2. Obtener referencias a elementos del DOM
 const inputMensaje = document.getElementById('mensaje-input');

@@ -1,0 +1,616 @@
+[{
+  "_id": {
+    "$oid": "67868ab3c69cb35b43c45f58"
+  },
+  "type": "ACERA",
+  "abr": "AC"
+},
+{
+  "_id": {
+    "$oid": "67868ab3c69cb35b43c45f59"
+  },
+  "type": "ALDEA",
+  "abr": "AD"
+},
+{
+  "_id": {
+    "$oid": "67868ab3c69cb35b43c45f5a"
+  },
+  "type": "ALAMEDA",
+  "abr": "AL"
+},
+{
+  "_id": {
+    "$oid": "67868ab3c69cb35b43c45f5b"
+  },
+  "type": "AMPLIACIÓN",
+  "abr": "AM"
+},
+{
+  "_id": {
+    "$oid": "67868ab3c69cb35b43c45f5c"
+  },
+  "type": "ANGOSTA",
+  "abr": "AN"
+},
+{
+  "_id": {
+    "$oid": "67868ab3c69cb35b43c45f5d"
+  },
+  "type": "APARTAMENTOS",
+  "abr": "AP"
+},
+{
+  "_id": {
+    "$oid": "67868ab3c69cb35b43c45f5e"
+  },
+  "type": "ACEQUIA",
+  "abr": "AQ"
+},
+{
+  "_id": {
+    "$oid": "67868ab3c69cb35b43c45f5f"
+  },
+  "type": "APARTADO DE CORREOS",
+  "abr": "AS"
+},
+{
+  "_id": {
+    "$oid": "67868ab3c69cb35b43c45f60"
+  },
+  "type": "ATAJO",
+  "abr": "AT"
+},
+{
+  "_id": {
+    "$oid": "67868ab3c69cb35b43c45f61"
+  },
+  "type": "AVENIDA",
+  "abr": "AV"
+},
+{
+  "_id": {
+    "$oid": "67868ab3c69cb35b43c45f62"
+  },
+  "type": "BAJADA",
+  "abr": "BA"
+},
+{
+  "_id": {
+    "$oid": "67868ab3c69cb35b43c45f63"
+  },
+  "type": "BARRANCO",
+  "abr": "BC"
+},
+{
+  "_id": {
+    "$oid": "67868ab3c69cb35b43c45f64"
+  },
+  "type": "BARRIADA",
+  "abr": "BD"
+},
+{
+  "_id": {
+    "$oid": "67868ab3c69cb35b43c45f65"
+  },
+  "type": "BLOQUES",
+  "abr": "BL"
+},
+{
+  "_id": {
+    "$oid": "67868ab3c69cb35b43c45f66"
+  },
+  "type": "BARRIO",
+  "abr": "BO"
+},
+{
+  "_id": {
+    "$oid": "67868ab3c69cb35b43c45f67"
+  },
+  "type": "CALLEJA",
+  "abr": "CA"
+},
+{
+  "_id": {
+    "$oid": "67868ab3c69cb35b43c45f68"
+  },
+  "type": "CALLEJUELA",
+  "abr": "CE"
+},
+{
+  "_id": {
+    "$oid": "67868ab3c69cb35b43c45f69"
+  },
+  "type": "CHALET",
+  "abr": "CH"
+},
+{
+  "_id": {
+    "$oid": "67868ab3c69cb35b43c45f6a"
+  },
+  "type": "CALLEJÓN",
+  "abr": "CJ"
+},
+{
+  "_id": {
+    "$oid": "67868ab3c69cb35b43c45f6b"
+  },
+  "type": "CALLE",
+  "abr": "CL"
+},
+{
+  "_id": {
+    "$oid": "67868ab3c69cb35b43c45f6c"
+  },
+  "type": "CAMINO",
+  "abr": "CM"
+},
+{
+  "_id": {
+    "$oid": "67868ab3c69cb35b43c45f6d"
+  },
+  "type": "COSTANILLA",
+  "abr": "CN"
+},
+{
+  "_id": {
+    "$oid": "67868ab3c69cb35b43c45f6e"
+  },
+  "type": "COLONIA",
+  "abr": "CO"
+},
+{
+  "_id": {
+    "$oid": "67868ab3c69cb35b43c45f6f"
+  },
+  "type": "COOPERATIVA",
+  "abr": "CP"
+},
+{
+  "_id": {
+    "$oid": "67868ab3c69cb35b43c45f70"
+  },
+  "type": "CARRERA",
+  "abr": "CR"
+},
+{
+  "_id": {
+    "$oid": "67868ab3c69cb35b43c45f71"
+  },
+  "type": "CASERIO",
+  "abr": "CS"
+},
+{
+  "_id": {
+    "$oid": "67868ab3c69cb35b43c45f72"
+  },
+  "type": "CARRETERA",
+  "abr": "CT"
+},
+{
+  "_id": {
+    "$oid": "67868ab3c69cb35b43c45f73"
+  },
+  "type": "CUESTA",
+  "abr": "CU"
+},
+{
+  "_id": {
+    "$oid": "67868ab3c69cb35b43c45f74"
+  },
+  "type": "CALZADA",
+  "abr": "CZ"
+},
+{
+  "_id": {
+    "$oid": "67868ab3c69cb35b43c45f75"
+  },
+  "type": "ESCALA",
+  "abr": "EA"
+},
+{
+  "_id": {
+    "$oid": "67868ab3c69cb35b43c45f76"
+  },
+  "type": "EDIFICIO",
+  "abr": "ED"
+},
+{
+  "_id": {
+    "$oid": "67868ab3c69cb35b43c45f77"
+  },
+  "type": "ESCALINATA",
+  "abr": "EL"
+},
+{
+  "_id": {
+    "$oid": "67868ab3c69cb35b43c45f78"
+  },
+  "type": "ESCALERA",
+  "abr": "ES"
+},
+{
+  "_id": {
+    "$oid": "67868ab3c69cb35b43c45f79"
+  },
+  "type": "ESTRADA",
+  "abr": "ET"
+},
+{
+  "_id": {
+    "$oid": "67868ab3c69cb35b43c45f7a"
+  },
+  "type": "GLORIETA",
+  "abr": "GL"
+},
+{
+  "_id": {
+    "$oid": "67868ab3c69cb35b43c45f7b"
+  },
+  "type": "GRUPO",
+  "abr": "GR"
+},
+{
+  "_id": {
+    "$oid": "67868ab3c69cb35b43c45f7c"
+  },
+  "type": "CORRAL",
+  "abr": "KO"
+},
+{
+  "_id": {
+    "$oid": "67868ab3c69cb35b43c45f7d"
+  },
+  "type": "LUGAR",
+  "abr": "LG"
+},
+{
+  "_id": {
+    "$oid": "67868ab3c69cb35b43c45f7e"
+  },
+  "type": "LLANO",
+  "abr": "LL"
+},
+{
+  "_id": {
+    "$oid": "67868ab3c69cb35b43c45f7f"
+  },
+  "type": "MERCADO",
+  "abr": "MC"
+},
+{
+  "_id": {
+    "$oid": "67868ab3c69cb35b43c45f80"
+  },
+  "type": "MUNICIPIO",
+  "abr": "MN"
+},
+{
+  "_id": {
+    "$oid": "67868ab3c69cb35b43c45f81"
+  },
+  "type": "MONTAÑA",
+  "abr": "MO"
+},
+{
+  "_id": {
+    "$oid": "67868ab3c69cb35b43c45f82"
+  },
+  "type": "MANZANA",
+  "abr": "MZ"
+},
+{
+  "_id": {
+    "$oid": "67868ab3c69cb35b43c45f83"
+  },
+  "type": "PASEO ALTO",
+  "abr": "PA"
+},
+{
+  "_id": {
+    "$oid": "67868ab3c69cb35b43c45f84"
+  },
+  "type": "POBLADO",
+  "abr": "PB"
+},
+{
+  "_id": {
+    "$oid": "67868ab3c69cb35b43c45f85"
+  },
+  "type": "PARTICULAR",
+  "abr": "PC"
+},
+{
+  "_id": {
+    "$oid": "67868ab3c69cb35b43c45f86"
+  },
+  "type": "PASADIZO",
+  "abr": "PD"
+},
+{
+  "_id": {
+    "$oid": "67868ab3c69cb35b43c45f87"
+  },
+  "type": "PLAZOLETA",
+  "abr": "PE"
+},
+{
+  "_id": {
+    "$oid": "67868ab3c69cb35b43c45f88"
+  },
+  "type": "POLÍGONO",
+  "abr": "PG"
+},
+{
+  "_id": {
+    "$oid": "67868ab3c69cb35b43c45f89"
+  },
+  "type": "PASILLO",
+  "abr": "PI"
+},
+{
+  "_id": {
+    "$oid": "67868ab3c69cb35b43c45f8a"
+  },
+  "type": "PASAJE",
+  "abr": "PJ"
+},
+{
+  "_id": {
+    "$oid": "67868ab3c69cb35b43c45f8b"
+  },
+  "type": "PLACETA",
+  "abr": "PL"
+},
+{
+  "_id": {
+    "$oid": "67868ab3c69cb35b43c45f8c"
+  },
+  "type": "PROLONGACION",
+  "abr": "PN"
+},
+{
+  "_id": {
+    "$oid": "67868ab3c69cb35b43c45f8d"
+  },
+  "type": "PASEO BAJO",
+  "abr": "PO"
+},
+{
+  "_id": {
+    "$oid": "67868ab3c69cb35b43c45f8e"
+  },
+  "type": "PASEO",
+  "abr": "PP"
+},
+{
+  "_id": {
+    "$oid": "67868ab3c69cb35b43c45f8f"
+  },
+  "type": "PARQUE",
+  "abr": "PQ"
+},
+{
+  "_id": {
+    "$oid": "67868ab3c69cb35b43c45f90"
+  },
+  "type": "PORTALES",
+  "abr": "PR"
+},
+{
+  "_id": {
+    "$oid": "67868ab3c69cb35b43c45f91"
+  },
+  "type": "PASO",
+  "abr": "PS"
+},
+{
+  "_id": {
+    "$oid": "67868ab3c69cb35b43c45f92"
+  },
+  "type": "PATIO",
+  "abr": "PT"
+},
+{
+  "_id": {
+    "$oid": "67868ab3c69cb35b43c45f93"
+  },
+  "type": "PLAZUELA",
+  "abr": "PU"
+},
+{
+  "_id": {
+    "$oid": "67868ab3c69cb35b43c45f94"
+  },
+  "type": "PRIVADA",
+  "abr": "PV"
+},
+{
+  "_id": {
+    "$oid": "67868ab3c69cb35b43c45f95"
+  },
+  "type": "PLAZA",
+  "abr": "PZ"
+},
+{
+  "_id": {
+    "$oid": "67868ab3c69cb35b43c45f96"
+  },
+  "type": "RAMAL",
+  "abr": "RA"
+},
+{
+  "_id": {
+    "$oid": "67868ab3c69cb35b43c45f97"
+  },
+  "type": "RAMBLA",
+  "abr": "RB"
+},
+{
+  "_id": {
+    "$oid": "67868ab3c69cb35b43c45f98"
+  },
+  "type": "RINCONADA",
+  "abr": "RC"
+},
+{
+  "_id": {
+    "$oid": "67868ab3c69cb35b43c45f99"
+  },
+  "type": "RONDA",
+  "abr": "RD"
+},
+{
+  "_id": {
+    "$oid": "67868ab3c69cb35b43c45f9a"
+  },
+  "type": "RESIDENCIA",
+  "abr": "RE"
+},
+{
+  "_id": {
+    "$oid": "67868ab3c69cb35b43c45f9b"
+  },
+  "type": "RESIDENCIAL",
+  "abr": "RL"
+},
+{
+  "_id": {
+    "$oid": "67868ab3c69cb35b43c45f9c"
+  },
+  "type": "RINCÓN",
+  "abr": "RN"
+},
+{
+  "_id": {
+    "$oid": "67868ab3c69cb35b43c45f9d"
+  },
+  "type": "RAMPA",
+  "abr": "RP"
+},
+{
+  "_id": {
+    "$oid": "67868ab3c69cb35b43c45f9e"
+  },
+  "type": "RIBERA",
+  "abr": "RR"
+},
+{
+  "_id": {
+    "$oid": "67868ab3c69cb35b43c45f9f"
+  },
+  "type": "SECTOR",
+  "abr": "SC"
+},
+{
+  "_id": {
+    "$oid": "67868ab3c69cb35b43c45fa0"
+  },
+  "type": "SENDA",
+  "abr": "SD"
+},
+{
+  "_id": {
+    "$oid": "67868ab3c69cb35b43c45fa1"
+  },
+  "type": "PASSEIG",
+  "abr": "SP"
+},
+{
+  "_id": {
+    "$oid": "67868ab3c69cb35b43c45fa2"
+  },
+  "type": "SENDERO",
+  "abr": "SR"
+},
+{
+  "_id": {
+    "$oid": "67868ab3c69cb35b43c45fa3"
+  },
+  "type": "SUBIDA",
+  "abr": "SU"
+},
+{
+  "_id": {
+    "$oid": "67868ab3c69cb35b43c45fa4"
+  },
+  "type": "TRANSVERSAL",
+  "abr": "TL"
+},
+{
+  "_id": {
+    "$oid": "67868ab3c69cb35b43c45fa5"
+  },
+  "type": "TORRE",
+  "abr": "TO"
+},
+{
+  "_id": {
+    "$oid": "67868ab3c69cb35b43c45fa6"
+  },
+  "type": "TRAVESÍA",
+  "abr": "TR"
+},
+{
+  "_id": {
+    "$oid": "67868ab3c69cb35b43c45fa7"
+  },
+  "type": "TRASERA",
+  "abr": "TS"
+},
+{
+  "_id": {
+    "$oid": "67868ab3c69cb35b43c45fa8"
+  },
+  "type": "TORRENTE",
+  "abr": "TT"
+},
+{
+  "_id": {
+    "$oid": "67868ab3c69cb35b43c45fa9"
+  },
+  "type": "URBANIZACIÓN",
+  "abr": "UR"
+},
+{
+  "_id": {
+    "$oid": "67868ab3c69cb35b43c45faa"
+  },
+  "type": "VÍA",
+  "abr": "VI"
+},
+{
+  "_id": {
+    "$oid": "67868ab3c69cb35b43c45fab"
+  },
+  "type": "VILLAS",
+  "abr": "VL"
+},
+{
+  "_id": {
+    "$oid": "67868ab3c69cb35b43c45fac"
+  },
+  "type": "VIVIENDAS",
+  "abr": "VV"
+},
+{
+  "_id": {
+    "$oid": "67868ab3c69cb35b43c45fad"
+  },
+  "type": "SIN DATOS DOMICILIARIOS",
+  "abr": "XX"
+},
+{
+  "_id": {
+    "$oid": "67868ab3c69cb35b43c45fae"
+  },
+  "type": "ZONA",
+  "abr": "ZO"
+},
+{
+  "_id": {
+    "$oid": "67868ab3c69cb35b43c45faf"
+  },
+  "type": "OTROS",
+  "abr": "ZZ"
+}]

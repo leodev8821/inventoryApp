@@ -1,7 +1,8 @@
 import mongo from '../database/mongo.js';
 import { scrapeSpainsTownsAndProvinces } from '../utils/scraping.util.js';
-import { createTown } from '../models/mongoose/spainTowns.model.js';
-import { createProvince } from '../models/mongoose/spainProvinces.model.js';
+import { createTown, getAllSpainTowns } from '../models/mongoose/spainTowns.model.js';
+import { createProvince,getAllSpainProvinces } from '../models/mongoose/spainProvinces.model.js';
+import { getAllAddressTypes } from '../models/mongoose/addressType.model.js';
 
 export default {
 
@@ -57,5 +58,69 @@ export default {
 				error: error.message
 			});
 		}
-	}
+	},
+
+	getProvinces: async (req, res) => {
+
+		try {
+
+			await mongo.connectToMongo();
+			const provinces = await getAllSpainProvinces();
+
+			return res.status(200).json({
+				message: `Todas las Provincias han sido recuperadas.`,
+				provinces: provinces
+			});
+
+		} catch (error) {
+			res.status(500).json({
+				message: 'Error al obtener las provincias de la base de datos.',
+				error: error.message
+			});
+		}
+
+	},
+
+	getTowns: async (req, res) => {
+
+		try {
+
+			await mongo.connectToMongo();
+			const towns = await getAllSpainTowns();
+
+			return res.status(200).json({
+				message: `Todas los municipios han sido recuperados.`,
+				towns: towns
+			});
+
+		} catch (error) {
+			res.status(500).json({
+				message: 'Error al obtener los municipios de la base de datos.',
+				error: error.message
+			});
+		}
+
+	},
+
+	getAddressType: async (req, res) => {
+
+		try {
+
+			await mongo.connectToMongo();
+			const type = await getAllAddressTypes();
+
+			return res.status(200).json({
+				message: `Todas los tipos de vía han sido recuperados.`,
+				type: type
+			});
+
+		} catch (error) {
+			res.status(500).json({
+				message: 'Error al obtener los municipios de la base de datos.',
+				error: error.message
+			});
+		}
+
+	},
+
 }
