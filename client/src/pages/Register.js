@@ -202,7 +202,7 @@ const Register = () => {
                         <InputLabel id="provincia-label">Provincia</InputLabel>
                         <Select
                             labelId="provincia-label"
-                            id="provincia"
+                            id="prov"
                             name="provincia"
                             value={formAddress.prov}
                             label="Provincia"
@@ -233,7 +233,6 @@ const Register = () => {
                             ))}
                         </Select>
                     </FormControl>
-
 
                     <FormControl margin="normal" required fullWidth>
                         <InputLabel id="tipo-via-label">Tipo de vía</InputLabel>
