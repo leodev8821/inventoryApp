@@ -2,6 +2,7 @@ import React from "react";
 import { AuthProvider } from "./utils/context/AuthContext";
 import { RouteProvider } from "./utils/context/RouteContext";
 import Login from "./pages/Login";
+import Register from "./pages/Register";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 const App = () => {
@@ -10,7 +11,8 @@ const App = () => {
       <Router>
         <AuthProvider>
           <Routes>
-            <Route path="/" element={<Login />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
             {/* 
             <Route path="/lopd" element={<Lopd />} />
             <Route path="/recuperar-contrasena" element={<PassRecoveryForm />} />
