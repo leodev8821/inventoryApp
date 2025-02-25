@@ -1,10 +1,13 @@
 import express, { json, urlencoded } from 'express';
 import cors from 'cors';
 import mysql from './database/mysql.js'
+import mongo from './database/mongo.js';
 import { router } from './routes/routes.js';
 
 //conexión de sequelize con la BD
-mysql.connection();
+await mysql.connection();
+
+await mongo.connectToMongo();
 
 const app = express()
 
@@ -18,4 +21,4 @@ app.use(router)
 
 const port = process.env.PORT || 3001
 
-app.listen(port, () => console.log(`Server running on port ${port}`))
+app.listen(port, () => console.log(`Server running on port ${port}`));

@@ -84,31 +84,16 @@ export async function scrapeSpainsTownsAndProvinces() {
     try {
         let province_counter = 1;
         let allTowns = [];
-        let provinces = [];
-        let uniqueProvinces = new Set(); // Usamos un Set para asegurar provincias únicas fácilmente
 
         console.log("Obteniendo información de las provincias y sus municipios...");
 
         const towns = await getTownsInfo('https://www.ign.es/web/ane-datos-geograficos/-/datos-geograficos/datosPoblacion?tipoBusqueda=municipios');
         allTowns = allTowns.concat(towns);
 
-        // Extraer provincias únicas
-        allTowns.forEach(town => {
-            if (town.province && !uniqueProvinces.has(town.province)) {
-                let format = {
-                    province: town.province,
-                    INE_code: province_counter++
-                };
-                uniqueProvinces.add(town.province);
-                provinces.push(format);
-            }
-        });
-
         console.log("Información de las provincias y sus municipios obtenida correctamente.");
 
         return {
-            towns: allTowns,
-            provinces: provinces
+            towns: allTowns
         };
     } catch (e) {
         console.error("Error en scrapeSpainsTownsAndProvinces:", e);

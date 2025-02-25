@@ -10,9 +10,7 @@ const router = Router();
 
 // BBDD MongoDB
 router.get('/inventory-app/v1/address/create-all-towns', address.createAllTownsAndProvinces);
-router.get('/inventory-app/v1/address/all-provinces', address.getProvinces);
-router.get('/inventory-app/v1/address/all-towns', address.getTowns);
-router.get('/inventory-app/v1/address/all-address-type', address.getAddressType);
+router.get('/inventory-app/v1/address/all-address-data', address.getAddressData);
 
 /* //Address
 router.get('/inventory-app/v1/address/all-types', address.getTypeAddress)

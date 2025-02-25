@@ -7,7 +7,7 @@ export const addressTypeSchema = new mongoose.Schema({
     abr: String
 });
 
-const AddressType = mongoose.model('AddressType', addressTypeSchema);
+const AddressType = mongoose.model('AddressType', addressTypeSchema, 'address-types');
 
 // Operaciones CRUD
 
