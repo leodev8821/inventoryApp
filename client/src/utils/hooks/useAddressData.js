@@ -3,58 +3,67 @@ import useFetch from "./useFetch";
 
 const useAddressData = () => {
     const { fetchData } = useFetch();
-    const [provinces, setProvinces] = useState([]);
     const [towns, setTowns] = useState([]);
-    const [addressType, setAddressType] = useState([]); // Corrección de typo
-    const [loading, setLoading] = useState(true); // Estado de carga
-    const [error, setError] = useState(null); // Estado de error
+    const [addressTypes, setAddressTypes] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
+    // Función para manejar el error de la respuesta
+    const handleError = async (response) => {
+        try {
+            const errorData = await response.json();
+            const errorMessage = `Server Error: ${response.status} - ${errorData.message || response.statusText}`;
+            setError(errorMessage);
+            console.error("Server Error:", errorMessage, errorData);
+        } catch (jsonError) {
+            const errorMessage = `Server Error (no JSON): ${response.status} - ${response.statusText}`;
+            setError(errorMessage);
+            console.error("Server Error (no JSON):", errorMessage);
+        }
+    };
+
+    // Función principal de fetch de datos
+    const fetchDataAsync = async () => {
+        setLoading(true);
+        setError(null);
+
+        try {
+            const response = await fetchData({
+                endpoint: "/inventory-app/v1/address/all-address-data",
+                method: "GET",
+            });
+
+            
+
+            if (!response) {
+                setError("Error en la petición: No se recibió respuesta.");
+                console.error("Fetch Error: No response received.");
+                return;
+            }
+
+            console.log("Response:", response);
+
+            if (response.ok) {
+                const data = await response.json();
+                console.log("Data:", data);
+                setTowns(data.towns);
+                setAddressTypes(data.types);
+            } else {
+                handleError(response);
+            }
+        } catch (err) {
+            console.error("Fetch Error:", err);
+            setError("Error en la petición de datos. Inténtelo más tarde.");
+        } finally {
+            setLoading(false);
+        }
+    };
 
     useEffect(() => {
-        const fetchDataAsync = async () => {
-            setLoading(true);
-            setError(null); // Resetear el error
-
-            try {
-                const requests = [
-                    fetchData({ endpoint: "/inventory-app/v1/address/all-provinces", method: "GET" }),
-                    fetchData({ endpoint: "/inventory-app/v1/address/all-towns", method: "GET" }),
-                    fetchData({ endpoint: "/inventory-app/v1/address/all-address-type", method: "GET" })
-                ];
-
-                const responses = await Promise.all(requests);
-
-                if (responses.every(response => response.ok)) {
-                    const [provResponse, townResponse, addressTypeResponse] = responses;
-
-                    const prov = await provResponse.json();
-                    const town = await townResponse.json();
-                    const addrs = await addressTypeResponse.json();
-
-                    setProvinces(prov);
-                    setTowns(town);
-                    setAddressType(addrs);
-                } else {
-                    const errorMessages = responses.map(response => {
-                        if (!response.ok) {
-                            return `Error: ${response.status} - ${response.statusText}`;
-                        }
-                        return ""; // Para las respuestas ok
-                    }).filter(message => message !== ""); // Filtra cadenas vacías
-
-                    setError(`Error al obtener datos: ${errorMessages.join(" / ")}`);
-                }
-            } catch (err) {
-                console.error("Error en la petición de datos:", err);
-                setError("Error en la petición de datos. Inténtelo más tarde.");
-            } finally {
-                setLoading(false);
-            }
-        };
-
         fetchDataAsync();
-    }, [fetchData]); // Dependencia de fetchData
+    }, [fetchData]);
 
-    return { provinces, towns, addressType, loading, error }; // Devuelve loading y error
+    return { towns, addressTypes, loading, error };
 };
 
 export default useAddressData;

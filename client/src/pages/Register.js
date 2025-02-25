@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import {
     TextField,
     Button,
@@ -27,10 +27,9 @@ const Register = () => {
         last_names: '',
         email: '',
         pass: '',
-        address: '' // No se usa directamente, se construye a partir de formAddress
+        address: '' // Se construye a partir de formAddress
     });
     const [formAddress, setFormAddress] = useState({
-        ca: '', // No se usa, se podría eliminar si no es necesario en el futuro
         prov: '',
         mun: '',
         tipo: '',
@@ -38,48 +37,53 @@ const Register = () => {
         cop: ''
     });
     const [lopd, setLopd] = useState(false);
+    const [selectedProvince, setSelectedProvince] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const { register, loading, error } = useRegister();
-    const { provinces, towns, addressType, loading: loadingAddressData, error: errorAddressData } = useAddressData(); // Incluir loading y error de useAddressData
+    const { towns, addressTypes, loading: loadingAddressData, error: errorAddressData } = useAddressData();
+
+    // Filtrar los municipios por la provincia seleccionada
+    const filteredTowns = useMemo(() => {
+        if (!selectedProvince) return towns;
+        return towns.filter(town => town.province === selectedProvince);
+    }, [towns, selectedProvince]);
+
+    const handleProvinceChange = (e) => {
+        setFormAddress(prev => ({ ...prev, prov: e.target.value, mun: '' }));
+        setSelectedProvince(e.target.value);
+    };
 
     useEffect(() => {
-        // Construir el string de dirección a partir de formAddress
-        const addressString = Object.values(formAddress).filter(Boolean).join(', '); // Filtra valores vacíos y los une
+        // Construir el string de dirección
+        const addressString = Object.values(formAddress).filter(Boolean).join(', ');
         setFormData(prevFormData => ({ ...prevFormData, address: addressString }));
-    }, [formAddress]); // Dependencia de formAddress
+    }, [formAddress]);
 
     const handleFormAddress = (e) => {
         const { id, value } = e.target;
-        setFormAddress({ ...formAddress, [id]: value });
+        setFormAddress(prev => ({ ...prev, [id]: value }));
     };
 
     const handleChange = (e) => {
         const { id, value } = e.target;
-        setFormData({ ...formData, [id]: value });
+        setFormData(prev => ({ ...prev, [id]: value }));
     };
 
-    const handleRegister = (e) => {
+    const handleRegister = () => {
         register(formData);
     };
 
-    if (loadingAddressData) { // Mostrar un indicador de carga mientras se obtienen los datos de dirección
-        return <CircularProgress />; // O un componente de carga más elaborado
+    if (loadingAddressData) {
+        return <CircularProgress />;
     }
 
-    if (errorAddressData) { // Mostrar un mensaje de error si falla la carga de datos de dirección
+    if (errorAddressData) {
         return <Typography color="error">{errorAddressData}</Typography>;
     }
 
     return (
         <Container maxWidth="sm">
-            <Box
-                sx={{
-                    marginTop: 8,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                }}
-            >
+            <Box sx={{ marginTop: 8, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                 <Typography component="h1" variant="h5">
                     Register
                 </Typography>
@@ -91,37 +95,28 @@ const Register = () => {
                         id="username"
                         label="Username"
                         name="username"
-                        autoComplete="username"
-                        autoFocus
                         value={formData.username}
                         onChange={handleChange}
-                        placeholder="username"
                     />
                     <TextField
                         margin="normal"
                         required
                         fullWidth
                         id="first_name"
-                        label="First_name"
+                        label="First name"
                         name="first_name"
-                        autoComplete="first_name"
-                        autoFocus
                         value={formData.first_name}
                         onChange={handleChange}
-                        placeholder="First name"
                     />
                     <TextField
                         margin="normal"
                         required
                         fullWidth
                         id="last_names"
-                        label="Last_names"
+                        label="Last names"
                         name="last_names"
-                        autoComplete="last_names"
-                        autoFocus
                         value={formData.last_names}
                         onChange={handleChange}
-                        placeholder="Lastnames"
                     />
                     <TextField
                         margin="normal"
@@ -130,12 +125,9 @@ const Register = () => {
                         id="email"
                         label="Email"
                         name="email"
-                        autoComplete="email"
-                        type='email'
-                        autoFocus
+                        type="email"
                         value={formData.email}
                         onChange={handleChange}
-                        placeholder="Email"
                     />
                     <TextField
                         margin="normal"
@@ -145,14 +137,12 @@ const Register = () => {
                         label="Password"
                         type={showPassword ? 'text' : 'password'}
                         id="pass"
-                        autoComplete="pass"
                         value={formData.pass}
                         onChange={handleChange}
                         InputProps={{
                             endAdornment: (
                                 <InputAdornment position="end">
                                     <IconButton
-                                        aria-label="toggle password visibility"
                                         onClick={() => setShowPassword(!showPassword)}
                                         edge="end"
                                     >
@@ -162,54 +152,20 @@ const Register = () => {
                             ),
                         }}
                     />
-                    <FormControlLabel
-                        control={
-                            <Checkbox
-                                value="lopd"
-                                color="primary"
-                                checked={lopd}
-                                onChange={() => setLopd(!lopd)}
-                            />
-                        }
-                        label="Ley de Protección"
-                    />
-                    {error && (
-                        <Typography variant="body2" color="error" sx={{ mt: 1 }}>
-                            {error}
-                        </Typography>
-                    )}
-                    {/*-----------------------ADDRESS------------------------------------- */}
-                    {/* <FormControl margin="normal" required fullWidth>
-                        <InputLabel id="comunidad-autonoma-label">Comunidad Autónoma</InputLabel>
-                        <Select
-                            labelId="comunidad-autonoma-label"
-                            id="ca"
-                            name="comunidadAutonoma"
-                            value={formAddress.ca}
-                            label="Comunidad Autónoma"
-                            onChange={handleFormAddress}
-                        >
-                            {comunidadesAutonomas.map((comunidad) => (
-                                <MenuItem key={comunidad} value={comunidad}>
-                                    {comunidad}
-                                </MenuItem>
-                            ))}
-                        </Select>
-                    </FormControl> */}
 
-
+                    {/* Campos de dirección */}
                     <FormControl margin="normal" required fullWidth>
                         <InputLabel id="provincia-label">Provincia</InputLabel>
                         <Select
                             labelId="provincia-label"
                             id="prov"
-                            name="provincia"
                             value={formAddress.prov}
                             label="Provincia"
-                            onChange={handleFormAddress}
+                            onChange={handleProvinceChange}
                         >
-                            {provinces.map((province) => (
-                                <MenuItem key={province.province} value={province.province}>
+                            <MenuItem value="">Seleccione una provincia</MenuItem>
+                            {towns.map((province) => (
+                                <MenuItem key={province._id} value={province.province}>
                                     {province.province}
                                 </MenuItem>
                             ))}
@@ -221,13 +177,13 @@ const Register = () => {
                         <Select
                             labelId="municipio-label"
                             id="mun"
-                            name="municipio"
                             value={formAddress.mun}
                             label="Municipio"
                             onChange={handleFormAddress}
                         >
-                            {towns.map((town) => (
-                                <MenuItem key={town.town} value={town.town}>
+                            <MenuItem value="">Seleccione un municipio</MenuItem>
+                            {filteredTowns.map((town) => (
+                                <MenuItem key={town._id} value={town.town}>
                                     {town.town}
                                 </MenuItem>
                             ))}
@@ -239,29 +195,26 @@ const Register = () => {
                         <Select
                             labelId="tipo-via-label"
                             id="tipo"
-                            name="tipoVia"
                             value={formAddress.tipo}
                             label="Tipo de vía"
                             onChange={handleFormAddress}
                         >
-                            {addressType.map((tipo) => (
-                                <MenuItem key={tipo.type} value={tipo.type}>
+                            {addressTypes.map((tipo) => (
+                                <MenuItem key={tipo.type} value={tipo}>
                                     {tipo.type}
                                 </MenuItem>
                             ))}
                         </Select>
                     </FormControl>
+
                     <TextField
                         margin="normal"
                         required
                         fullWidth
                         id="via"
                         label="Vía"
-                        name="via"
-                        autoFocus
                         value={formAddress.via}
                         onChange={handleFormAddress}
-                        placeholder="Coronas 7"
                     />
 
                     <TextField
@@ -270,20 +223,29 @@ const Register = () => {
                         fullWidth
                         id="cop"
                         label="Código Postal"
-                        name="cop"
-                        autoFocus
                         value={formAddress.cop}
                         onChange={handleFormAddress}
-                        placeholder="28000"
                     />
+
+                    <FormControlLabel
+                        control={
+                            <Checkbox
+                                checked={lopd}
+                                onChange={() => setLopd(!lopd)}
+                            />
+                        }
+                        label="Ley de Protección"
+                    />
+                    {error && <Typography variant="body2" color="error" sx={{ mt: 1 }}>{error}</Typography>}
+
                     <Button
                         fullWidth
                         variant="contained"
                         sx={{ mt: 3, mb: 2 }}
-                        onClick={() => handleRegister(formData)}
+                        onClick={handleRegister}
                         disabled={loading}
                     >
-                        {loading ? <CircularProgress size={24} /> : 'Login'}
+                        {loading ? <CircularProgress size={24} /> : 'Register'}
                     </Button>
                 </Box>
             </Box>
