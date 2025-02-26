@@ -84,6 +84,7 @@ export async function scrapeSpainsTownsAndProvinces() {
     try {
         let province_counter = 1;
         let allTowns = [];
+        l
 
         console.log("Obteniendo información de las provincias y sus municipios...");
 
@@ -93,7 +94,8 @@ export async function scrapeSpainsTownsAndProvinces() {
         console.log("Información de las provincias y sus municipios obtenida correctamente.");
 
         return {
-            towns: allTowns
+            towns: allTowns,
+            provinces: provinces
         };
     } catch (e) {
         console.error("Error en scrapeSpainsTownsAndProvinces:", e);
