@@ -14,13 +14,18 @@ import {
     IconButton,
     InputAdornment,
     MenuItem,
+    Fab
 } from '@mui/material';
 import Visibility from '@mui/icons-material/Visibility';
-import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import { VisibilityOff, ArrowBackIosNew } from '@mui/icons-material';
 import useRegister from '../utils/hooks/useRegister.js';
 import useAddressData from "../utils/hooks/useAddressData.js";
+import useNavigation from "../utils/hooks/useNavigation.js";
+
+
 
 const Register = () => {
+    const { navigate } = useNavigation();
     const [formData, setFormData] = useState({
         username: '',
         first_name: '',
@@ -30,17 +35,21 @@ const Register = () => {
         address: '' // Se construye a partir de formAddress
     });
     const [formAddress, setFormAddress] = useState({
-        prov: '',
-        mun: '',
-        tipo: '',
-        via: '',
-        cop: ''
+        province: '',
+        town: '',
+        type: '',
+        road: '',
+        pc: ''
     });
     const [lopd, setLopd] = useState(false);
     const [selectedProvince, setSelectedProvince] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const { register, loading, error } = useRegister();
-    const { towns, addressTypes, loading: loadingAddressData, error: errorAddressData } = useAddressData();
+    const { provinces, towns, addressTypes, loading: loadingAddressData, error: errorAddressData } = useAddressData();
+
+    const handleBack = (e) => {
+        navigate(-1 )
+    }
 
     // Filtrar los municipios por la provincia seleccionada
     const filteredTowns = useMemo(() => {
@@ -49,7 +58,7 @@ const Register = () => {
     }, [towns, selectedProvince]);
 
     const handleProvinceChange = (e) => {
-        setFormAddress(prev => ({ ...prev, prov: e.target.value, mun: '' }));
+        setFormAddress(prev => ({ ...prev, province: e.target.value, town: '' }));
         setSelectedProvince(e.target.value);
     };
 
@@ -60,8 +69,8 @@ const Register = () => {
     }, [formAddress]);
 
     const handleFormAddress = (e) => {
-        const { id, value } = e.target;
-        setFormAddress(prev => ({ ...prev, [id]: value }));
+        const { name, value } = e.target;
+        setFormAddress(prev => ({ ...prev, [name]: value }));
     };
 
     const handleChange = (e) => {
@@ -83,6 +92,11 @@ const Register = () => {
 
     return (
         <Container maxWidth="sm">
+            <Box sx={{ '& > :not(style)': { m: 1 } }}>
+                <Fab color="primary" aria-label="back" onClick={handleBack}>
+                    <ArrowBackIosNew />
+                </Fab>
+            </Box>
             <Box sx={{ marginTop: 8, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                 <Typography component="h1" variant="h5">
                     Register
@@ -158,15 +172,15 @@ const Register = () => {
                         <InputLabel id="provincia-label">Provincia</InputLabel>
                         <Select
                             labelId="provincia-label"
-                            id="prov"
-                            value={formAddress.prov}
+                            id="province"
+                            value={formAddress.province}
                             label="Provincia"
                             onChange={handleProvinceChange}
                         >
                             <MenuItem value="">Seleccione una provincia</MenuItem>
-                            {towns.map((province) => (
-                                <MenuItem key={province._id} value={province.province}>
-                                    {province.province}
+                            {provinces.map((province) => (
+                                <MenuItem key={province} value={province}>
+                                    {province}
                                 </MenuItem>
                             ))}
                         </Select>
@@ -176,14 +190,15 @@ const Register = () => {
                         <InputLabel id="municipio-label">Municipio</InputLabel>
                         <Select
                             labelId="municipio-label"
-                            id="mun"
-                            value={formAddress.mun}
+                            id="town"
+                            name="town"
+                            value={formAddress.town}
                             label="Municipio"
                             onChange={handleFormAddress}
                         >
                             <MenuItem value="">Seleccione un municipio</MenuItem>
                             {filteredTowns.map((town) => (
-                                <MenuItem key={town._id} value={town.town}>
+                                <MenuItem key={town.town} value={town.town}>
                                     {town.town}
                                 </MenuItem>
                             ))}
@@ -194,14 +209,15 @@ const Register = () => {
                         <InputLabel id="tipo-via-label">Tipo de vía</InputLabel>
                         <Select
                             labelId="tipo-via-label"
-                            id="tipo"
-                            value={formAddress.tipo}
+                            id="type"
+                            name="type"
+                            value={formAddress.type}
                             label="Tipo de vía"
                             onChange={handleFormAddress}
                         >
                             {addressTypes.map((tipo) => (
-                                <MenuItem key={tipo.type} value={tipo}>
-                                    {tipo.type}
+                                <MenuItem key={tipo} value={tipo}>
+                                    {tipo}
                                 </MenuItem>
                             ))}
                         </Select>
@@ -211,9 +227,10 @@ const Register = () => {
                         margin="normal"
                         required
                         fullWidth
-                        id="via"
-                        label="Vía"
-                        value={formAddress.via}
+                        id="road"
+                        name="road"
+                        label="Vía y número"
+                        value={formAddress.road}
                         onChange={handleFormAddress}
                     />
 
@@ -221,9 +238,10 @@ const Register = () => {
                         margin="normal"
                         required
                         fullWidth
-                        id="cop"
+                        id="pc"
+                        name="pc"
                         label="Código Postal"
-                        value={formAddress.cop}
+                        value={formAddress.pc}
                         onChange={handleFormAddress}
                     />
 
@@ -234,8 +252,8 @@ const Register = () => {
                                 onChange={() => setLopd(!lopd)}
                             />
                         }
-                        label="Ley de Protección"
                     />
+                    <a id="lopd_link" href='/'>Ley de Protección</a>
                     {error && <Typography variant="body2" color="error" sx={{ mt: 1 }}>{error}</Typography>}
 
                     <Button

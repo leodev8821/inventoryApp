@@ -3,6 +3,7 @@ import useFetch from "./useFetch";
 
 const useAddressData = () => {
     const { fetchData } = useFetch();
+    const [provinces, setProvinces] = useState([]);
     const [towns, setTowns] = useState([]);
     const [addressTypes, setAddressTypes] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -26,30 +27,32 @@ const useAddressData = () => {
     const fetchDataAsync = async () => {
         setLoading(true);
         setError(null);
+        let types = [];
 
         try {
-            const response = await fetchData({
+            const data = await fetchData({
                 endpoint: "/inventory-app/v1/address/all-address-data",
                 method: "GET",
-            });
+            });           
 
-            
-
-            if (!response) {
+            if (!data) {
                 setError("Error en la petición: No se recibió respuesta.");
                 console.error("Fetch Error: No response received.");
                 return;
             }
 
-            console.log("Response:", response);
+            if (data) {
 
-            if (response.ok) {
-                const data = await response.json();
-                console.log("Data:", data);
+                data.types.forEach(type => {
+                    const capitalzed = type.type.charAt(0).toUpperCase() + type.type.slice(1).toLowerCase();
+                    types.push(capitalzed);
+                });
+
+                setProvinces(data.provinces);
                 setTowns(data.towns);
-                setAddressTypes(data.types);
+                setAddressTypes(types);
             } else {
-                handleError(response);
+                handleError(data);
             }
         } catch (err) {
             console.error("Fetch Error:", err);
@@ -63,7 +66,7 @@ const useAddressData = () => {
         fetchDataAsync();
     }, [fetchData]);
 
-    return { towns, addressTypes, loading, error };
+    return { provinces, towns, addressTypes, loading, error };
 };
 
 export default useAddressData;

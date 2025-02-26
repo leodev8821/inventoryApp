@@ -11,6 +11,7 @@ import {
     CircularProgress,
     IconButton,
     InputAdornment,
+    Link
 } from '@mui/material';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
@@ -19,8 +20,10 @@ const Login = () => {
     const [login, setLogin] = useState('');
     const [password, setPassword] = useState('');
     const [remember, setRemember] = useState(false);
-    const { login: handleLogin, loading, error } = useLogin();
     const [showPassword, setShowPassword] = useState(false);
+    const { login: handleLogin, loading, error } = useLogin();
+
+
 
     return (
         <Container maxWidth="sm">
@@ -90,6 +93,7 @@ const Login = () => {
                             {error}
                         </Typography>
                     )}
+                    <Link href="/register" underline="hover">¿Aún no tienes cuenta?, Regístrate</Link>
                     <Button
                         fullWidth
                         variant="contained"

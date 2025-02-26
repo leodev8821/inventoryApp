@@ -1,4 +1,4 @@
-import { useState, useContext } from "react";
+import { useState } from "react";
 import useFetch from "./useFetch";
 import useNavigation from "./useNavigation";
 
@@ -25,22 +25,23 @@ const useRegister = () => {
         setError(null);
 
         try {
+
             const response = await fetchData({
                 endpoint: "/inventory-app/v1/user/create-new-user",
                 method: "POST",
                 body: { ...formData },
             });
 
-            if (response.ok) {
-                console.log("Usuario creado:", await response.json());
+            if (response) {
+                console.log("Usuario creado:", response);
                 navigate("/login");
             } else {
-                console.error("Error al crear usuario:", response.status, await response.text());
-                setError("Invalid login credentials.");
+                console.error("Error al crear usuario:", response);
+                setError("Error al crear usuario");
             }
 
         } catch (err) {
-            console.error("Login failed:", err);
+            console.error("User couldn't be created:", err);
             setError("An error occurred during register.");
         } finally {
             setLoading(false);
