@@ -1,6 +1,7 @@
 import React from "react";
 import { AuthProvider } from "./utils/context/AuthContext";
 import { RouteProvider } from "./utils/context/RouteContext";
+import { ToastProvider } from "./utils/context/ToastContext";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import DashboardLayoutBasic from "./pages/Dashboard";
@@ -8,14 +9,15 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 const App = () => {
   return (
-    <RouteProvider>
-      <Router>
-        <AuthProvider>
-          <Routes>
-            <Route path="/" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/dashboard" element={<DashboardLayoutBasic />} />
-            {/* 
+    <ToastProvider>
+      <RouteProvider>
+        <Router>
+          <AuthProvider>
+            <Routes>
+              <Route path="/" element={<Login />} />
+              <Route path="/register" element={<Register />} />
+              <Route path="/dashboard" element={<DashboardLayoutBasic />} />
+              {/* 
             <Route path="/lopd" element={<Lopd />} />
             <Route path="/recuperar-contrasena" element={<PassRecoveryForm />} />
                 <Route path="/confirma-contrasena/:token" element={<PassConfirmation />} />
@@ -29,10 +31,13 @@ const App = () => {
                 <Route path="/info-alumno" element={<StudentsInfo />} />
                 <Route path="/nomina" element={<NomineTable />} />
                 <Route path="/documento" element={<DocumentTable />} /> */}
-          </Routes>
-        </AuthProvider>
-      </Router>
-    </RouteProvider>
+            </Routes>
+          </AuthProvider>
+        </Router>
+      </RouteProvider>
+
+    </ToastProvider>
+
   );
 };
 

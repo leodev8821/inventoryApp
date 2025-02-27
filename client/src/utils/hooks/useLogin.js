@@ -3,8 +3,10 @@ import { jwtDecode } from "jwt-decode";
 import useFetch from "./useFetch";
 import useNavigation from "./useNavigation";
 import { AuthContext } from "../context/AuthContext";
+import { useToast } from '../context/ToastContext';
 
 const useLogin = () => {
+    const { notifySuccess, notifyError } = useToast();
     const { fetchData } = useFetch();
     const { navigate } = useNavigation();
     const { setUser } = useContext(AuthContext); // Accede al contexto de autenticación
@@ -31,10 +33,11 @@ const useLogin = () => {
                 sessionStorage.setItem("authToken", response.token);
                 const decodedToken = jwtDecode(response.token);
                 setUser(decodedToken); // Almacena el usuario en el contexto de autenticación
-                
+                notifySuccess("Logueado correctamente.", { position: "top-center" });
                 navigate("/dashboard");
             } else {
-                setError("Invalid login credentials.");
+                setError("Credenciales incorrectas.");
+                notifyError(error);
             }
         } catch (err) {
             console.error("Login failed:", err);

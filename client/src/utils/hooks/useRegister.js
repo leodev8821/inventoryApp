@@ -34,7 +34,7 @@ const useRegister = () => {
 
             if (response) {
                 console.log("Usuario creado:", response);
-                navigate("/login");
+                navigate("/");
             } else {
                 console.error("Error al crear usuario:", response);
                 setError("Error al crear usuario");
