@@ -155,7 +155,7 @@ export async function updateOneProduct(productInfo, newData) {
  * @param {*} productInfo -> product_name or bar_code from Product
  * @returns  Product -> Product modified (deleted)
  */
-export async function deleteClient(productInfo) {
+export async function deleteProduct(productInfo) {
     try {
         const fields = ["product_name", "bar_code"];
         const product = await Product.findOne({
