@@ -3,7 +3,7 @@ import { getSequelizeConf } from '../../database/mysql.js';
 import { getOneUser, User } from './user.model.js';
 import { getOneProduct, Product } from './product.model.js';
 
-const sequelize = getSequelizeConf();
+const connection = getSequelizeConf();
 
 /**
  * @typedef {object} InventoryAttributes
