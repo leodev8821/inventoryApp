@@ -1,8 +1,9 @@
 import { Router } from 'express';
-//import address from '../controllers/address.controller.js';
-//import comms from '../controllers/comms.controller.js';
 import address from '../controllers/address.controller.js';
-import user from '../controllers/users.controller.js'
+import user from '../controllers/users.controller.js';
+import product from '../controllers/products.controller.js';
+import category from '../controllers/categories.controllers.js';
+import inventory from '../controllers/inventories.controller.js';
 //import token from '../utils/verifyToken.js';
 
 const router = Router();
@@ -39,9 +40,15 @@ router.post('/inventory-app/v1/user/create-new-user', user.registerUser);
 
 router.post('/inventory-app/v1/user/login', user.loginUser);
 
-//router.post('/inventory-app/v1/user/update-pass', user.updatePass);
+// Categories
+router.post('/inventory-app/v1/categories/new-category', category.newCategory);
+router.get('/inventory-app/v1/categories/all-categories', category.allCategories);
 
-//Funcionalidad confirmar nuevo correo funcional
-//router.post('/inventory-app/v1/user/confirm-pass/:token', user.confirmPass);
+// Products
+router.post('/inventory-app/v1/products/new-product', product.newProduct);
+router.get('/inventory-app/v1/products/all-products/:category_id', product.allProducts);
+
+//Inventories
+router.post('/inventory-app/v1/inventory/all-registers', inventory.allInventoryRegisters);
 
 export { router };

@@ -1,4 +1,5 @@
 import { createNewProduct, getAllProducts } from '../models/sequelize/product.model.js';
+import { getOneCategory } from '../models/sequelize/category.model.js';
 import dotenv from 'dotenv';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
@@ -19,16 +20,24 @@ export default {
 
 	newProduct: async (req, res) => {
 		try {
-			const { img, category_id, bar_code, product_name, description, buy_price, sell_price } = req.body;
+			const { category_id, bar_code, product_name, description, buy_price, sell_price, image_url, quantity } = req.body;
+
+            const userId = req.user ? req.user.id : null;
+
+            if (!userId) {
+                return res.status(400).json({ message: 'No se proporcionó el usuario.' });
+            }
 
 			const data = {
-				img,
+				userId,
 				category_id,
 				bar_code,
 				product_name,
 				description,
 				buy_price,
-				sell_price
+				sell_price,
+				image_url,
+				quantity
 			};
 			const newProduct = await createNewProduct(data);
 
@@ -38,12 +47,7 @@ export default {
 
 			res.status(201).json({
 				message: 'Nuevo producto creado',
-				category_id,
-				bar_code,
-				product_name,
-				buy_price,
-				sell_price,
-				img
+				newProduct
 			});
 		} catch (error) {
 			res.status(500).json({ message: 'Error al crear producto', error })
@@ -52,27 +56,41 @@ export default {
 
 	allProducts: async (req, res) => {
 		try {
-			const products = await getAllProducts();
+			const { category_id } = req.params;
+			const userId = req.user ? req.user.id : null;
+
+			if (!userId) {
+                return res.status(400).json({ message: 'No se proporcionó el usuario.' });
+            }
+
+			const data = {
+				userId,
+				category_id
+			}
+
+			const products = await getAllProducts(data);
 
 			const resp = products.map((product, i) => ({
 				product: `${i + 1}`,
-				[product.category_id],
-				bar_code,
-				product_name,
-				buy_price,
-				sell_price,
-				img
+				category_id: product.category_id,
+				bar_code: product.bar_code,
+				product_name: product.product_name,
+				description: product.description,
+				buy_price: product.buy_price,
+				sell_price: product.sell_price,
+				image_url: product.image_url,
+				quantity: product.quantity
 			}));
 
 			// Enviar la respuesta combinada
 			res.status(201).json(resp)
 
 		} catch (error) {
-			res.status(500).json({ message: 'Error al listar usuarios', error })
+			res.status(500).json({ message: 'Error al listar productos', error })
 		}
 	},
 
-	oneUser: async (req, res) => {
+	oneProduct: async (req, res) => {
 		try {
 			// Obtener los datos del cuerpo de la solicitud
 			const { login_data } = req.body

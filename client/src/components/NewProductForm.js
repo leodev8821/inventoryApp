@@ -39,6 +39,16 @@ const NewProductForm = () => {
     });
     const [errors, setErrors] = useState({});
 
+    const handleBack = () => {
+        navigate('/dashboard');
+    };
+
+    const handleChange = (e) => {
+        const { id, value, name } = e.target;
+        const field = id || name;
+        setFormData(prev => ({ ...prev, [field]: value }));
+    }
+
     return (
         <Container maxWidth="sm">
 
@@ -61,122 +71,6 @@ const NewProductForm = () => {
                             <Grid2 container spacing={2} sx={{ margin: 'auto' }}>
 
                                 <Grid2 size={{ xs: 12 }}>
-                                    <TextField
-                                        margin="normal"
-                                        size="small"
-                                        required
-                                        fullWidth
-                                        id="bar_code"
-                                        name="bar_code"
-                                        label="Código de Barras"
-                                        value={formData.bar_code}
-                                        onChange={handleChange}
-                                        onBlur={handleBlur}
-                                        error={Boolean(errors.bar_code)}
-                                        helperText={errors.bar_code}
-                                    />
-
-                                    <TextField
-                                        margin="normal"
-                                        size="small"
-                                        required
-                                        fullWidth
-                                        id="product_name"
-                                        name="product_name"
-                                        label="Nombre del Producto"
-                                        value={formData.product_name}
-                                        onChange={handleChange}
-                                        onBlur={handleBlur}
-                                        error={Boolean(errors.product_name)}
-                                        helperText={errors.product_name}
-                                    />
-
-                                    <TextField
-                                        margin="normal"
-                                        size="small"
-                                        required
-                                        fullWidth
-                                        id="buy_price"
-                                        name="buy_price"
-                                        label="Precio de Compra"
-                                        type="number"
-                                        value={formData.buy_price}
-                                        onChange={handleChange}
-                                        onBlur={handleBlur}
-                                        error={Boolean(errors.buy_price)}
-                                        helperText={errors.buy_price}
-                                    />
-                                    <TextField
-                                        margin="normal"
-                                        size="small"
-                                        required
-                                        fullWidth
-                                        id="sell_price"
-                                        name="sell_price"
-                                        label="Precio de Venta"
-                                        type="number"
-                                        value={formData.sell_price}
-                                        onChange={handleChange}
-                                        onBlur={handleBlur}
-                                        error={Boolean(errors.sell_price)}
-                                        helperText={errors.sell_price}
-                                    />
-                                    <TextField
-                                        margin="normal"
-                                        size="small"
-                                        required
-                                        fullWidth
-                                        id="pass"
-                                        name='pass'
-                                        label="Contraseña"
-                                        type={showPassword ? 'text' : 'password'}
-                                        value={formData.pass}
-                                        onChange={handleChange}
-                                        onBlur={handleBlur}
-                                        error={Boolean(errors.pass)}
-                                        helperText={errors.pass}
-                                        InputProps={{
-                                            endAdornment: (
-                                                <InputAdornment position="end">
-                                                    <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
-                                                        {showPassword ? <VisibilityOff /> : <Visibility />}
-                                                    </IconButton>
-                                                </InputAdornment>
-                                            ),
-                                        }}
-                                    />
-                                    <TextField
-                                        margin="normal"
-                                        size="small"
-                                        required
-                                        fullWidth
-                                        id="confirm_pass"
-                                        name="confirm_pass"
-                                        label="Confirmar Contraseña"
-                                        type={showPassword ? 'text' : 'password'}
-                                        value={formData.confirm_pass}
-                                        onChange={handleChange}
-                                        onBlur={handleBlur}
-                                        error={Boolean(errors.confirm_pass)}
-                                        helperText={errors.confirm_pass}
-                                        InputProps={{
-                                            endAdornment: (
-                                                <InputAdornment position="end">
-                                                    <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
-                                                        {showPassword ? <VisibilityOff /> : <Visibility />}
-                                                    </IconButton>
-                                                </InputAdornment>
-                                            ),
-                                        }}
-                                    />
-                                </Grid2>
-
-                                {/* Selection Fields */}
-                                <Grid2 size={{ xs: 12 }}>
-                                    <Divider sx={{ my: 2 }}>
-                                        Dirección
-                                    </Divider>
-
                                     <FormControl fullWidth margin="normal" required>
                                         <InputLabel id="provincia-label">Provincia</InputLabel>
                                         <Select
@@ -198,6 +92,71 @@ const NewProductForm = () => {
                                         </Select>
                                         {errors.province && <FormHelperText>{errors.province}</FormHelperText>}
                                     </FormControl>
+                                    <TextField
+                                        margin="normal"
+                                        size="small"
+                                        required
+                                        fullWidth
+                                        id="bar_code"
+                                        name="bar_code"
+                                        label="Código de Barras"
+                                        value={formData.bar_code}
+                                        onChange={handleChange}
+                                        error={Boolean(errors.bar_code)}
+                                        helperText={errors.bar_code}
+                                    />
+
+                                    <TextField
+                                        margin="normal"
+                                        size="small"
+                                        required
+                                        fullWidth
+                                        id="product_name"
+                                        name="product_name"
+                                        label="Nombre del Producto"
+                                        value={formData.product_name}
+                                        onChange={handleChange}
+                                        error={Boolean(errors.product_name)}
+                                        helperText={errors.product_name}
+                                    />
+
+                                    <TextField
+                                        margin="normal"
+                                        size="small"
+                                        required
+                                        fullWidth
+                                        id="buy_price"
+                                        name="buy_price"
+                                        label="Precio de Compra"
+                                        type="number"
+                                        value={formData.buy_price}
+                                        onChange={handleChange}
+                                        error={Boolean(errors.buy_price)}
+                                        helperText={errors.buy_price}
+                                    />
+                                    <TextField
+                                        margin="normal"
+                                        size="small"
+                                        required
+                                        fullWidth
+                                        id="sell_price"
+                                        name="sell_price"
+                                        label="Precio de Venta"
+                                        type="number"
+                                        value={formData.sell_price}
+                                        onChange={handleChange}
+                                        error={Boolean(errors.sell_price)}
+                                        helperText={errors.sell_price}
+                                    />
+                                </Grid2>
+
+                                {/* Selection Fields */}
+                                <Grid2 size={{ xs: 12 }}>
+                                    <Divider sx={{ my: 2 }}>
+                                        Dirección
+                                    </Divider>
+
+
 
                                     <FormControl fullWidth margin="normal" required>
                                         <InputLabel id="municipio-label">Municipio</InputLabel>

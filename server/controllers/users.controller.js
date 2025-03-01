@@ -48,6 +48,7 @@ export default {
 
 			// Datos que irán en el token
 			const payload = {
+				id: user.id,
 				username: user.username,
 				email: user.email,
 				first_name: user.first_name,
