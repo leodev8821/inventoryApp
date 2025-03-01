@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import decodeUserMiddleware from '../middlewares/decodeUser.js';
 import address from '../controllers/address.controller.js';
 import user from '../controllers/users.controller.js';
 import product from '../controllers/products.controller.js';
@@ -13,20 +14,11 @@ const router = Router();
 router.get('/inventory-app/v1/address/create-all-towns', address.createAllTownsAndProvinces);
 router.get('/inventory-app/v1/address/all-address-data', address.getAddressData);
 
-/* //Address
-router.get('/inventory-app/v1/address/all-types', address.getTypeAddress)
-router.get('/inventory-app/v1/address/all-towns', address.getTowns)
-//Comms
-router.get('/inventory-app/v1/comms/all-comms', comms.getComms)
-router.post('/inventory-app/v1/comms/new-comm', comms.postComms)
+/* 
 //LOPD
 router.get('/inventory-app/v1/generic/lopd', comms.lopdGet) */
 
 // BBDD MySQL
-/* 
-router.get('/inventory-app/v1/user/all-users', user.allUsers);
-
-router.post('/inventory-app/v1/user/one-user', user.oneUser); */
 
 router.post('/inventory-app/v1/user/create-new-user', user.registerUser);
 /* {
@@ -41,7 +33,7 @@ router.post('/inventory-app/v1/user/create-new-user', user.registerUser);
 router.post('/inventory-app/v1/user/login', user.loginUser);
 
 // Categories
-router.post('/inventory-app/v1/categories/new-category', category.newCategory);
+router.post('/inventory-app/v1/categories/new-category', decodeUserMiddleware, category.newCategory);
 router.get('/inventory-app/v1/categories/all-categories', category.allCategories);
 
 // Products

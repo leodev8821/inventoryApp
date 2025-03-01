@@ -13,7 +13,7 @@ const useLogin = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
-    const login = async (login_data, password) => {
+    const handleLogin = async (login_data, password) => {
         if (!login_data || !password) {
             setError("Please enter both login and password.");
             return;
@@ -47,7 +47,7 @@ const useLogin = () => {
         }
     };
 
-    return { login, loading, error };
+    return { handleLogin, loading, error };
 };
 
 export default useLogin;

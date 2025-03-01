@@ -7,7 +7,7 @@ export default {
     newCategory: async (req, res) => {
         try {
             const { category } = req.body;
-            const userId = req.user ? req.user.id : null;
+            const userId = req.user && req.user.id ? req.user.id : null;
 
             if (!userId) {
                 return res.status(400).json({ message: 'No se proporcionó el usuario.' });
@@ -17,7 +17,7 @@ export default {
                 return res.status(400).json({ error: 'El campo categoría es requerido.' });
             }
             const newCategory = await createNewCategory({
-                userId,
+                user_id: userId,
                 category,
             });
 

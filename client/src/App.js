@@ -5,6 +5,7 @@ import { ToastProvider } from "./utils/context/ToastContext";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import DashboardLayoutBasic from "./pages/Dashboard";
+import NewCategoryForm from "./components/NewCategoryForm";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 const App = () => {
@@ -17,6 +18,7 @@ const App = () => {
               <Route path="/" element={<Login />} />
               <Route path="/register" element={<Register />} />
               <Route path="/dashboard" element={<DashboardLayoutBasic />} />
+              <Route path="/new-category" element={<NewCategoryForm />} />
               {/* 
             <Route path="/lopd" element={<Lopd />} />
             <Route path="/recuperar-contrasena" element={<PassRecoveryForm />} />

@@ -21,7 +21,7 @@ const tokenUtils = {
      */
     signJwt: (tokenForm) => {
         return new Promise((resolve, reject) => {
-            jwt.sign(tokenForm, SECRET_KEY, { expiresIn: '10000' }, (err, token) => {
+            jwt.sign(tokenForm, SECRET_KEY, { expiresIn: '1h' }, (err, token) => {
                 if (err) {
                     reject({ error: 'Error al generar el token' });
                 } else {
