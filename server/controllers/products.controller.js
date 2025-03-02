@@ -22,15 +22,17 @@ export default {
 		try {
 			const { category_id, bar_code, product_name, description, buy_price, sell_price, image_url, quantity } = req.body;
 
-            const userId = req.user ? req.user.id : null;
+            const userId = req.user?.id;
+
+			console.log(category_id)
 
             if (!userId) {
                 return res.status(400).json({ message: 'No se proporcionó el usuario.' });
             }
 
 			const data = {
-				userId,
-				category_id,
+				user_id: userId,
+				category_id: category_id,
 				bar_code,
 				product_name,
 				description,
@@ -47,7 +49,7 @@ export default {
 
 			res.status(201).json({
 				message: 'Nuevo producto creado',
-				newProduct
+				newProduct: newProduct
 			});
 		} catch (error) {
 			res.status(500).json({ message: 'Error al crear producto', error })

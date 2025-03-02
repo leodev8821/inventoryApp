@@ -34,10 +34,10 @@ router.post('/inventory-app/v1/user/login', user.loginUser);
 
 // Categories
 router.post('/inventory-app/v1/categories/new-category', decodeUserMiddleware, category.newCategory);
-router.get('/inventory-app/v1/categories/all-categories', category.allCategories);
+router.get('/inventory-app/v1/categories/all-categories', decodeUserMiddleware, category.allCategories);
 
 // Products
-router.post('/inventory-app/v1/products/new-product', product.newProduct);
+router.post('/inventory-app/v1/products/new-product', decodeUserMiddleware, product.newProduct);
 router.get('/inventory-app/v1/products/all-products/:category_id', product.allProducts);
 
 //Inventories

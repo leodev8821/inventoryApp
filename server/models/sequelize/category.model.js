@@ -99,16 +99,21 @@ export async function createNewCategory(data) {
  * @returns {Promise<Array<object>>} - Lista de todas las categorías del usuario.
  * @throws {Error} - Lanza un error si hay un problema al consultar la base de datos.
  */
-export async function getAllCategories(data) {
+export async function getAllCategories(userId) {
     try {
-        return await Category.findAll({
-            where: { user_id: data.user_id }
+        // Obtener todas las categorías asociadas al usuario
+        const categories = await Category.findAll({
+            where: { user_id: userId },
+            raw: true,
+            order: [['category', 'ASC']]
         });
+
+        return categories; // Devuelve directamente el array de categorías
     } catch (error) {
         console.error('Error al obtener las categorías:', error);
         throw new Error('Error al obtener las categorías de la base de datos.');
     }
-};
+}
 
 /**
  * Obtiene una categoría por nombre y usuario.

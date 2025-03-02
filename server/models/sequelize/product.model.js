@@ -1,4 +1,4 @@
-import { DataTypes } from 'sequelize';
+import { DataTypes, Op } from 'sequelize';
 import { getSequelizeConf } from '../../database/mysql.js';
 import { Category } from './category.model.js';
 import { User } from './user.model.js';
