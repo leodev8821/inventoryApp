@@ -93,8 +93,19 @@ const useNewProductForm = () => {
                 body: data
             });
 
+            setFormData({
+                category_id: '',
+                bar_code: '',
+                product_name: '',
+                description: '',
+                buy_price: 0.0,
+                sell_price: 0.0,
+                image_url: '',
+                quantity: ''
+            });
+
             if (response?.newProduct) {
-                notifySuccess('Nueva producto creado', { position: 'top-center' });
+                notifySuccess('Nueva producto creado', { autoClose:2000, position: 'top-center' });
                 setTimeout(() => navigate(-1), 2000);
             } else {
                 setErrors({ server: response?.error || 'Error al crear la categoría' });

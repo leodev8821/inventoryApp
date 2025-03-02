@@ -38,7 +38,8 @@ router.get('/inventory-app/v1/categories/all-categories', decodeUserMiddleware, 
 
 // Products
 router.post('/inventory-app/v1/products/new-product', decodeUserMiddleware, product.newProduct);
-router.get('/inventory-app/v1/products/all-products/:category_id', product.allProducts);
+router.get('/inventory-app/v1/products/all-products/:category_id',decodeUserMiddleware, product.allProductsByCategory);
+router.get('/inventory-app/v1/products/all-products',decodeUserMiddleware, product.allProducts);
 
 //Inventories
 router.post('/inventory-app/v1/inventory/all-registers', inventory.allInventoryRegisters);

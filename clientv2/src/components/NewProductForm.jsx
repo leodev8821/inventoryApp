@@ -197,7 +197,7 @@ const NewProductForm = () => {
                                 </Grid2>
 
                                 <Grid2 size={{ xs: 12 }}>
-                                    {errors && loading &&(
+                                    {errors && Object.keys(errors).length > 0 && loading &&(
                                         <FormHelperText error>Tiene errores en el formulario</FormHelperText>
                                     )}
                                     <Button
@@ -205,7 +205,7 @@ const NewProductForm = () => {
                                         variant="contained"
                                         sx={{ mt: 3, mb: 2 }}
                                         onClick={() => handleNewProduct(formData)}
-                                        disabled={Boolean(errors || loading)}
+                                        disabled={loading}
                                     >
                                         {loading ? <CircularProgress size={24} /> : 'Registrar'}
                                     </Button>

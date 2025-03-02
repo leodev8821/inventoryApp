@@ -1,4 +1,4 @@
-import { createNewProduct, getAllProducts } from '../models/sequelize/product.model.js';
+import { createNewProduct, getAllProducts, getAllProductsByCategory } from '../models/sequelize/product.model.js';
 import { getOneCategory } from '../models/sequelize/category.model.js';
 import dotenv from 'dotenv';
 import { join, dirname } from 'path';
@@ -23,8 +23,6 @@ export default {
 			const { category_id, bar_code, product_name, description, buy_price, sell_price, image_url, quantity } = req.body;
 
             const userId = req.user?.id;
-
-			console.log(category_id)
 
             if (!userId) {
                 return res.status(400).json({ message: 'No se proporcionó el usuario.' });
@@ -56,7 +54,7 @@ export default {
 		}
 	},
 
-	allProducts: async (req, res) => {
+	allProductsByCategory: async (req, res) => {
 		try {
 			const { category_id } = req.params;
 			const userId = req.user ? req.user.id : null;
@@ -70,7 +68,7 @@ export default {
 				category_id
 			}
 
-			const products = await getAllProducts(data);
+			const products = await getAllProductsByCategory(data);
 
 			const resp = products.map((product, i) => ({
 				product: `${i + 1}`,
@@ -86,6 +84,38 @@ export default {
 
 			// Enviar la respuesta combinada
 			res.status(201).json(resp)
+
+		} catch (error) {
+			res.status(500).json({ message: 'Error al listar productos', error })
+		}
+	},
+
+	allProducts: async (req, res) => {
+		try {
+			const userId = req.user ? req.user.id : null;
+
+			if (!userId) {
+                return res.status(400).json({ message: 'No se proporcionó el usuario.' });
+            }
+
+			const products = await getAllProducts(userId);
+
+			const resp = products.map((product, i) => ({
+				product: `${i + 1}`,
+				category_id: product.category_id,
+				bar_code: product.bar_code,
+				product_name: product.product_name,
+				description: product.description,
+				buy_price: product.buy_price,
+				sell_price: product.sell_price,
+				image_url: product.image_url,
+				quantity: product.quantity
+			}));
+
+			res.status(200).json({
+                message: 'Productos obtenidos correctamente.',
+                data: resp,
+            });
 
 		} catch (error) {
 			res.status(500).json({ message: 'Error al listar productos', error })

@@ -7,29 +7,45 @@ const useFetch = () => {
     setFetchError(null);
 
     try {
+      // Configuración de la URL base
+      const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3001/inventory-app/v1";
+      const normalizedAPI_URL = API_URL.replace(/\/$/, ''); // Elimina / final si existe
+      const normalizedEndpoint = endpoint.startsWith("/") ? endpoint : `/${endpoint}`;
+      const url = `${normalizedAPI_URL}${normalizedEndpoint}`;
+
+      // Configuración de headers
       const headers = {
         "Content-Type": "application/json",
+        ...(authorization && { Authorization: authorization }),
       };
 
-      if (authorization) {
-        headers["Authorization"] = authorization;
-      }
-
+      // Configuración de opciones de fetch
       const fetchOptions = {
         method,
         headers,
-        body: method !== "GET" && body ? JSON.stringify(body) : undefined,
+        ...(method !== "GET" && body ? { body: JSON.stringify(body) } : {}),
       };
 
-      const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3001/inventory-app/v1";
-      const url = new URL(endpoint, API_URL);
+      // Realiza la solicitud
       const response = await fetch(url, fetchOptions);
 
+      // Verifica si la respuesta es válida
       if (!response.ok) {
-        throw new Error(`Error ${response.status}: ${response.statusText}`);
+        let errorMessage = `Error ${response.status}: ${response.statusText}`;
+        try {
+          const errorData = await response.json();
+          errorMessage = errorData.message || errorMessage;
+        } catch (_) {
+        }
+        throw new Error(errorMessage);
       }
 
-      return await response.json();
+      // Manejar respuestas sin contenido (ejemplo: código 204 No Content)
+      const contentType = response.headers.get("content-type");
+      if (contentType && contentType.includes("application/json")) {
+        return await response.json();
+      }
+      return null;
     } catch (err) {
       setFetchError(err.message);
       throw err;

@@ -160,7 +160,7 @@ export async function createNewProduct(data) {
 };
 
 /**
- * Obtiene todos los productos de un usuario y categoría.
+ * Obtiene todos los productos de un usuario.
  * @param {object} data - Datos para filtrar los productos.
  * @param {number} data.user_id - ID del usuario.
  * @param {number} data.category_id - ID de la categoría.
@@ -168,6 +168,27 @@ export async function createNewProduct(data) {
  * @throws {Error} - Error al obtener los productos.
  */
 export async function getAllProducts(data) {
+    try {
+        return await Product.findAll({
+            where: {
+                user_id: data.user_id
+            }
+        });
+    } catch (error) {
+        console.error('Error al obtener productos:', error);
+        throw new Error(`Error al obtener productos: ${error.message}`);
+    }
+};
+
+/**
+ * Obtiene todos los productos de un usuario y categoría.
+ * @param {object} data - Datos para filtrar los productos.
+ * @param {number} data.user_id - ID del usuario.
+ * @param {number} data.category_id - ID de la categoría.
+ * @returns {Promise<Array<object>>} - Lista de productos.
+ * @throws {Error} - Error al obtener los productos.
+ */
+export async function getAllProductsByCategory(data) {
     try {
         return await Product.findAll({
             where: {
