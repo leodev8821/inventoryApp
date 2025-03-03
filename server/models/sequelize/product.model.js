@@ -1,23 +1,55 @@
-import { DataTypes } from 'sequelize';
+import { DataTypes, Op } from 'sequelize';
 import { getSequelizeConf } from '../../database/mysql.js';
 import { Category } from './category.model.js';
+import { User } from './user.model.js';
 
 const connection = getSequelizeConf();
 
 
-//Definición del modelo Producto
+/**
+ * @typedef {object} ProductAttributes
+ * @property {number} id - ID único del producto.
+ * @property {number} user_id - ID del usuario que creó el producto.
+ * @property {number} category_id - ID de la categoría del producto.
+ * @property {string} bar_code - Código de barras del producto (único).
+ * @property {string} product_name - Nombre del producto (único).
+ * @property {string} description - Descripción del producto.
+ * @property {number} buy_price - Precio de compra del producto.
+ * @property {number} sell_price - Precio de venta del producto.
+ * @property {string|null} image_url - URL de la imagen del producto (opcional).
+ * @property {Date} createdAt - Fecha de creación del registro.
+ * @property {Date} updatedAt - Fecha de última actualización del registro.
+ */
+
+/**
+ * @typedef {import('sequelize').Model<ProductAttributes>} ProductInstance
+ */
+
+/**
+ * Definición del modelo Producto.
+ *
+ * @type {import('sequelize').ModelStatic<ProductInstance>}
+ */
 export const Product = connection.define('Product', {
     id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true
     },
+    user_id: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+            model: 'users',
+            key: 'id'       
+        }
+    },
     category_id: {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-            model: 'categories', // Nombre de la tabla de categorías
-            key: 'id'   // Clave primaria en la tabla de categorías
+            model: 'categories',
+            key: 'id'   
         }
     },
     bar_code: {
@@ -45,6 +77,10 @@ export const Product = connection.define('Product', {
     image_url: {
         type: DataTypes.STRING(255),
         allowNull: true
+    },
+    quantity: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
     }
 },
     {
@@ -52,59 +88,143 @@ export const Product = connection.define('Product', {
         timestamps: true
     });
 
-// Relación Many-To-many
-Product.belongsTo(Category, { foreignKey: 'category_id' });
-Category.hasMany(Product, { foreignKey: 'category_id' });
-
-// CRUD Operations
 /**
-     * Create a new Product
-     * @param {*} data -> new Product data
-     * @returns newProduct -> New Product created
-     */
+ * Relación: Un producto pertenece a una categoría.
+ *
+ * @description Establece la relación "belongsTo" entre Product y Category, usando 'category_id' como clave foránea.
+ * @see {@link Category}
+ */
+Product.belongsTo(Category, { foreignKey: 'category_id' });
+
+/**
+ * Relación: Una categoría tiene muchos productos.
+ *
+ * @description Establece la relación "hasMany" entre Category y Product, usando 'category_id' como clave foránea.
+ * @see {@link Product}
+ */
+Category.hasMany(Product, { foreignKey: 'category_id', onDelete: 'CASCADE' });
+
+/**
+ * Relación: Un producto pertenece a un usuario.
+ *
+ * @description Establece la relación "belongsTo" entre Product y User, usando 'user_id' como clave foránea.
+ * @see {@link User}
+ */
+Product.belongsTo(User, { foreignKey: 'user_id' });
+
+/**
+ * Relación: Un usuario tiene muchos productos.
+ *
+ * @description Establece la relación "hasMany" entre User y Product, usando 'user_id' como clave foránea.
+ * @see {@link Product}
+ */
+User.hasMany(Product, { foreignKey: 'user_id', onDelete: 'CASCADE' });
+
+/**
+ * Crea un nuevo producto.
+ * @param {object} data - Datos del producto.
+ * @param {number} data.user_id - ID del usuario.
+ * @param {number} data.category_id - ID de la categoría.
+ * @param {string} data.product_name - Nombre del producto.
+ * @param {string} data.bar_code - Código de barras del producto.
+ * @returns {Promise<object|null>} - Producto creado o null si ya existe.
+ * @throws {Error} - Error al crear el producto.
+ */
 export async function createNewProduct(data) {
     try {
-        const fields = ["product_name", "bar_code"];
-        const product = await Product.findOne({
+        const existProduct = await Product.findOne({
             where: {
-                [Op.or]: fields.map((field) => ({ [field]: data }))
+                [Op.and]: [
+                    { user_id: data.user_id },
+                    { category_id: data.category_id },
+                    {
+                        [Op.or]: [
+                            { product_name: data.product_name },
+                            { bar_code: data.bar_code }
+                        ]
+                    }
+                ]
             }
         });
-        if (product) {
+
+        if (existProduct) {
             return null;
         }
+
         const newProduct = await Product.create(data);
         return newProduct.dataValues;
     } catch (error) {
         console.error('Error al crear producto:', error);
+        throw new Error(`Error al crear producto: ${error.message}`);
     }
 };
 
 /**
- * Read (all Products)
- * @returns -> listado de productos
+ * Obtiene todos los productos de un usuario.
+ * @param {object} data - Datos para filtrar los productos.
+ * @param {number} data.user_id - ID del usuario.
+ * @param {number} data.category_id - ID de la categoría.
+ * @returns {Promise<Array<object>>} - Lista de productos.
+ * @throws {Error} - Error al obtener los productos.
  */
-export async function getAllProducts() {
+export async function getAllProducts(data) {
     try {
-        return await Product.findAll();
+        return await Product.findAll({
+            where: {
+                user_id: data.user_id
+            }
+        });
     } catch (error) {
         console.error('Error al obtener productos:', error);
-        throw new Error('Error al consultar la base de datos.');
+        throw new Error(`Error al obtener productos: ${error.message}`);
     }
 };
 
 /**
- * Buscar un producto por Productname o email
- * @param data -> product_name o bar_code
- * @returns Product -> producto encontrado
+ * Obtiene todos los productos de un usuario y categoría.
+ * @param {object} data - Datos para filtrar los productos.
+ * @param {number} data.user_id - ID del usuario.
+ * @param {number} data.category_id - ID de la categoría.
+ * @returns {Promise<Array<object>>} - Lista de productos.
+ * @throws {Error} - Error al obtener los productos.
+ */
+export async function getAllProductsByCategory(data) {
+    try {
+        return await Product.findAll({
+            where: {
+                user_id: data.user_id,
+                category_id: data.category_id
+            }
+        });
+    } catch (error) {
+        console.error('Error al obtener productos:', error);
+        throw new Error(`Error al obtener productos: ${error.message}`);
+    }
+};
+
+/**
+ * Obtiene un producto por nombre o código de barras.
+ * @param {object} data - Datos del producto.
+ * @param {number} data.user_id - ID del usuario.
+ * @param {number} data.category_id - ID de la categoría.
+ * @param {string} data.searchValue - Nombre o código de barras del producto.
+ * @returns {Promise<object|null>} - Producto encontrado o null.
+ * @throws {Error} - Error al obtener el producto.
  */
 export async function getOneProduct(data) {
     try {
-        const fields = ["product_name", "bar_code"];
-        const searchValue = data.trim(); // Asegura que no tenga espacios en blanco
         const product = await Product.findOne({
             where: {
-                [Op.or]: fields.map((field) => ({ [field]: searchValue }))
+                [Op.and]: [
+                    { user_id: data.user_id },
+                    { category_id: data.category_id },
+                    {
+                        [Op.or]: [
+                            { product_name: data.searchValue },
+                            { bar_code: data.searchValue }
+                        ]
+                    }
+                ]
             }
         });
 
@@ -112,64 +232,91 @@ export async function getOneProduct(data) {
             return null;
         }
         return product.dataValues;
-
     } catch (error) {
-        console.error(`Error al buscar producto "${data}":`, error.message);
-        throw new Error('Error al consultar la base de datos.');
+        console.error(`Error al buscar producto "${data.searchValue}":`, error.message);
+        throw new Error(`Error al buscar producto: ${error.message}`);
     }
 };
 
 /**
- * Update one Product
- * @param {String} ProductInfo -> Productname or email
- * @param  newData -> data to be update
- * @returns  Product -> Product updated
+ * Actualiza un producto.
+ * @param {object} data - Datos para buscar el producto.
+ * @param {number} data.user_id - ID del usuario.
+ * @param {number} data.category_id - ID de la categoría.
+ * @param {string} data.searchValue - Nombre o código de barras del producto.
+ * @param {object} newData - Datos a actualizar.
+ * @returns {Promise<object|null>} - El producto actualizado o null.
+ * @throws {Error} - Lanza un error si hay un problema con la base de datos.
  */
-export async function updateOneProduct(productInfo, newData) {
+export async function updateOneProduct(data, newData) {
     try {
-        const fields = ["product_name", "bar_code"];
         const product = await Product.findOne({
             where: {
-                [Op.or]: fields.map((field) => ({ [field]: productInfo }))
-            }
+                [Op.and]: [
+                    { user_id: data.user_id },
+                    { category_id: data.category_id },
+                    {
+                        [Op.or]: [
+                            { product_name: data.searchValue },
+                            { bar_code: data.searchValue },
+                        ],
+                    },
+                ],
+            },
         });
 
         if (!product) {
-            throw new Error('producto no encontrado');
+            return null;
         }
 
         await Product.update(newData, {
-            where: {
-                [Op.or]: productInfo.map((field) => ({ [field]: newData[field] }))
-            }
+            where: { id: product.id },
         });
-        return product.dataValues;
+
+        return { ...product.dataValues, ...newData };
     } catch (error) {
         console.error('Error al actualizar producto:', error);
-        throw new Error('Error al actualizar producto');
+        throw new Error('Error al actualizar producto en la base de datos.');
     }
-}
+};
 
 /**
- * Delete (set isVisible = 0) an Product
- * @param {*} productInfo -> product_name or bar_code from Product
- * @returns  Product -> Product modified (deleted)
+ * Elimina un producto lógicamente.
+ * @param {object} data - Datos para buscar el producto.
+ * @param {number} data.user_id - ID del usuario.
+ * @param {number} data.category_id - ID de la categoría.
+ * @param {string} data.searchValue - Nombre o código de barras del producto.
+ * @returns {Promise<boolean>} - True si se eliminó, false si no.
+ * @throws {Error} - Lanza un error si hay un problema con la base de datos.
  */
-export async function deleteProduct(productInfo) {
+export async function deleteProduct(data) {
     try {
-        const fields = ["product_name", "bar_code"];
         const product = await Product.findOne({
             where: {
-                [Op.or]: fields.map((field) => ({ [field]: productInfo }))
-            }
+                [Op.and]: [
+                    { user_id: data.user_id },
+                    { category_id: data.category_id },
+                    {
+                        [Op.or]: [
+                            { product_name: data.searchValue },
+                            { bar_code: data.searchValue },
+                        ],
+                    },
+                ],
+            },
         });
-        if (product) {
-            await Product.destroy();
-            return true;
-        } else {
+
+        if (!product) {
             return false;
         }
+
+        await Product.update({ deletedAt: new Date() }, {
+            where: { id: product.id },
+        });
+
+        return true;
     } catch (error) {
         console.error('Error al eliminar producto:', error);
+        throw new Error('Error al eliminar producto de la base de datos.');
     }
-}
+};

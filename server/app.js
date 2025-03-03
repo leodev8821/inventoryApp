@@ -2,6 +2,7 @@ import express, { json, urlencoded } from 'express';
 import cors from 'cors';
 import mysql from './database/mysql.js'
 import mongo from './database/mongo.js';
+import cookieParser from 'cookie-parser';
 import { router } from './routes/routes.js';
 
 //conexión de sequelize con la BD
@@ -16,6 +17,8 @@ app.use(json())
 app.use(urlencoded({ extended: false }))
 
 app.use(cors())
+
+app.use(cookieParser());
 
 app.use(router)
 

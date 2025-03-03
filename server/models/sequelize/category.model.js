@@ -1,14 +1,38 @@
-import { DataTypes } from 'sequelize';
+import { DataTypes, Op } from 'sequelize';
+import { User } from './user.model.js';
 import { getSequelizeConf } from '../../database/mysql.js';
 
 const connection = getSequelizeConf();
 
-// Category model definition
+/**
+ * @typedef {object} CategoryAttributes
+ * @property {number} id - ID único de la categoría.
+ * @property {number} user_id - ID del usuario al que pertenece la categoría.
+ * @property {string} category - Nombre de la categoría (debe ser único por usuario).
+ */
+
+/**
+ * @typedef {import('sequelize').Model<CategoryAttributes>} CategoryInstance
+ */
+
+/**
+ * Definición del modelo Categoría.
+ *
+ * @type {import('sequelize').ModelStatic<CategoryInstance>}
+ */
 export const Category = connection.define('Category', {
     id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true
+    },
+    user_id: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+            model: 'users', // Referencia a la tabla 'users'
+            key: 'id'       // Referencia a la columna 'id' de la tabla 'users'
+        }
     },
     category: {
         type: DataTypes.STRING(255),
@@ -21,14 +45,38 @@ export const Category = connection.define('Category', {
 });
 
 /**
-     * Create a new Category
-     * @param {*} data -> new Category data
-     * @returns newCategory -> New Category created
-     */
+ * Relación: Una categoría pertenece a un usuario.
+ *
+ * @description Establece la relación "belongsTo" entre Category y User, usando 'user_id' como clave foránea.
+ * @see {@link User}
+ */
+Category.belongsTo(User, { foreignKey: 'user_id' });
+
+/**
+ * Relación: Un usuario tiene muchas categorías.
+ *
+ * @description Establece la relación "hasMany" entre User y Category, usando 'user_id' como clave foránea.
+ * @see {@link Category}
+ */
+User.hasMany(Category, { foreignKey: 'user_id', onDelete: 'CASCADE' });
+
+/**
+ * Crea una nueva categoría.
+ *
+ * @async
+ * @function createNewCategory
+ * @param {object} data - Datos de la nueva categoría.
+ * @param {number} data.user_id - ID del usuario propietario de la categoría.
+ * @param {string} data.category - Nombre de la categoría.
+ * @returns {Promise<object|null>} - La nueva categoría creada (objeto) o null si ya existe.
+ * @throws {Error} - Lanza un error si hay un problema al consultar la base de datos.
+ */
 export async function createNewCategory(data) {
     try {
         const existCategory = await Category.findOne({
-            where: { [Op.or]: [{ category: data }] }
+            where: {
+                [Op.and]: [{ user_id: data.user_id }, { category: data.category }]
+            }
         });
         if (existCategory) {
             return null;
@@ -36,53 +84,82 @@ export async function createNewCategory(data) {
         const newCategory = await Category.create(data);
         return newCategory.dataValues;
     } catch (error) {
-        console.error('Error al crear Usuario:', error);
-        throw new Error('Error al consultar la base de datos.');
+        console.error('Error al crear la categoría:', error);
+        throw new Error('Error al crear la categoría en la base de datos.');
     }
 };
 
 /**
- * Read (all Categories)
- * @returns -> All categories list
+ * Obtiene todas las categorías de un usuario.
+ *
+ * @async
+ * @function getAllCategories
+ * @param {object} data - Datos para filtrar las categorías.
+ * @param {number} data.user_id - ID del usuario para filtrar las categorías.
+ * @returns {Promise<Array<object>>} - Lista de todas las categorías del usuario.
+ * @throws {Error} - Lanza un error si hay un problema al consultar la base de datos.
  */
-export async function getAllCategories() {
+export async function getAllCategories(userId) {
     try {
-        return await Category.findAll();
+        // Obtener todas las categorías asociadas al usuario
+        const categories = await Category.findAll({
+            where: { user_id: userId },
+            raw: true,
+            order: [['category', 'ASC']]
+        });
+
+        return categories; // Devuelve directamente el array de categorías
     } catch (error) {
         console.error('Error al obtener las categorías:', error);
-        throw new Error('Error al consultar la base de datos.');
+        throw new Error('Error al obtener las categorías de la base de datos.');
     }
-};
+}
 
 /**
- * To search an Category by name
- * @param data -> searched category's name
- * @returns category -> founded category
+ * Obtiene una categoría por nombre y usuario.
+ *
+ * @async
+ * @function getOneCategory
+ * @param {object} data - Datos de la categoría a buscar.
+ * @param {number} data.user_id - ID del usuario propietario de la categoría.
+ * @param {string} data.category - Nombre de la categoría a buscar.
+ * @returns {Promise<object|null>} - La categoría encontrada (objeto) o null si no existe.
+ * @throws {Error} - Lanza un error si hay un problema al consultar la base de datos.
  */
 export async function getOneCategory(data) {
     try {
         const category = await Category.findOne({
-            where: { [Op.or]: [{ category: data }] }
+            where: {
+                [Op.and]: [{ user_id: data.user_id }, { category: data.category }]
+            }
         });
         if (!category) {
             return null;
         }
         return category.dataValues;
     } catch (error) {
-        console.error(`Error al buscar la categoría "${data}":`, error.message);
-        throw new Error('Error al consultar la base de datos.');
+        console.error(`Error al buscar la categoría "${data.category}":`, error.message);
+        throw new Error('Error al obtener la categoría de la base de datos.');
     }
 };
 
 /**
- * To delete an category by Name
- * @param {*} data -> the category's name
- * @returns {Boolean} -> true if deleted
+ * Elimina una categoría por nombre y usuario.
+ *
+ * @async
+ * @function deleteCategory
+ * @param {object} data - Datos de la categoría a eliminar.
+ * @param {number} data.user_id - ID del usuario propietario de la categoría.
+ * @param {string} data.category - Nombre de la categoría a eliminar.
+ * @returns {Promise<boolean>} - True si la categoría fue eliminada, false si no.
+ * @throws {Error} - Lanza un error si hay un problema al consultar la base de datos.
  */
 export async function deleteCategory(data) {
     try {
         const category = await Category.findOne({
-            where: { [Op.or]: [{ category: data }] }
+            where: {
+                [Op.and]: [{ user_id: data.user_id }, { category: data.category }]
+            }
         });
         if (category) {
             await category.destroy();
@@ -92,5 +169,6 @@ export async function deleteCategory(data) {
         }
     } catch (error) {
         console.error('Error al eliminar la categoría:', error);
+        throw new Error('Error al eliminar la categoría de la base de datos.');
     }
 }
