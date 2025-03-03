@@ -48,29 +48,6 @@ const tokenUtils = {
             return null;
         }
     },
-
-    /**
-     * Función para extraer el token del header y almacenarlo en req.token
-     * @param {*} req --> Petición
-     * @param {*} res --> Respuesta
-     * @param {*} next --> Siguiente middleware
-     */
-    verifyToken: (req, res, next) => {
-        const bearerHeader = req.headers['authorization'];
-
-        if (bearerHeader && bearerHeader.trim()) {
-            const bearerToken = bearerHeader.split(' ')[1];
-
-            const decodedToken = this.decodeToken(bearerToken);
-
-            if (decodedToken) {
-                req.authData = decodedToken;
-                next();
-            } else {
-                res.status(403).json({ error: 'Token no proporcionado' });
-            }
-        }
-    }
 };
 
 export default tokenUtils;

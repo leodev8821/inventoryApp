@@ -22,7 +22,7 @@ export default {
 		try {
 			const { category_id, bar_code, product_name, description, buy_price, sell_price, image_url, quantity } = req.body;
 
-            const userId = req.user?.id;
+            const userId = req.authData?.id;
 
             if (!userId) {
                 return res.status(400).json({ message: 'No se proporcionó el usuario.' });
@@ -57,7 +57,7 @@ export default {
 	allProductsByCategory: async (req, res) => {
 		try {
 			const { category_id } = req.params;
-			const userId = req.user ? req.user.id : null;
+			const userId = req.authData ? req.authData.id : null;
 
 			if (!userId) {
                 return res.status(400).json({ message: 'No se proporcionó el usuario.' });
@@ -92,7 +92,7 @@ export default {
 
 	allProducts: async (req, res) => {
 		try {
-			const userId = req.user ? req.user.id : null;
+			const userId = req.authData ? req.authData.id : null;
 
 			if (!userId) {
                 return res.status(400).json({ message: 'No se proporcionó el usuario.' });

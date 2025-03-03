@@ -21,15 +21,7 @@ const decodeUserMiddleware = (req, res, next) => {
     return res.status(403).json({ error: 'Token inválido o expirado' });
   }
 
-  // Guardar el usuario decodificado en una cookie
-  res.cookie('user', JSON.stringify(decodedUser), {
-    httpOnly: true, // La cookie no es accesible desde el cliente vía JavaScript
-    secure: process.env.NODE_ENV === 'production', // Solo se envía por HTTPS en producción
-  });
-
-  // También se puede adjuntar la información a la petición para usarla en otros middlewares o rutas
-  req.user = decodedUser;
-
+  req.authData = decodedUser;
   next();
 };
 

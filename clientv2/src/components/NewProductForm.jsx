@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext, useEffect } from 'react';
 import {
     TextField,
     Button,
@@ -22,10 +22,36 @@ import {
 import { ArrowBackIosNew } from '@mui/icons-material';
 import useCategoryData from '../utils/hooks/useCategoryData.js';
 import useNewProductForm from '../utils/hooks/useNewProductForm.js';
+import { AuthContext } from '../utils/context/AuthContext';
 
 const NewProductForm = () => {
     const { formData, errors, loading, handleBack, handleChange, handleSelectBlur, handleNewProduct } = useNewProductForm();
     const { categories } = useCategoryData();
+
+    const { user } = useContext(AuthContext);
+    
+        useEffect(() => {
+            if (!user) {
+                const timer = setTimeout(() => {
+                    handleBack();
+                }, 2000);
+    
+                return () => clearTimeout(timer);
+            }
+        }, [user, handleBack]);
+    
+        if (!user) {
+            return (
+                <Card sx={{ width: '100%', marginTop: 3 }}>
+                    <CardContent>
+                        <Box component="form" noValidate sx={{ mt: 1 }} >
+                            <h2>No se encuentra logueado. Redirigiendo...</h2>
+                            <CircularProgress />
+                        </Box>
+                    </CardContent>
+                </Card>
+            )
+        }
 
     return (
         <Container maxWidth="sm">

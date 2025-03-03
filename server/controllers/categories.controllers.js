@@ -7,7 +7,7 @@ export default {
     newCategory: async (req, res) => {
         try {
             const { category } = req.body;
-            const userId = req.user?.id;
+            const userId = req.authData?.id;
 
             if (!userId) {
                 return res.status(400).json({ message: 'No se proporcionó el usuario.' });
@@ -37,7 +37,7 @@ export default {
 
     allCategories: async (req, res) => {
         try {
-            const userId = req.user?.id;
+            const userId = req.authData?.id;
 
             if (!userId) {
                 return res.status(400).json({ message: 'No se proporcionó el usuario.' });
@@ -71,7 +71,7 @@ export default {
             const { category } = req.params;
 
             // Suponiendo que el id del usuario viene desde la sesión (req.user) o, en su defecto, desde la query
-            const userId = req.user ? req.user.id : null;
+            const userId = req.authData ? req.authData.id : null;
 
             if (!userId) {
                 return res.status(400).json({ message: 'No se proporcionó el id del usuario.' });
@@ -104,7 +104,7 @@ export default {
             // Extrae el id del registro de inventario desde la URL
             const { category } = req.params;
 
-            const userId = req.user ? req.user.id : null;
+            const userId = req.authData ? req.authData.id : null;
 
             if (!userId) {
                 return res.status(400).json({ message: 'No se proporcionó el id del usuario.' });

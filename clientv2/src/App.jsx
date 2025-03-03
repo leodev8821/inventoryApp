@@ -7,6 +7,7 @@ import Register from "./pages/Register";
 import DashboardLayoutBasic from "./pages/Dashboard";
 import NewCategoryForm from "./components/NewCategoryForm";
 import NewProductForm from "./components/NewProductForm";
+import ProductTable from "./components/ProductsTable";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 const App = () => {
@@ -19,8 +20,9 @@ const App = () => {
               <Route path="/" element={<Login />} />
               <Route path="/register" element={<Register />} />
               <Route path="/dashboard" element={<DashboardLayoutBasic />} />
-              <Route path="/new-category" element={<NewCategoryForm />} />
-              <Route path="/new-product" element={<NewProductForm />} />
+              <Route path="/dashboard/new-category" element={<NewCategoryForm />} />
+              <Route path="/dashboard/new-product" element={<NewProductForm />} />
+              <Route path="/dashboard/products-table" element={<ProductTable />} />
               {/* 
             <Route path="/lopd" element={<Lopd />} />
             <Route path="/recuperar-contrasena" element={<PassRecoveryForm />} />

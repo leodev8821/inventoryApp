@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useContext, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
@@ -8,55 +8,13 @@ import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import BarChartIcon from '@mui/icons-material/BarChart';
 import DescriptionIcon from '@mui/icons-material/Description';
 import LayersIcon from '@mui/icons-material/Layers';
+import { Logout } from '@mui/icons-material';
 import { AppProvider } from '@toolpad/core/AppProvider';
 import { DashboardLayout } from '@toolpad/core/DashboardLayout';
 import { useDemoRouter } from '@toolpad/core/internal';
+import { AuthContext } from '../utils/context/AuthContext';
 
-const NAVIGATION = [
-  {
-    kind: 'header',
-    title: 'Main items',
-  },
-  {
-    segment: 'dashboard',
-    title: 'Dashboard',
-    icon: <DashboardIcon />,
-  },
-  {
-    segment: 'orders',
-    title: 'Orders',
-    icon: <ShoppingCartIcon />,
-  },
-  {
-    kind: 'divider',
-  },
-  {
-    kind: 'header',
-    title: 'Analytics',
-  },
-  {
-    segment: 'reports',
-    title: 'Reports',
-    icon: <BarChartIcon />,
-    children: [
-      {
-        segment: 'sales',
-        title: 'Sales',
-        icon: <DescriptionIcon />,
-      },
-      {
-        segment: 'traffic',
-        title: 'Traffic',
-        icon: <DescriptionIcon />,
-      },
-    ],
-  },
-  {
-    segment: 'integrations',
-    title: 'Integrations',
-    icon: <LayersIcon />,
-  },
-];
+
 
 const demoTheme = createTheme({
   cssVariables: {
@@ -95,7 +53,59 @@ DemoPageContent.propTypes = {
 };
 
 function DashboardLayoutBasic(props) {
+  const { logout } = useContext(AuthContext);
   const { window } = props;
+
+  const NAVIGATION = [
+    {
+      kind: 'header',
+      title: 'Main items',
+    },
+    {
+      segment: 'dashboard',
+      title: 'Dashboard',
+      icon: <DashboardIcon />,
+    },
+    {
+      segment: 'orders',
+      title: 'Orders',
+      icon: <ShoppingCartIcon />,
+    },
+    {
+      kind: 'divider',
+    },
+    {
+      kind: 'header',
+      title: 'Analytics',
+    },
+    {
+      segment: 'reports',
+      title: 'Reports',
+      icon: <BarChartIcon />,
+      children: [
+        {
+          segment: 'sales',
+          title: 'Sales',
+          icon: <DescriptionIcon />,
+        },
+        {
+          segment: 'traffic',
+          title: 'Traffic',
+          icon: <DescriptionIcon />,
+        },
+      ],
+    },
+    {
+      segment: 'integrations',
+      title: 'Integrations',
+      icon: <LayersIcon />,
+    },
+    {
+      segment: 'Logout',
+      title: 'Logout',
+      icon: <Logout />,
+    },
+  ];
 
   const router = useDemoRouter('/dashboard');
 

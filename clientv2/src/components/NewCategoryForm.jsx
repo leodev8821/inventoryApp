@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext, useEffect } from 'react';
 import {
     TextField,
     Button,
@@ -14,10 +14,35 @@ import {
 } from '@mui/material';
 import { ArrowBackIosNew } from '@mui/icons-material';
 import useNewCategoryForm from '../utils/hooks/useNewCategoryForm';
+import { AuthContext } from '../utils/context/AuthContext';
 
 const NewCategoryForm = () => {
 
     const { formData, errors, loading, handleBack, handleChange, handleNewCategory } = useNewCategoryForm();
+    const { user } = useContext(AuthContext);
+
+    useEffect(() => {
+        if (!user) {
+            const timer = setTimeout(() => {
+                handleBack();
+            }, 2000);
+
+            return () => clearTimeout(timer);
+        }
+    }, [user, handleBack]);
+
+    if (!user) {
+        return (
+            <Card sx={{ width: '100%', marginTop: 3 }}>
+                <CardContent>
+                    <Box component="form" noValidate sx={{ mt: 1 }} >
+                        <h2>No se encuentra logueado. Redirigiendo...</h2>
+                        <CircularProgress />
+                    </Box>
+                </CardContent>
+            </Card>
+        )
+    }
 
     if (loading) {
         return <CircularProgress />;
