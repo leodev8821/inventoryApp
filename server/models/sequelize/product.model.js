@@ -171,7 +171,7 @@ export async function getAllProducts(data) {
     try {
         return await Product.findAll({
             where: {
-                user_id: data.user_id
+                user_id: data
             }
         });
     } catch (error) {

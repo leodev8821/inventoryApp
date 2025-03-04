@@ -1,28 +1,44 @@
-import { useMemo } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import useProductData from './useProductData.js';
 import useCategoryData from './useCategoryData.js';
 
 const useProductsTable = () => {
-    const { products } = useProductData();
-    const { categories } = useCategoryData();
+    const { products, errorProduct } = useProductData();
+    const { categories, errorCategory } = useCategoryData();
+    const [loading, setLoading] = useState(true);
+    const [initialized, setInitialized] = useState(false);
 
-    const columns = [
-        { field: 'product', headerName: 'ID', width: 70 },
-        { field: 'categoryName', headerName: 'Categoría', width: 130, valueGetter: (params) => params.row.categoryName },
+    // Retraso de 500ms para asegurarme que los datos de useProductData y useCategoryData ya esten definidos
+    useEffect(() => {
+        if (products && categories) {
+            setTimeout(() => {
+                setLoading(false);
+                setInitialized(true);
+            }, 500);
+        }
+    }, [products, categories]);
+
+    const columns = useMemo(() => [
+        { field: 'id', headerName: 'ID', width: 70 },
+        { field: 'category', headerName: 'Categoría', width: 180 },
         { field: 'bar_code', headerName: 'Código de Barras', width: 130 },
         { field: 'product_name', headerName: 'Nombre', width: 130 },
-        { field: 'description', headerName: 'Nombre', width: 130 },
-        { field: 'buy_price', headerName: 'Precio Compra', type: 'number', width: 90 },
-        { field: 'sell_price', headerName: 'Precio Venta', type: 'number', width: 90 },
-        { field: 'quantity', headerName: 'Cantidad', type: 'number', width: 90 }
-    ];
+        { field: 'description', headerName: 'Descripción', width: 350 },
+        { field: 'buy_price', headerName: 'Precio Compra', type: 'number', width: 150 },
+        { field: 'sell_price', headerName: 'Precio Venta', type: 'number', width: 150 },
+        { field: 'quantity', headerName: 'Cantidad', type: 'number', width: 150 }
+    ], [initialized]);
 
     const rows = useMemo(() => {
+        if (!initialized || !products || !categories) {
+            return [];
+        }
+
         return products.map(product => {
             const category = categories.find(cat => cat.id === product.category_id);
             return {
                 id: product.id,
-                categoryName: category ? category.category_name : 'N/A',
+                category: category?.category || 'N/A',
                 bar_code: product.bar_code,
                 product_name: product.product_name,
                 description: product.description,
@@ -31,11 +47,11 @@ const useProductsTable = () => {
                 quantity: product.quantity,
             };
         });
-    }, [products, categories]);
+    }, [initialized, products, categories]);
 
-    const paginationModel = { page: 0, pageSize: 5 };
+    const paginationModel = useMemo(() => ({ page: 0, pageSize: 5 }), []);
 
-    return { columns, rows, paginationModel }
-}
+    return { columns, rows, paginationModel, loading, errorProduct, errorCategory };
+};
 
 export default useProductsTable;

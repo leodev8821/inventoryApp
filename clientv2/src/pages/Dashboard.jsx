@@ -1,139 +1,100 @@
-import React, { useContext, useEffect } from 'react';
-import PropTypes from 'prop-types';
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
+import React, { useContext, useEffect, useMemo } from 'react';
+import { AppProvider, DashboardLayout } from '@toolpad/core';
+import { Box, IconButton, Card, CardContent, CircularProgress } from '@mui/material';
 import { createTheme } from '@mui/material/styles';
-import DashboardIcon from '@mui/icons-material/Dashboard';
-import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
-import BarChartIcon from '@mui/icons-material/BarChart';
-import DescriptionIcon from '@mui/icons-material/Description';
-import LayersIcon from '@mui/icons-material/Layers';
-import { Logout } from '@mui/icons-material';
-import { AppProvider } from '@toolpad/core/AppProvider';
-import { DashboardLayout } from '@toolpad/core/DashboardLayout';
-import { useDemoRouter } from '@toolpad/core/internal';
+import { Logout, List, AddCircle } from '@mui/icons-material';
+import { Outlet, Link, useLocation } from 'react-router-dom';
+import { RouteContext } from '../utils/context/RouteContext';
 import { AuthContext } from '../utils/context/AuthContext';
+import useNavigation from "../utils/hooks/useNavigation";
 
+const AppLayout = () => {
+  const { toggleType } = useContext(RouteContext);
+  const { logout, user } = useContext(AuthContext);
+  const location = useLocation();
+  const { navigate } = useNavigation();
 
+  const isAuthenticated = useMemo(() => !!user, [user]);
 
-const demoTheme = createTheme({
-  cssVariables: {
-    colorSchemeSelector: 'data-toolpad-color-scheme',
-  },
-  colorSchemes: { light: true, dark: true },
-  breakpoints: {
-    values: {
-      xs: 0,
-      sm: 600,
-      md: 600,
-      lg: 1200,
-      xl: 1536,
-    },
-  },
-});
+  // Definir la navegación de acuerdo a la autenticación
+  const navigation = useMemo(() => {
+    if (isAuthenticated) {
+      return [
+        { kind: 'header', title: 'Navegación' },
+        { segment: 'products-table', title: 'Todos los Productos', to: '/dashboard/products-table', icon: <List /> },
+        { segment: 'new-category', title: 'Crear Categoría', to: '/dashboard/new-category', icon: <AddCircle /> },
+        { segment: 'new-product', title: 'Crear Producto', to: '/dashboard/new-product', icon: <AddCircle /> },
+        { kind: 'header', title: 'Logout' },
+        { segment: 'logout', title: 'Ir a Login', to: '/login', icon: <Logout /> },
+      ];
+    } else {
+      return [
+        { kind: 'header', title: 'Logout' },
+        { label: 'Ir a Login', to: '/login', icon: <Logout /> },
+      ];
+    }
+  }, [isAuthenticated]);
 
-function DemoPageContent({ pathname }) {
-  return (
-    <Box
-      sx={{
-        py: 4,
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        textAlign: 'center',
-      }}
-    >
-      <Typography>Dashboard content for {pathname}</Typography>
-    </Box>
-  );
-}
+  // Actualizar el estado de tipo de vista cuando cambia la ruta
+  useEffect(() => {
+    toggleType(location.pathname);
+  }, [location.pathname, toggleType]);
 
-DemoPageContent.propTypes = {
-  pathname: PropTypes.string.isRequired,
-};
+  const myTheme = createTheme({
+    cssVariables: {
+      colorSchemeSelector: 'data-toolpad-color-scheme',
+    },
+    colorSchemes: { light: true, dark: true },
+    breakpoints: {
+      values: {
+        xs: 0,
+        sm: 600,
+        md: 900,
+        lg: 1200,
+        xl: 1536,
+      },
+    },
+  });
 
-function DashboardLayoutBasic(props) {
-  const { logout } = useContext(AuthContext);
-  const { window } = props;
-
-  const NAVIGATION = [
-    {
-      kind: 'header',
-      title: 'Main items',
-    },
-    {
-      segment: 'dashboard',
-      title: 'Dashboard',
-      icon: <DashboardIcon />,
-    },
-    {
-      segment: 'orders',
-      title: 'Orders',
-      icon: <ShoppingCartIcon />,
-    },
-    {
-      kind: 'divider',
-    },
-    {
-      kind: 'header',
-      title: 'Analytics',
-    },
-    {
-      segment: 'reports',
-      title: 'Reports',
-      icon: <BarChartIcon />,
-      children: [
-        {
-          segment: 'sales',
-          title: 'Sales',
-          icon: <DescriptionIcon />,
-        },
-        {
-          segment: 'traffic',
-          title: 'Traffic',
-          icon: <DescriptionIcon />,
-        },
-      ],
-    },
-    {
-      segment: 'integrations',
-      title: 'Integrations',
-      icon: <LayersIcon />,
-    },
-    {
-      segment: 'Logout',
-      title: 'Logout',
-      icon: <Logout />,
-    },
-  ];
-
-  const router = useDemoRouter('/dashboard');
-
-  // Remove this const when copying and pasting into your project.
-  const demoWindow = window !== undefined ? window() : undefined;
+  // Función de logout
+  const handleLogout = () => {
+    logout();
+    navigate('/login');  // Redirige al login
+  };
 
   return (
-    // preview-start
     <AppProvider
-      navigation={NAVIGATION}
-      router={router}
-      theme={demoTheme}
-      window={demoWindow}
+      navigation={navigation}  // Pasa la navegación correctamente
+      router={{
+        navigate: (to) => navigate(to), // Utiliza `navigate` de react-router-dom
+      }}
+      theme={myTheme}
     >
-      <DashboardLayout>
-        <DemoPageContent pathname={router.pathname} />
+      <DashboardLayout
+        navigation={navigation.map(item => ({
+          kind: item.kind,
+          title: item.title,
+          to: item.to,    // Asegúrate de pasar correctamente `to` con Link
+          icon: item.icon,
+          href: item.to,
+          component: Link, // Usar Link para las rutas
+        }))}
+        appBar={{
+          position: 'sticky',
+          sx: { zIndex: (theme) => theme.zIndex.drawer + 1 },
+          actions: isAuthenticated ? (
+            <IconButton aria-label="logout" onClick={handleLogout}>
+              <Logout />
+            </IconButton>
+          ) : null,
+        }}
+      >
+        <Box sx={{ p: 3 }}>
+          <Outlet />
+        </Box>
       </DashboardLayout>
     </AppProvider>
-    // preview-end
   );
-}
-
-DashboardLayoutBasic.propTypes = {
-  /**
-   * Injected by the documentation to work in an iframe.
-   * Remove this when copying and pasting into your project.
-   */
-  window: PropTypes.func,
 };
 
-export default DashboardLayoutBasic;
+export default AppLayout;

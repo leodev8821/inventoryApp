@@ -101,7 +101,7 @@ export default {
 			const products = await getAllProducts(userId);
 
 			const resp = products.map((product, i) => ({
-				product: `${i + 1}`,
+				id: `${i + 1}`,
 				category_id: product.category_id,
 				bar_code: product.bar_code,
 				product_name: product.product_name,
