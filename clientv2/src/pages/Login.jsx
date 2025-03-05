@@ -3,8 +3,6 @@ import useLogin from '../utils/hooks/useLogin';
 import {
     TextField,
     Button,
-    Checkbox,
-    FormControlLabel,
     Container,
     Typography,
     Box,
@@ -20,14 +18,13 @@ import VisibilityOff from '@mui/icons-material/VisibilityOff';
 const Login = () => {
     const [login, setLogin] = useState('');
     const [password, setPassword] = useState('');
-    const [remember, setRemember] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
     const { handleLogin, loading, error } = useLogin();
 
 
 
     return (
-        <Paper elevation={3} square={false} maxWidth="sm">
+        <Paper elevation={3} square={false}>
             <Container maxWidth="sm">
                 <Box
                     sx={{
@@ -40,7 +37,15 @@ const Login = () => {
                     <Typography component="h1" variant="h5">
                         Login
                     </Typography>
-                    <Box component="form" noValidate sx={{ mt: 1 }}>
+                    <Box 
+                        component="form" 
+                        noValidate 
+                        sx={{ mt: 1 }}
+                        onSubmit={(e) => {
+                            e.preventDefault();
+                            handleLogin(login, password);
+                        }}
+                    >
                         <TextField
                             margin="normal"
                             required
@@ -79,27 +84,12 @@ const Login = () => {
                                 ),
                             }}
                         />
-                        <FormControlLabel
-                            control={
-                                <Checkbox
-                                    value="remember"
-                                    color="primary"
-                                    checked={remember}
-                                    onChange={() => setRemember(!remember)}
-                                />
-                            }
-                            label="Remember me"
-                        />
-                        {error && (
-                            <Typography variant="body2" color="error" sx={{ mt: 1 }}>
-                                {error}
-                            </Typography>
-                        )}
                         <Link href="/register" underline="hover">¿Aún no tienes cuenta?, Regístrate</Link>
                         <Button
                             fullWidth
                             variant="contained"
                             sx={{ mt: 3, mb: 2 }}
+                            type='submit'
                             onClick={() => handleLogin(login, password)}
                             disabled={loading}
                         >

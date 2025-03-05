@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useMemo } from 'react';
 import { AppProvider, DashboardLayout } from '@toolpad/core';
 import { Box, IconButton, Card, CardContent, CircularProgress, Typography } from '@mui/material';
 import { createTheme } from '@mui/material/styles';
-import { Logout, List, AddCircle, Inventory2 } from '@mui/icons-material';
+import { Logout, List, AddCircle, Inventory2, Login } from '@mui/icons-material';
 import { Outlet, useLocation } from 'react-router-dom';
 import { RouteContext } from '../utils/context/RouteContext';
 import { AuthContext } from '../utils/context/AuthContext';
@@ -10,6 +10,7 @@ import useNavigation from "../utils/hooks/useNavigation";
 import NewCategoryForm from "../components/NewCategoryForm";
 import NewProductForm from "../components/NewProductForm";
 import ProductTable from "../components/ProductsTable";
+import ProhibitMessage from '../components/ProhibitMessage';
 
 const AppLayout = () => {
   const { toggleType } = useContext(RouteContext);
@@ -19,21 +20,33 @@ const AppLayout = () => {
 
   const isAuthenticated = useMemo(() => !!user, [user]);
 
+  // Función de logout
+  const handleLogout = () => {
+    logout;
+    setTimeout(() => {
+      navigate('/login');
+    }, 100);
+  };
+
   // Definir la navegación de acuerdo a la autenticación
   const navigation = useMemo(() => {
     if (isAuthenticated) {
       return [
         { kind: 'header', title: 'Navegación' },
-        { segment: 'dashboard/', title: 'Todos los Productos', icon: <List /> },
+        { segment: 'dashboard/all-products', title: 'Todos los Productos', icon: <List /> },
         { segment: 'dashboard/new-category', title: 'Crear Categoría', icon: <AddCircle /> },
         { segment: 'dashboard/new-product', title: 'Crear Producto', icon: <AddCircle /> },
         { kind: 'header', title: 'Logout' },
-        { title: 'Ir a Login', to: '/login', icon: <Logout /> },
+        {
+          title: 'Logout',
+          icon: <Logout />,
+          onClick: handleLogout
+        },
       ];
     } else {
       return [
         { kind: 'header', title: 'Login' },
-        { title: 'login', to: '/login', icon: <Logout /> },
+        { title: 'Login', to: '/login', icon: <Login /> },
       ];
     }
   }, [isAuthenticated]);
@@ -59,11 +72,6 @@ const AppLayout = () => {
     },
   });
 
-  // Función de logout
-  const handleLogout = () => {
-    logout();
-    navigate('/login');
-  };
 
   return (
     <AppProvider
@@ -95,12 +103,13 @@ const AppLayout = () => {
             flexDirection: 'column',
             alignItems: 'center',
             textAlign: 'center',
-            width: '80%',
+            width: '100%',
             mx: 'auto',
             minHeight: '50vh',
           }}
         >
           <Outlet />
+
         </Box>
 
       </DashboardLayout>

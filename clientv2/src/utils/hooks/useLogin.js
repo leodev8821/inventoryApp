@@ -34,7 +34,7 @@ const useLogin = () => {
                 const decodedToken = jwtDecode(response.token);
                 setUser(decodedToken); // Almacena el usuario en el contexto de autenticación
                 notifySuccess("Logueado correctamente.", { position: "top-center" });
-                navigate("/dashboard");
+                navigate("/dashboard/all-products");
             } else {
                 setError("Credenciales incorrectas.");
                 notifyError(error);

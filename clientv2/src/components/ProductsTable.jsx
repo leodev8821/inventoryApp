@@ -15,7 +15,7 @@ const ProductTable = () => {
     }
 
     return (
-        <Paper elevation={3} sx={{ height: 400, width: '100%', margin: 'auto'}}>
+        <Paper elevation={3} sx={{ height: 400, width: '100%', margin: 'auto', padding: '1em'}}>
             <Typography>Todos los Productos</Typography>
             <DataGrid
                 rows={rows}

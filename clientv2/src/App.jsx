@@ -20,9 +20,9 @@ const App = () => {
               <Route path="/" element={<AppLayout />}>
                 <Route index element={<Login />} />
                 <Route path="/register" element={<Register />} />
-                <Route path="all-products" element={<ProductTable />} />
-                <Route path="new-category" element={<NewCategoryForm />} />
-                <Route path="new-product" element={<NewProductForm />} />
+                <Route path="dashboard/all-products" element={<ProductTable />} />
+                <Route path="dashboard/new-category" element={<NewCategoryForm />} />
+                <Route path="dashboard/new-product" element={<NewProductForm />} />
               </Route>
             </Routes>
           </AuthProvider>
