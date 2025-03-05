@@ -7,14 +7,13 @@ import {
     Typography,
     Box,
     CircularProgress,
-    Fab,
     Card,
     CardContent,
     Grid2
 } from '@mui/material';
-import { ArrowBackIosNew } from '@mui/icons-material';
 import useNewCategoryForm from '../utils/hooks/useNewCategoryForm';
 import { AuthContext } from '../utils/context/AuthContext';
+import ProhibitMessage from './ProhibitMessage';
 
 const NewCategoryForm = () => {
 
@@ -33,14 +32,7 @@ const NewCategoryForm = () => {
 
     if (!user) {
         return (
-            <Card sx={{ width: '100%', marginTop: 3 }}>
-                <CardContent>
-                    <Box component="form" noValidate sx={{ mt: 1 }} >
-                        <h2>No se encuentra logueado. Redirigiendo...</h2>
-                        <CircularProgress />
-                    </Box>
-                </CardContent>
-            </Card>
+            <ProhibitMessage />
         )
     }
 
@@ -50,14 +42,6 @@ const NewCategoryForm = () => {
 
     return (
         <Container maxWidth="sm">
-
-            <Box sx={{ marginTop: 2 }}>
-                <Fab color="primary" aria-label="back" onClick={handleBack}>
-                    <ArrowBackIosNew />
-                </Fab>
-            </Box>
-
-
             <Box sx={{ marginTop: 8, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
 
 

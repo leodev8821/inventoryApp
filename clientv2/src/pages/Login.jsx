@@ -11,7 +11,8 @@ import {
     CircularProgress,
     IconButton,
     InputAdornment,
-    Link
+    Link,
+    Paper
 } from '@mui/material';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
@@ -26,86 +27,88 @@ const Login = () => {
 
 
     return (
-        <Container maxWidth="sm">
-            <Box
-                sx={{
-                    marginTop: 8,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                }}
-            >
-                <Typography component="h1" variant="h5">
-                    Login
-                </Typography>
-                <Box component="form" noValidate sx={{ mt: 1 }}>
-                    <TextField
-                        margin="normal"
-                        required
-                        fullWidth
-                        id="login"
-                        label="Login"
-                        name="login"
-                        autoComplete="username"
-                        autoFocus
-                        value={login}
-                        onChange={(e) => setLogin(e.target.value)}
-                        placeholder="username/email"
-                    />
-                    <TextField
-                        margin="normal"
-                        required
-                        fullWidth
-                        name="password"
-                        label="Password"
-                        type={showPassword ? 'text' : 'password'}
-                        id="password"
-                        autoComplete="current-password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        InputProps={{
-                            endAdornment: (
-                                <InputAdornment position="end">
-                                    <IconButton
-                                        aria-label="toggle password visibility"
-                                        onClick={() => setShowPassword(!showPassword)}
-                                        edge="end"
-                                    >
-                                        {showPassword ? <VisibilityOff /> : <Visibility />}
-                                    </IconButton>
-                                </InputAdornment>
-                            ),
-                        }}
-                    />
-                    <FormControlLabel
-                        control={
-                            <Checkbox
-                                value="remember"
-                                color="primary"
-                                checked={remember}
-                                onChange={() => setRemember(!remember)}
-                            />
-                        }
-                        label="Remember me"
-                    />
-                    {error && (
-                        <Typography variant="body2" color="error" sx={{ mt: 1 }}>
-                            {error}
-                        </Typography>
-                    )}
-                    <Link href="/register" underline="hover">¿Aún no tienes cuenta?, Regístrate</Link>
-                    <Button
-                        fullWidth
-                        variant="contained"
-                        sx={{ mt: 3, mb: 2 }}
-                        onClick={() => handleLogin(login, password)}
-                        disabled={loading}
-                    >
-                        {loading ? <CircularProgress size={24} /> : 'Login'}
-                    </Button>
+        <Paper elevation={3} square={false} maxWidth="sm">
+            <Container maxWidth="sm">
+                <Box
+                    sx={{
+                        marginTop: 8,
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                    }}
+                >
+                    <Typography component="h1" variant="h5">
+                        Login
+                    </Typography>
+                    <Box component="form" noValidate sx={{ mt: 1 }}>
+                        <TextField
+                            margin="normal"
+                            required
+                            fullWidth
+                            id="login"
+                            label="Login"
+                            name="login"
+                            autoComplete="username"
+                            autoFocus
+                            value={login}
+                            onChange={(e) => setLogin(e.target.value)}
+                            placeholder="username/email"
+                        />
+                        <TextField
+                            margin="normal"
+                            required
+                            fullWidth
+                            name="password"
+                            label="Password"
+                            type={showPassword ? 'text' : 'password'}
+                            id="password"
+                            autoComplete="current-password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            InputProps={{
+                                endAdornment: (
+                                    <InputAdornment position="end">
+                                        <IconButton
+                                            aria-label="toggle password visibility"
+                                            onClick={() => setShowPassword(!showPassword)}
+                                            edge="end"
+                                        >
+                                            {showPassword ? <VisibilityOff /> : <Visibility />}
+                                        </IconButton>
+                                    </InputAdornment>
+                                ),
+                            }}
+                        />
+                        <FormControlLabel
+                            control={
+                                <Checkbox
+                                    value="remember"
+                                    color="primary"
+                                    checked={remember}
+                                    onChange={() => setRemember(!remember)}
+                                />
+                            }
+                            label="Remember me"
+                        />
+                        {error && (
+                            <Typography variant="body2" color="error" sx={{ mt: 1 }}>
+                                {error}
+                            </Typography>
+                        )}
+                        <Link href="/register" underline="hover">¿Aún no tienes cuenta?, Regístrate</Link>
+                        <Button
+                            fullWidth
+                            variant="contained"
+                            sx={{ mt: 3, mb: 2 }}
+                            onClick={() => handleLogin(login, password)}
+                            disabled={loading}
+                        >
+                            {loading ? <CircularProgress size={24} /> : 'Login'}
+                        </Button>
+                    </Box>
                 </Box>
-            </Box>
-        </Container>
+            </Container>
+        </Paper>
     );
 };
 

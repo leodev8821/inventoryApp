@@ -1,5 +1,5 @@
 import React from 'react';
-import { CircularProgress } from '@mui/material';
+import { CircularProgress, Typography } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 import Paper from '@mui/material/Paper';
 import useProductsTable from '../utils/hooks/useProductsTable';
@@ -15,7 +15,8 @@ const ProductTable = () => {
     }
 
     return (
-        <Paper sx={{ height: 400, width: '100%', margin: 'auto'}}>
+        <Paper elevation={3} sx={{ height: 400, width: '100%', margin: 'auto'}}>
+            <Typography>Todos los Productos</Typography>
             <DataGrid
                 rows={rows}
                 columns={columns}

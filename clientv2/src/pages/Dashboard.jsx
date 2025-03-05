@@ -1,16 +1,19 @@
 import React, { useContext, useEffect, useMemo } from 'react';
 import { AppProvider, DashboardLayout } from '@toolpad/core';
-import { Box, IconButton, Card, CardContent, CircularProgress } from '@mui/material';
+import { Box, IconButton, Card, CardContent, CircularProgress, Typography } from '@mui/material';
 import { createTheme } from '@mui/material/styles';
-import { Logout, List, AddCircle } from '@mui/icons-material';
-import { Outlet, Link, useLocation } from 'react-router-dom';
+import { Logout, List, AddCircle, Inventory2 } from '@mui/icons-material';
+import { Outlet, useLocation } from 'react-router-dom';
 import { RouteContext } from '../utils/context/RouteContext';
 import { AuthContext } from '../utils/context/AuthContext';
 import useNavigation from "../utils/hooks/useNavigation";
+import NewCategoryForm from "../components/NewCategoryForm";
+import NewProductForm from "../components/NewProductForm";
+import ProductTable from "../components/ProductsTable";
 
 const AppLayout = () => {
   const { toggleType } = useContext(RouteContext);
-  const { logout, user } = useContext(AuthContext);
+  const { user, logout } = useContext(AuthContext);
   const location = useLocation();
   const { navigate } = useNavigation();
 
@@ -21,21 +24,21 @@ const AppLayout = () => {
     if (isAuthenticated) {
       return [
         { kind: 'header', title: 'Navegación' },
-        { segment: 'products-table', title: 'Todos los Productos', to: '/dashboard/products-table', icon: <List /> },
-        { segment: 'new-category', title: 'Crear Categoría', to: '/dashboard/new-category', icon: <AddCircle /> },
-        { segment: 'new-product', title: 'Crear Producto', to: '/dashboard/new-product', icon: <AddCircle /> },
+        { segment: 'dashboard/', title: 'Todos los Productos', icon: <List /> },
+        { segment: 'dashboard/new-category', title: 'Crear Categoría', icon: <AddCircle /> },
+        { segment: 'dashboard/new-product', title: 'Crear Producto', icon: <AddCircle /> },
         { kind: 'header', title: 'Logout' },
-        { segment: 'logout', title: 'Ir a Login', to: '/login', icon: <Logout /> },
+        { title: 'Ir a Login', to: '/login', icon: <Logout /> },
       ];
     } else {
       return [
-        { kind: 'header', title: 'Logout' },
-        { label: 'Ir a Login', to: '/login', icon: <Logout /> },
+        { kind: 'header', title: 'Login' },
+        { title: 'login', to: '/login', icon: <Logout /> },
       ];
     }
   }, [isAuthenticated]);
 
-  // Actualizar el estado de tipo de vista cuando cambia la ruta
+
   useEffect(() => {
     toggleType(location.pathname);
   }, [location.pathname, toggleType]);
@@ -59,26 +62,22 @@ const AppLayout = () => {
   // Función de logout
   const handleLogout = () => {
     logout();
-    navigate('/login');  // Redirige al login
+    navigate('/login');
   };
 
   return (
     <AppProvider
-      navigation={navigation}  // Pasa la navegación correctamente
+      navigation={navigation}
       router={{
-        navigate: (to) => navigate(to), // Utiliza `navigate` de react-router-dom
+        navigate: (to) => navigate(to)
       }}
       theme={myTheme}
     >
       <DashboardLayout
-        navigation={navigation.map(item => ({
-          kind: item.kind,
-          title: item.title,
-          to: item.to,    // Asegúrate de pasar correctamente `to` con Link
-          icon: item.icon,
-          href: item.to,
-          component: Link, // Usar Link para las rutas
-        }))}
+        branding={{
+          title: 'InventoryApp'
+        }}
+        navigation={navigation}
         appBar={{
           position: 'sticky',
           sx: { zIndex: (theme) => theme.zIndex.drawer + 1 },
@@ -89,9 +88,21 @@ const AppLayout = () => {
           ) : null,
         }}
       >
-        <Box sx={{ p: 3 }}>
+        <Box
+          sx={{
+            py: 4,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            textAlign: 'center',
+            width: '80%',
+            mx: 'auto',
+            minHeight: '50vh',
+          }}
+        >
           <Outlet />
         </Box>
+
       </DashboardLayout>
     </AppProvider>
   );

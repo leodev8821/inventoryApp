@@ -16,13 +16,14 @@ const App = () => {
       <RouteProvider>
         <Router>
           <AuthProvider>
-            <Routes>
-              <Route path="/" element={<Login />} />
-              <Route path="/register" element={<Register />} />
-              <Route path="/dashboard" element={<AppLayout />} />
-              <Route path="/dashboard/products-table" element={<ProductTable />} />
-              <Route path="/dashboard/new-category" element={<NewCategoryForm />} />
-              <Route path="/dashboard/new-product" element={<NewProductForm />} />
+          <Routes>
+              <Route path="/" element={<AppLayout />}>
+                <Route index element={<Login />} />
+                <Route path="/register" element={<Register />} />
+                <Route path="all-products" element={<ProductTable />} />
+                <Route path="new-category" element={<NewCategoryForm />} />
+                <Route path="new-product" element={<NewProductForm />} />
+              </Route>
             </Routes>
           </AuthProvider>
         </Router>

@@ -15,14 +15,13 @@ import {
     IconButton,
     InputAdornment,
     MenuItem,
-    Fab,
     Card,
     CardContent,
     Divider,
     Grid2
 } from '@mui/material';
 import Visibility from '@mui/icons-material/Visibility';
-import { VisibilityOff, ArrowBackIosNew } from '@mui/icons-material';
+import { VisibilityOff } from '@mui/icons-material';
 import useRegister from '../utils/hooks/useRegister.js';
 
 const Register = () => {
@@ -61,13 +60,6 @@ const Register = () => {
 
     return (
         <Container maxWidth="sm">
-
-            <Box sx={{ marginTop: 2 }}>
-                <Fab color="primary" aria-label="back" onClick={handleBack}>
-                    <ArrowBackIosNew />
-                </Fab>
-            </Box>
-
 
             <Box sx={{ marginTop: 8, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
 

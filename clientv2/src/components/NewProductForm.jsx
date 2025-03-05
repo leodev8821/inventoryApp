@@ -13,15 +13,14 @@ import {
     Box,
     CircularProgress,
     MenuItem,
-    Fab,
     Card,
     CardContent,
     Divider,
     Grid2
 } from '@mui/material';
-import { ArrowBackIosNew } from '@mui/icons-material';
 import useCategoryData from '../utils/hooks/useCategoryData.js';
 import useNewProductForm from '../utils/hooks/useNewProductForm.js';
+import ProhibitMessage from './ProhibitMessage.jsx';
 import { AuthContext } from '../utils/context/AuthContext';
 
 const NewProductForm = () => {
@@ -42,26 +41,12 @@ const NewProductForm = () => {
     
         if (!user) {
             return (
-                <Card sx={{ width: '100%', marginTop: 3 }}>
-                    <CardContent>
-                        <Box component="form" noValidate sx={{ mt: 1 }} >
-                            <h2>No se encuentra logueado. Redirigiendo...</h2>
-                            <CircularProgress />
-                        </Box>
-                    </CardContent>
-                </Card>
+                <ProhibitMessage />
             )
         }
 
     return (
         <Container maxWidth="sm">
-
-            <Box sx={{ marginTop: 2 }}>
-                <Fab color="primary" aria-label="back" onClick={handleBack}>
-                    <ArrowBackIosNew />
-                </Fab>
-            </Box>
-
 
             <Box sx={{ marginTop: 8, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
 
