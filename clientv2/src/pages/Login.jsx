@@ -84,7 +84,6 @@ const Login = () => {
                                 ),
                             }}
                         />
-                        <Link href="/register" underline="hover">¿Aún no tienes cuenta?, Regístrate</Link>
                         <Button
                             fullWidth
                             variant="contained"

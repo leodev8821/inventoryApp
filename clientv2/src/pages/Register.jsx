@@ -2,9 +2,7 @@ import React from 'react';
 import {
     TextField,
     Button,
-    Checkbox,
     Select,
-    FormControlLabel,
     FormControl,
     InputLabel,
     FormHelperText,
@@ -36,9 +34,8 @@ const Register = () => {
         showPassword,
         filteredTowns,
         formAddress,
-        lopd,
+        roles,
         setErrors,
-        setLopd,
         handleRegister,
         handleProvinceChange,
         setShowPassword,
@@ -58,6 +55,7 @@ const Register = () => {
         return <Typography color="error">{errorAddressData}</Typography>;
     }
 
+    console.log(formData)
     return (
         <Container maxWidth="sm">
 
@@ -74,6 +72,28 @@ const Register = () => {
                             <Grid2 container spacing={2} sx={{ margin: 'auto' }}>
 
                                 <Grid2 size={{ xs: 12 }}>
+
+                                    <FormControl fullWidth margin="normal" required>
+                                        <InputLabel id="role">Rol</InputLabel>
+                                        <Select
+                                            labelId="role"
+                                            id="role_id"
+                                            name="role_id"
+                                            size="small"
+                                            value={formData.role_id}
+                                            label="Rol"
+                                            onChange={handleChange}
+                                            onBlur={handleSelectBlur}
+                                            error={Boolean(errors.role_id)}
+                                            helpertext={errors.role_id}
+                                        >
+                                            {roles.map((role) => (
+                                                <MenuItem key={role.id} value={role.role}>
+                                                    {role.roleName}
+                                                </MenuItem>
+                                            ))}
+                                        </Select>
+                                    </FormControl>
 
                                     <TextField
                                         margin="normal"
@@ -201,6 +221,8 @@ const Register = () => {
                                             label="Provincia"
                                             onChange={handleProvinceChange}
                                             onBlur={handleSelectBlur}
+                                            error={Boolean(errors.province)}
+                                            helpertext={errors.province}
                                         >
                                             <MenuItem value="">Seleccione una provincia</MenuItem>
                                             {provinces.map((province) => (
@@ -209,7 +231,6 @@ const Register = () => {
                                                 </MenuItem>
                                             ))}
                                         </Select>
-                                        {errors.province && <FormHelperText>{errors.province}</FormHelperText>}
                                     </FormControl>
 
                                     <FormControl fullWidth margin="normal" required>
@@ -223,6 +244,8 @@ const Register = () => {
                                             label="Municipio"
                                             onChange={handleFormAddress}
                                             onBlur={handleSelectBlur}
+                                            error={Boolean(errors.town)}
+                                            helpertext={errors.town}
                                         >
                                             <MenuItem value="">Seleccione un municipio</MenuItem>
                                             {filteredTowns.map((town) => (
@@ -231,7 +254,6 @@ const Register = () => {
                                                 </MenuItem>
                                             ))}
                                         </Select>
-                                        {errors.town && <FormHelperText>{errors.town}</FormHelperText>}
                                     </FormControl>
 
                                     <FormControl fullWidth margin="normal" required>
@@ -245,6 +267,8 @@ const Register = () => {
                                             label="Tipo de vía"
                                             onChange={handleFormAddress}
                                             onBlur={handleSelectBlur}
+                                            error={Boolean(errors.type)}
+                                            helpertext={errors.type}
                                         >
                                             {addressTypes.map((tipo) => (
                                                 <MenuItem key={tipo} value={tipo}>
@@ -252,7 +276,6 @@ const Register = () => {
                                                 </MenuItem>
                                             ))}
                                         </Select>
-                                        {errors.type && <FormHelperText>{errors.type}</FormHelperText>}
                                     </FormControl>
 
                                     <TextField
@@ -292,25 +315,11 @@ const Register = () => {
                                     />
                                 </Grid2>
 
-                                {/* Fila 8: Checkbox */}
-                                <Grid2 size={{ xs: 12 }}>
-                                    <FormControlLabel
-                                        control={<Checkbox checked={lopd} onChange={() => setLopd(!lopd)} />}
-                                        label="Acepto la Ley de Protección de Datos"
-                                    />
-                                    <a id="lopd_link" href="/">Ley de Protección</a>
-                                    {errors.lopd && (
-                                        <Typography color="error" variant="caption">
-                                            {errors.lopd}
-                                        </Typography>
-                                    )}
-                                </Grid2>
-
                                 {/* Fila 9: Botón Registrar */}
                                 <Grid2 size={{ xs: 12 }}>
                                     {errors && Object.keys(errors).length > 0 && (
                                         <Typography variant="body2" color="error" sx={{ mt: 1 }}>
-                                            {JSON.stringify(errors)}
+                                            Tienes errores en el formulario
                                         </Typography>
                                     )}
                                     <Button

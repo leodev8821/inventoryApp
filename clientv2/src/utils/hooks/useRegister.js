@@ -3,20 +3,22 @@ import useFetch from "./useFetch";
 import useNavigation from "./useNavigation";
 import { useToast } from '../context/ToastContext.jsx';
 import useAddressData from "../hooks/useAddressData.js";
+import useRolesData from "./useRolesData.js";
 
 const useRegister = () => {
     const { fetchData } = useFetch();
     const { navigate } = useNavigation();
     const { notifySuccess, notifyError } = useToast();
     const { provinces, towns, addressTypes, loadingAddressData, errorAddressData } = useAddressData();
+    const { roles, setErrorRole } = useRolesData();
     
     const [loading, setLoading] = useState(false);
-    const [lopd, setLopd] = useState(false);
     const [errors, setErrors] = useState({});
     const [selectedProvince, setSelectedProvince] = useState('');
     const [showPassword, setShowPassword] = useState(false);
 
     const [formData, setFormData] = useState({
+        role_id: 0,
         username: '',
         first_name: '',
         last_names: '',
@@ -33,6 +35,8 @@ const useRegister = () => {
         road: '',
         pc: '',
     });
+
+    
 
     // Filtrar municipios según la provincia seleccionada
     const filteredTowns = useMemo(() => {
@@ -57,8 +61,6 @@ const useRegister = () => {
         Object.keys(formAddress).forEach(field => {
             if (!formAddress[field]) newErrors[field] = 'Campo obligatorio!';
         });
-
-        if (!lopd) newErrors.lopd = 'Debes aceptar la Ley de Protección de Datos';
 
         return newErrors;
     };
@@ -91,10 +93,12 @@ const useRegister = () => {
         setLoading(true);
 
         try {
+            const token = sessionStorage.getItem("authToken");
             const response = await fetchData({
                 endpoint: "/user/create-new-user",
                 method: "POST",
-                body: formData,
+                authorization: `${token}`,
+                body: data
             });
 
             if (response) {
@@ -121,8 +125,8 @@ const useRegister = () => {
         showPassword,
         filteredTowns,
         formAddress,
-        lopd,
-        setLopd,
+        roles,
+        setErrors,
         handleRegister,
         handleChange: (e) => handleChange(e, setFormData),
         handleFormAddress: (e) => handleChange(e, setFormAddress),

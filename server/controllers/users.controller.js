@@ -13,7 +13,7 @@ const envPath = join(__dirname, '../../.env'); // Subir un nivel hasta 'inventor
 dotenv.config({ path: envPath });
 
 // Usar variables de entorno
-const SECRET_KEY = process.env.SECRET_KEY;
+const allowedRoles = process.env.ALLOWED_ROLES.split(',').map(Number);
 
 /* ------------- FUNCTIONS ----------------*/
 
@@ -49,6 +49,7 @@ export default {
 			// Datos que irán en el token
 			const payload = {
 				id: user.id,
+				role: user.role_id,
 				username: user.username,
 				email: user.email,
 				first_name: user.first_name,
@@ -75,8 +76,22 @@ export default {
 
 	registerUser: async (req, res) => {
 		try {
-			const { username, first_name, last_names, email, pass, address } = req.body;
+			const userRole = req.authData?.role_id;
+
+			console.log(userRole)
+
+			const { role_id, username, first_name, last_names, email, pass, address } = req.body;
+
+			if (!userRole) {
+				return res.status(400).json({ message: 'No se proporcionó el rol.' });
+			}
+
+			if (!allowedRoles.includes(role)) {
+				return res.status(402).json({ message: 'Usuario no autorizado para registrar.' });
+			}
+
 			const data = {
+				role_id,
 				username,
 				first_name,
 				last_names,
@@ -86,7 +101,7 @@ export default {
 				isRegistered: false,
 				isVisible: true
 			};
-			const newUser = await createNewUser(data);
+			const newUser = await createNewUser(userRole, data);
 
 			if (!newUser) {
 				return res.status(409).json({ message: 'Usuario ya existe en la BD' });

@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import decodeUserMiddleware from '../middlewares/decodeUser.js';
 import address from '../controllers/address.controller.js';
+import role from '../controllers/roles.controller.js';
 import user from '../controllers/users.controller.js';
 import product from '../controllers/products.controller.js';
 import category from '../controllers/categories.controllers.js';
@@ -20,17 +21,9 @@ router.get('/inventory-app/v1/generic/lopd', comms.lopdGet) */
 
 // BBDD MySQL
 
-router.post('/inventory-app/v1/user/create-new-user', user.registerUser);
-/* {
-	"username" : "admin",
-	"first_name" : "Leo",
-	"last_names" : "Caicedo",
-	"email" : "leo@admin.com",
-	"pass" : "miPass1",
-	"address" : "Calle Falsa 123"
-}*/
-
+//Users
 router.post('/inventory-app/v1/user/login', user.loginUser);
+router.post('/inventory-app/v1/user/create-new-user', decodeUserMiddleware, user.registerUser);
 
 // Categories
 router.post('/inventory-app/v1/categories/new-category', decodeUserMiddleware, category.newCategory);
@@ -40,6 +33,9 @@ router.get('/inventory-app/v1/categories/all-categories', decodeUserMiddleware, 
 router.post('/inventory-app/v1/products/new-product', decodeUserMiddleware, product.newProduct);
 router.get('/inventory-app/v1/products/all-products/:category_id',decodeUserMiddleware, product.allProductsByCategory);
 router.get('/inventory-app/v1/products/all-products',decodeUserMiddleware, product.allProducts);
+
+// Roles
+router.get('/inventory-app/v1/roles/all-roles', decodeUserMiddleware, role.allRoles);
 
 //Inventories
 router.post('/inventory-app/v1/inventory/all-registers', inventory.allInventoryRegisters);

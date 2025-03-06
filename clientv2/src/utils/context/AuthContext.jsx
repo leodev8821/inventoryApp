@@ -20,8 +20,7 @@ export const AuthProvider = ({ children }) => {
     }, []);
 
     const logout = () => {
-        //sessionStorage.removeItem("authToken");
-        sessionStorage.clear();
+        sessionStorage.removeItem("authToken");
         console.log("He limpiado sessionStorage")
         setUser(null);
     };

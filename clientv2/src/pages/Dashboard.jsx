@@ -2,11 +2,12 @@ import React, { useContext, useEffect, useMemo } from 'react';
 import { AppProvider, DashboardLayout } from '@toolpad/core';
 import { Box, IconButton, Card, CardContent, CircularProgress, Typography } from '@mui/material';
 import { createTheme } from '@mui/material/styles';
-import { Logout, List, AddCircle, Inventory2, Login } from '@mui/icons-material';
+import { Logout, List, AddCircle, Inventory2, Login, HowToReg } from '@mui/icons-material';
 import { Outlet, useLocation } from 'react-router-dom';
 import { RouteContext } from '../utils/context/RouteContext';
 import { AuthContext } from '../utils/context/AuthContext';
 import useNavigation from "../utils/hooks/useNavigation";
+import Register from './Register';
 import NewCategoryForm from "../components/NewCategoryForm";
 import NewProductForm from "../components/NewProductForm";
 import ProductTable from "../components/ProductsTable";
@@ -22,7 +23,7 @@ const AppLayout = () => {
 
   // Función de logout
   const handleLogout = () => {
-    logout;
+    logout();
     setTimeout(() => {
       navigate('/login');
     }, 100);
@@ -36,12 +37,13 @@ const AppLayout = () => {
         { segment: 'dashboard/all-products', title: 'Todos los Productos', icon: <List /> },
         { segment: 'dashboard/new-category', title: 'Crear Categoría', icon: <AddCircle /> },
         { segment: 'dashboard/new-product', title: 'Crear Producto', icon: <AddCircle /> },
+        { segment: 'dashboard/register-user', title: 'Registrar nuevo Usuario', icon: <HowToReg /> },
         { kind: 'header', title: 'Logout' },
-        {
-          title: 'Logout',
+        { title: 'Logout',
           icon: <Logout />,
           onClick: handleLogout
         },
+         
       ];
     } else {
       return [

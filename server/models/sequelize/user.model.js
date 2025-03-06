@@ -1,6 +1,7 @@
 import { DataTypes, Op } from 'sequelize';
 import bcrypt from 'bcryptjs';
 import { getSequelizeConf } from '../../database/mysql.js';
+import { Role } from './role.model.js';
 
 const connection = getSequelizeConf();
 
@@ -10,6 +11,14 @@ export const User = connection.define('User', {
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true
+    },
+    role_id: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+            model: 'roles',
+            key: 'id'       
+        }
     },
     username: {
         type: DataTypes.STRING(100),
@@ -61,14 +70,35 @@ export const User = connection.define('User', {
     }
 });
 
+/**
+ * Relación: Una Usuario pertenece a un rol.
+ *
+ * @description Establece la relación "belongsTo" entre Role y User, usando 'role_id' como clave foránea.
+ * @see {@link User}
+ */
+User.belongsTo(Role, { foreignKey: 'role_id' });
+
+/**
+ * Relación: Un rol tiene muchos usuarios.
+ *
+ * @description Establece la relación "hasMany" entre User y Role, usando 'role_id' como clave foránea.
+ * @see {@link Role}
+ */
+Role.hasMany(User, { foreignKey: 'role_id', onDelete: 'CASCADE' });
+
 // CRUD Operations
 /**
      * Create a new user
      * @param {*} data -> new user data
      * @returns newUser -> New user created
      */
-export async function createNewUser(data) {
+export async function createNewUser(role,data) {
     try {
+        if(!role){
+            console.warn('Usuario no autorizado')
+            return null;
+        }
+
         const loginData = ["username", "email"];
         const user = await User.findOne({
             where: {
