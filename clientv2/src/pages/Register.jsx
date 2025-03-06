@@ -41,9 +41,8 @@ const Register = () => {
         setShowPassword,
         handleBack,
         handleChange,
-        handleBlur,
         handleFormAddress,
-        handleSelectBlur
+        handleBlur
     } = useRegister();
 
 
@@ -83,7 +82,7 @@ const Register = () => {
                                             value={formData.role_id}
                                             label="Rol"
                                             onChange={handleChange}
-                                            onBlur={handleSelectBlur}
+                                            onBlur={handleBlur}
                                             error={Boolean(errors.role_id)}
                                             helpertext={errors.role_id}
                                         >
@@ -220,7 +219,7 @@ const Register = () => {
                                             value={formAddress.province}
                                             label="Provincia"
                                             onChange={handleProvinceChange}
-                                            onBlur={handleSelectBlur}
+                                            onBlur={handleBlur}
                                             error={Boolean(errors.province)}
                                             helpertext={errors.province}
                                         >
@@ -243,7 +242,7 @@ const Register = () => {
                                             value={formAddress.town}
                                             label="Municipio"
                                             onChange={handleFormAddress}
-                                            onBlur={handleSelectBlur}
+                                            onBlur={handleBlur}
                                             error={Boolean(errors.town)}
                                             helpertext={errors.town}
                                         >
@@ -266,7 +265,7 @@ const Register = () => {
                                             value={formAddress.type}
                                             label="Tipo de vía"
                                             onChange={handleFormAddress}
-                                            onBlur={handleSelectBlur}
+                                            onBlur={handleBlur}
                                             error={Boolean(errors.type)}
                                             helpertext={errors.type}
                                         >

@@ -78,7 +78,7 @@ export default {
 		try {
 			const userRole = req.authData?.role_id;
 
-			console.log(userRole)
+			console.warn(userRole)
 
 			const { role_id, username, first_name, last_names, email, pass, address } = req.body;
 

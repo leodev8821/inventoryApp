@@ -22,6 +22,7 @@ const decodeUserMiddleware = (req, res, next) => {
   }
 
   req.authData = decodedUser;
+  console.warn(decodedUser)
   next();
 };
 
