@@ -36,8 +36,6 @@ const useRegister = () => {
         pc: '',
     });
 
-    
-
     // Filtrar municipios según la provincia seleccionada
     const filteredTowns = useMemo(() => {
         return selectedProvince ? towns.filter(town => town.province === selectedProvince) : towns;
@@ -98,7 +96,7 @@ const useRegister = () => {
                 endpoint: "/user/create-new-user",
                 method: "POST",
                 authorization: `${token}`,
-                body: data
+                body: formData
             });
 
             if (response) {
@@ -109,6 +107,7 @@ const useRegister = () => {
             }
         } catch (err) {
             notifyError("Error al registrar el usuario", { position: "top-right" });
+            console.error(err.message)
         } finally {
             setLoading(false);
         }
@@ -131,7 +130,6 @@ const useRegister = () => {
         handleChange: (e) => handleChange(e, setFormData),
         handleFormAddress: (e) => handleChange(e, setFormAddress),
         handleBlur,
-        handleBack: () => navigate(-1),
         setShowPassword,
         handleProvinceChange: (e) => {
             setFormAddress(prev => ({ ...prev, province: e.target.value, town: '' }));

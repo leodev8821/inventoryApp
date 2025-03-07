@@ -31,7 +31,7 @@ const useFetch = () => {
 
       // Verifica si la respuesta es válida
       if (!response.ok) {
-        let errorMessage = `Error ${response.status}: ${response.statusText}`;
+        let errorMessage = `Un error ${response.status}: ${response.statusText}`;
         try {
           const errorData = await response.json();
           errorMessage = errorData.message || errorMessage;
@@ -47,7 +47,7 @@ const useFetch = () => {
       }
       return null;
     } catch (err) {
-      setFetchError(err.message);
+      setFetchError(err);
       throw err;
     }
   }, []);

@@ -47,15 +47,15 @@ export default {
 		// Cargar el archivo .env manualmente
 		dotenv.config({ path: envPath });
 
-		const MY_ADMIN_ROLE = parseInt(process.env.ADMIN_ROLE, 10)
-		const MY_ADMIN_USERNAME = process.env.ADMIN_USERNAME;
-		const MY_ADMIN_F_NAME = process.env.ADMIN_FIRST_NAME;
-		const MY_ADMIN_L_NAME = process.env.ADMIN_LAST_NAMES;
-		const MY_ADMIN_EMAIL = process.env.ADMIN_EMAIL;
-		const MY_ADMIN_PASS = process.env.ADMIN_PASS;
-		const MY_ADMIN_ADDR = process.env.ADMIN_ADDRESS;
-		const MY_ADMIN_REG = process.env.ADMIN_IS_REGISTERED;
-		const MY_ADMIN_VISIBLE = process.env.ADMIN_IS_VISIBLE;
+		const MY_SUDO_ROLE = parseInt(process.env.SUDO_ROLE, 10)
+		const MY_SUDO_USERNAME = process.env.SUDO_USERNAME;
+		const MY_SUDO_F_NAME = process.env.SUDO_FIRST_NAME;
+		const MY_SUDO_L_NAME = process.env.SUDO_LAST_NAMES;
+		const MY_SUDO_EMAIL = process.env.SUDO_EMAIL;
+		const MY_SUDO_PASS = process.env.SUDO_PASS;
+		const MY_SUDO_ADDR = process.env.SUDO_ADDRESS;
+		const MY_SUDO_REG = process.env.SUDO_IS_REGISTERED;
+		const MY_SUDO_VISIBLE = process.env.SUDO_IS_VISIBLE;
 
 		const sequelize = getSequelizeConf();
 		try {
@@ -76,10 +76,10 @@ export default {
 			const roleCount = await Role.count();
 			if (roleCount === 0) {
 				const rolesToInsert = [
-					{ role: 0 },
 					{ role: 1 },
 					{ role: 2 },
-					{ role: 3 }
+					{ role: 3 },
+					{ role: 4 }
 				];
 				await Role.bulkCreate(rolesToInsert);
 				console.log('Roles iniciales insertados.');
@@ -87,23 +87,23 @@ export default {
 				console.log('Los roles ya existen, no se insertaron nuevos registros.');
 			}
 
-			//Insertar usuario admin
+			//Insertar usuario superUser
 			const userCount = await User.count();
 			if (userCount === 0) {
-				const adminUser = {
-					role_id: MY_ADMIN_ROLE,
-					username: MY_ADMIN_USERNAME,
-					first_name: MY_ADMIN_F_NAME,
-					last_names: MY_ADMIN_L_NAME,
-					email: MY_ADMIN_EMAIL,
-					pass: MY_ADMIN_PASS,
-					address: MY_ADMIN_ADDR,
-					isRegistered: MY_ADMIN_REG,
-					isVisible: MY_ADMIN_VISIBLE
+				const sudoUser = {
+					role_id: MY_SUDO_ROLE,
+					username: MY_SUDO_USERNAME,
+					first_name: MY_SUDO_F_NAME,
+					last_names: MY_SUDO_L_NAME,
+					email: MY_SUDO_EMAIL,
+					pass: MY_SUDO_PASS,
+					address: MY_SUDO_ADDR,
+					isRegistered: MY_SUDO_REG,
+					isVisible: MY_SUDO_VISIBLE
 				};
-				await User.create(adminUser)
+				await User.create(sudoUser)
 			} else {
-				console.log('Admin ya esta creado');
+				console.log('Superusuario ya existe');
 			}
 		} catch (error) {
 			console.error('No se pudo conectar a la base de datos:', error);

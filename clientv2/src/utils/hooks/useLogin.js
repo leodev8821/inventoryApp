@@ -15,7 +15,8 @@ const useLogin = () => {
 
     const handleLogin = async (login_data, password) => {
         if (!login_data || !password) {
-            setError("Please enter both login and password.");
+            setError("Tienes que llenar todos los campos");
+            notifyError(error);
             return;
         }
 
@@ -32,16 +33,16 @@ const useLogin = () => {
             if (response?.token) {
                 sessionStorage.setItem("authToken", response.token);
                 const decodedToken = jwtDecode(response.token);
-                setUser(decodedToken); // Almacena el usuario en el contexto de autenticación
-                notifySuccess("Logueado correctamente.", { position: "top-center" });
+                setUser(decodedToken);
+                notifySuccess(`${decodedToken.username}, te has logueado correctamente.`, { position: "top-center" });
                 navigate("/dashboard/all-products");
             } else {
                 setError("Credenciales incorrectas.");
                 notifyError(error);
             }
         } catch (err) {
-            console.error("Login failed:", err);
-            setError("An error occurred during login.");
+            setError(err.message);
+            notifyError(err.message);
         } finally {
             setLoading(false);
         }

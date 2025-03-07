@@ -37,9 +37,9 @@ const Login = () => {
                     <Typography component="h1" variant="h5">
                         Login
                     </Typography>
-                    <Box 
-                        component="form" 
-                        noValidate 
+                    <Box
+                        component="form"
+                        noValidate
                         sx={{ mt: 1 }}
                         onSubmit={(e) => {
                             e.preventDefault();
@@ -84,6 +84,12 @@ const Login = () => {
                                 ),
                             }}
                         />
+                        {error && (
+                            <Typography variant="body2" color="error" sx={{ mt: 1 }}>
+                                {error}
+                            </Typography>
+                            )
+                        }
                         <Button
                             fullWidth
                             variant="contained"

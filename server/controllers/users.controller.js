@@ -43,7 +43,7 @@ export default {
 			const validPass = await bcrypt.compare(password, user.pass);
 
 			if (!validPass) {
-				return res.status(401).json({ error: 'Credenciales incorrectas' });
+				return res.status(401).json({ message: 'Credenciales incorrectas' });
 			}
 
 			// Datos que irán en el token
@@ -76,7 +76,7 @@ export default {
 
 	registerUser: async (req, res) => {
 		try {
-			const userRole = req.authData?.role_id;
+			const userRole = req.authData?.role;
 
 			console.warn(userRole)
 

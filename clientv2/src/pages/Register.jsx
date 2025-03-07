@@ -39,7 +39,6 @@ const Register = () => {
         handleRegister,
         handleProvinceChange,
         setShowPassword,
-        handleBack,
         handleChange,
         handleFormAddress,
         handleBlur
@@ -54,7 +53,6 @@ const Register = () => {
         return <Typography color="error">{errorAddressData}</Typography>;
     }
 
-    console.log(formData)
     return (
         <Container maxWidth="sm">
 
@@ -86,6 +84,7 @@ const Register = () => {
                                             error={Boolean(errors.role_id)}
                                             helpertext={errors.role_id}
                                         >
+                                            <MenuItem value={0}>Seleccione Rol</MenuItem>
                                             {roles.map((role) => (
                                                 <MenuItem key={role.id} value={role.role}>
                                                     {role.roleName}
@@ -269,6 +268,7 @@ const Register = () => {
                                             error={Boolean(errors.type)}
                                             helpertext={errors.type}
                                         >
+                                            <MenuItem value="">Seleccione el Tipo de vía</MenuItem>
                                             {addressTypes.map((tipo) => (
                                                 <MenuItem key={tipo} value={tipo}>
                                                     {tipo}

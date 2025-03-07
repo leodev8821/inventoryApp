@@ -10,10 +10,10 @@ const connection = getSequelizeConf();
  * @typedef {object} RoleAttributes
  * @property {number} id - ID único de la Rol.
  * @property {number} role - ID del rol al que pertenece (mas alto, mas permisos).
- * 0 - Empleado
- * 1 - Encargado
- * 2 - Administrador
- * 3 - SuperUser (*^*)
+ * 1 - Empleado
+ * 2 - Encargado
+ * 3 - Administrador
+ * 4 - SuperUser (*^*)
  */
 
 /**

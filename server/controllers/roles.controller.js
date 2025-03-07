@@ -15,10 +15,10 @@ export default {
             dotenv.config({ path: envPath });
 
             const roleNames  ={
-                0: process.env.EMPLOYED,
-                1: process.env.MANAGER,
-                2: process.env.ADMINISTRATOR, 
-                3: process.env.SUPERUSER
+                1: process.env.EMPLOYED,
+                2: process.env.MANAGER,
+                3: process.env.ADMINISTRATOR, 
+                4: process.env.SUPERUSER
             }
 
             const userRole = req.authData?.role;
