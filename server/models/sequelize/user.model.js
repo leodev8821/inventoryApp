@@ -92,13 +92,8 @@ Role.hasMany(User, { foreignKey: 'role_id', onDelete: 'CASCADE' });
      * @param {*} data -> new user data
      * @returns newUser -> New user created
      */
-export async function createNewUser(role,data) {
+export async function createNewUser(data) {
     try {
-        if(!role){
-            console.warn('Usuario no autorizado')
-            return null;
-        }
-
         const loginData = ["username", "email"];
         const user = await User.findOne({
             where: {

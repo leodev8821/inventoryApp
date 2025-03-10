@@ -92,7 +92,7 @@ export default {
 
 	allProducts: async (req, res) => {
 		try {
-			const userId = req.authData ? req.authData.id : null;
+			const userId = req.userId ? req.userId : null;
 
 			if (!userId) {
                 return res.status(400).json({ message: 'No se proporcionó el usuario.' });

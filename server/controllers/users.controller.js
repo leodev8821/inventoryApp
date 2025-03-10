@@ -13,7 +13,7 @@ const envPath = join(__dirname, '../../.env'); // Subir un nivel hasta 'inventor
 dotenv.config({ path: envPath });
 
 // Usar variables de entorno
-const allowedRoles = process.env.ALLOWED_ROLES.split(',').map(Number);
+const sudoRole = parseInt(process.env.SUDO_ROLE);
 
 /* ------------- FUNCTIONS ----------------*/
 
@@ -76,18 +76,11 @@ export default {
 
 	registerUser: async (req, res) => {
 		try {
-			const userRole = req.authData?.role;
-
-			console.warn(userRole)
 
 			const { role_id, username, first_name, last_names, email, pass, address } = req.body;
 
-			if (!userRole) {
-				return res.status(400).json({ message: 'No se proporcionó el rol.' });
-			}
-
-			if (!allowedRoles.includes(role)) {
-				return res.status(402).json({ message: 'Usuario no autorizado para registrar.' });
+			if(role_id === sudoRole) {
+				return res.status(403).json({ message: 'No tienes autorización para crear este tipo de usuario'})
 			}
 
 			const data = {
@@ -101,7 +94,7 @@ export default {
 				isRegistered: false,
 				isVisible: true
 			};
-			const newUser = await createNewUser(userRole, data);
+			const newUser = await createNewUser(data);
 
 			if (!newUser) {
 				return res.status(409).json({ message: 'Usuario ya existe en la BD' });
@@ -115,7 +108,7 @@ export default {
 				email: newUser.email
 			});
 		} catch (error) {
-			res.status(500).json({ message: 'Error al listar usuarios', error })
+			res.status(500).json({ message: 'Error al crear usuario', error })
 		}
 	},
 

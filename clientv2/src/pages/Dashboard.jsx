@@ -21,13 +21,7 @@ const AppLayout = () => {
 
   const isAuthenticated = useMemo(() => !!user, [user]);
 
-  // Función de logout
-  const handleLogout = () => {
-    logout();
-    setTimeout(() => {
-      navigate('/login');
-    }, 100);
-  };
+  
 
   // Definir la navegación de acuerdo a la autenticación
   const navigation = useMemo(() => {
@@ -39,10 +33,7 @@ const AppLayout = () => {
         { segment: 'dashboard/new-product', title: 'Crear Producto', icon: <AddCircle /> },
         { segment: 'dashboard/register-user', title: 'Registrar nuevo Usuario', icon: <HowToReg /> },
         { kind: 'header', title: 'Logout' },
-        { title: 'Logout',
-          icon: <Logout />,
-          onClick: handleLogout
-        },
+        { segment: 'dashboard/logout', title: 'Logout', icon: <Logout />},
          
       ];
     } else {
@@ -92,7 +83,7 @@ const AppLayout = () => {
           position: 'sticky',
           sx: { zIndex: (theme) => theme.zIndex.drawer + 1 },
           actions: isAuthenticated ? (
-            <IconButton aria-label="logout" onClick={handleLogout}>
+            <IconButton aria-label="logout">
               <Logout />
             </IconButton>
           ) : null,
