@@ -1,16 +1,18 @@
-import { useMemo, useState, useEffect } from 'react';
+import { useMemo, useState, useEffect, useContext } from 'react';
 import useProductData from './useProductData.js';
 import useCategoryData from './useCategoryData.js';
+import { AuthContext } from '../context/AuthContext.jsx';
 
 const useProductsTable = () => {
     const { products, errorProduct } = useProductData();
     const { categories, errorCategory } = useCategoryData();
     const [loading, setLoading] = useState(true);
     const [initialized, setInitialized] = useState(false);
+    const { user } = useContext(AuthContext);
 
     // Retraso de 500ms para asegurarme que los datos de useProductData y useCategoryData ya esten definidos
     useEffect(() => {
-        if (products && categories) {
+        if (products && categories && user) {
             setTimeout(() => {
                 setLoading(false);
                 setInitialized(true);
