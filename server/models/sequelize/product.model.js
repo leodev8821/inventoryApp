@@ -41,7 +41,7 @@ export const Product = connection.define('Product', {
         allowNull: false,
         references: {
             model: 'categories',
-            key: 'id'   
+            key: 'id'
         }
     },
     bar_code: {
@@ -175,7 +175,6 @@ export async function getAllProductsByCategory(data) {
 /**
  * Obtiene un producto por nombre o código de barras.
  * @param {object} data - Datos del producto.
- * @param {number} data.user_id - ID del usuario.
  * @param {number} data.category_id - ID de la categoría.
  * @param {string} data.searchValue - Nombre o código de barras del producto.
  * @returns {Promise<object|null>} - Producto encontrado o null.
@@ -185,22 +184,18 @@ export async function getOneProduct(data) {
     try {
         const product = await Product.findOne({
             where: {
-                [Op.and]: [
-                    { category_id: data.category_id },
-                    {
-                        [Op.or]: [
-                            { product_name: data.searchValue },
-                            { bar_code: data.searchValue }
-                        ]
-                    }
+                [Op.or]: [
+                    { id: data },
+                    { product_name: data },
+                    { bar_code: data }
                 ]
-            }
+            }, raw: true
         });
 
         if (!product) {
             return null;
         }
-        return product.dataValues;
+        return product;
     } catch (error) {
         console.error(`Error al buscar producto "${data.searchValue}":`, error.message);
         throw new Error(`Error al buscar producto: ${error.message}`);

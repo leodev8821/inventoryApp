@@ -1,19 +1,38 @@
 import { createNewInventory, getAllInventories, getInventoryById, updateInventory } from '../models/sequelize/inventory.model.js';
+import { getOneProduct } from '../models/sequelize/product.model.js';
 
 /* ------------- FUNCTIONS ----------------*/
 
 export default {
 
-	newInventoryRegister: async (req, res) => {
+	newRegister: async (req, res) => {
 		try {
-			const { product_id, change } = req.body;
+			/*
+			id: Int
+			product_id: Int
+			quantity: Int
+			value: decimal
+			isVisible: bool*/
+			const product_id = req.params;
+			const { quantity, isVisible } = req.body;
 
-			if (!product_id || change === undefined) {
-				return res.status(400).json({ error: 'Los campos product_id y change son requeridos.' });
+			if (!product_id || quantity === undefined || isVisible === undefined) {
+				return res.status(400).json({ error: 'Los campos Cantidad y Visibilidad son requeridos.' });
 			}
+
+			const product = await getOneProduct(product_id);
+			
+			if (!product) {
+				return res.status(404).json({ error: 'No se encuentra el producto' });
+			}
+
+			const value = quantity * product.buy_price;
+
 			const newInventory = await createNewInventory({
 				product_id,
-				change,
+				quantity,
+				value,
+				isVisible: true
 			});
 
 			res.status(201).json({
@@ -28,19 +47,25 @@ export default {
 
 	allInventoryRegisters: async (req, res) => {
 		try {			
+			/*
+			id: Int
+			product_id: Int
+			quantity: Int
+			value: decimal
+			isVisible: bool*/
 			const inventories = await getAllInventories();
 
 			if (!inventories) {
-				return res.status(404).json({ message: 'Registros de inventarios no encontrados o no pertenecen al usuario.' });
+				return res.status(404).json({ message: 'Registros de inventarios no encontrados' });
 			}
 			
 			// Formatea la respuesta
 			const resp = {
 				inventory: inventories.id,
-				user: inventories.user_id,
 				product: inventories.product_id,
-				change: inventories.change,
-				created: inventories.createdAt
+				quantity: inventories.quantity,
+				value: inventories.value,
+				isVisible: inventories.isVisible
 			};
 			
 			res.status(200).json(resp);
@@ -50,10 +75,19 @@ export default {
 		}
 	},
 
-	oneProduct: async (req, res) => {
+	/**TODO */
+	updateQuantity: async (req, res) => {
 		try {
-			// Extrae el id del registro de inventario desde la URL
-			const { id } = req.params;
+			/*
+			id: Int
+			product_id: Int
+			quantity: Int
+			value: decimal
+			isVisible: bool*/
+			const product_id = req.params;
+			const { quantity, isVisible } = req.body;
+
+			const product = await getOneProduct(product_id);
 						
 			// Llama a la función de servicio para obtener el registro del inventario
 			const inventory = await getInventoryById(id);

@@ -38,6 +38,7 @@ router.get('/inventory-app/v1/products/all-products',decodeUserMiddleware, verif
 router.get('/inventory-app/v1/roles/all-roles', decodeUserMiddleware, verifyPermitRoles, role.allRoles);
 
 //Inventories
+router.post('/inventory-app/v1/inventory/create-register/:product_id', decodeUserMiddleware, inventory.newRegister);
 router.post('/inventory-app/v1/inventory/all-registers', inventory.allInventoryRegisters);
 
 export { router };

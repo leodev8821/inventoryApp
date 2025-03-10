@@ -37,15 +37,20 @@ export const Inventory = connection.define('Inventory', {
             key: 'id'
         }
     },
-    change: {
+    quantity: {
         type: DataTypes.INTEGER,
+        defaultValue: 0,
         allowNull: false,
-        comment: 'Cantidad agregada (valor positivo) o retirada (valor negativo)'
     },
-    createdAt: {
-        type: DataTypes.DATE,
-        allowNull: false,
-        defaultValue: DataTypes.NOW
+    value: {
+        type: DataTypes.DECIMAL(10, 2),
+        defaultValue: 0.0,
+        allowNull: false
+    },
+    isVisible: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
+        allowNull: false
     }
 }, {
     tableName: 'inventories',
