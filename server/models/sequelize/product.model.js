@@ -36,14 +36,6 @@ export const Product = connection.define('Product', {
         primaryKey: true,
         autoIncrement: true
     },
-    user_id: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        references: {
-            model: 'users',
-            key: 'id'       
-        }
-    },
     category_id: {
         type: DataTypes.INTEGER,
         allowNull: false,
@@ -105,22 +97,6 @@ Product.belongsTo(Category, { foreignKey: 'category_id' });
 Category.hasMany(Product, { foreignKey: 'category_id', onDelete: 'CASCADE' });
 
 /**
- * Relación: Un producto pertenece a un usuario.
- *
- * @description Establece la relación "belongsTo" entre Product y User, usando 'user_id' como clave foránea.
- * @see {@link User}
- */
-Product.belongsTo(User, { foreignKey: 'user_id' });
-
-/**
- * Relación: Un usuario tiene muchos productos.
- *
- * @description Establece la relación "hasMany" entre User y Product, usando 'user_id' como clave foránea.
- * @see {@link Product}
- */
-User.hasMany(Product, { foreignKey: 'user_id', onDelete: 'CASCADE' });
-
-/**
  * Crea un nuevo producto.
  * @param {object} data - Datos del producto.
  * @param {number} data.user_id - ID del usuario.
@@ -135,7 +111,6 @@ export async function createNewProduct(data) {
         const existProduct = await Product.findOne({
             where: {
                 [Op.and]: [
-                    { user_id: data.user_id },
                     { category_id: data.category_id },
                     {
                         [Op.or]: [
@@ -167,13 +142,9 @@ export async function createNewProduct(data) {
  * @returns {Promise<Array<object>>} - Lista de productos.
  * @throws {Error} - Error al obtener los productos.
  */
-export async function getAllProducts(data) {
+export async function getAllProducts() {
     try {
-        return await Product.findAll({
-            where: {
-                user_id: data
-            }
-        });
+        return await Product.findAll();
     } catch (error) {
         console.error('Error al obtener productos:', error);
         throw new Error(`Error al obtener productos: ${error.message}`);
@@ -192,7 +163,6 @@ export async function getAllProductsByCategory(data) {
     try {
         return await Product.findAll({
             where: {
-                user_id: data.user_id,
                 category_id: data.category_id
             }
         });
@@ -216,7 +186,6 @@ export async function getOneProduct(data) {
         const product = await Product.findOne({
             where: {
                 [Op.and]: [
-                    { user_id: data.user_id },
                     { category_id: data.category_id },
                     {
                         [Op.or]: [
@@ -253,7 +222,6 @@ export async function updateOneProduct(data, newData) {
         const product = await Product.findOne({
             where: {
                 [Op.and]: [
-                    { user_id: data.user_id },
                     { category_id: data.category_id },
                     {
                         [Op.or]: [
@@ -294,7 +262,6 @@ export async function deleteProduct(data) {
         const product = await Product.findOne({
             where: {
                 [Op.and]: [
-                    { user_id: data.user_id },
                     { category_id: data.category_id },
                     {
                         [Op.or]: [

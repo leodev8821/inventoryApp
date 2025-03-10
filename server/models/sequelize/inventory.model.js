@@ -37,14 +37,6 @@ export const Inventory = connection.define('Inventory', {
             key: 'id'
         }
     },
-    user_id: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        references: {
-            model: 'users', // Hace referencia a la tabla de usuarios
-            key: 'id'
-        }
-    },
     change: {
         type: DataTypes.INTEGER,
         allowNull: false,
@@ -67,10 +59,6 @@ Inventory.belongsTo(Product, { foreignKey: 'product_id', onDelete: 'CASCADE' });
 // Un producto puede tener muchos registros en el inventario.
 Product.hasMany(Inventory, { foreignKey: 'product_id', onDelete: 'CASCADE' });
 
-// Un registro de inventario pertenece a un usuario (quien realizó el cambio).
-Inventory.belongsTo(User, { foreignKey: 'user_id', onDelete: 'CASCADE' });
-// Un usuario puede tener muchos movimientos de inventario.
-User.hasMany(Inventory, { foreignKey: 'user_id', onDelete: 'CASCADE' });
 
 // CRUD Operations
 /**
@@ -94,13 +82,9 @@ export async function createNewInventory(data) {
  * @param {number} userId - ID del usuario.
  * @returns {Array} - Lista de registros de inventario.
  */
-export async function getAllInventories(userId) {
+export async function getAllInventories() {
     try {
-        const inventories = await Inventory.findAll({
-            where: {
-                user_id: userId
-            }
-        });
+        const inventories = await Inventory.findAll();
         return inventories.map(inventory => inventory.dataValues);
     } catch (error) {
         console.error('Error al obtener los registros de inventario:', error);
@@ -114,12 +98,11 @@ export async function getAllInventories(userId) {
  * @param {number} userId - ID del usuario.
  * @returns {object|null} - Registro encontrado o null si no existe o no pertenece al usuario.
  */
-export async function getInventoryById(id, userId) {
+export async function getInventoryById(id) {
     try {
         const inventory = await Inventory.findOne({
             where: {
-                id: id,
-                user_id: userId
+                id: id
             }
         });
         if (!inventory) {
@@ -139,12 +122,11 @@ export async function getInventoryById(id, userId) {
  * @param {object} data - Datos a actualizar (por ejemplo, product_id, change).
  * @returns {object|null} - Registro actualizado o null si no se encontró o no pertenece al usuario.
  */
-export async function updateInventory(id, userId, data) {
+export async function updateInventory(id, data) {
     try {
         const inventory = await Inventory.findOne({
             where: {
                 id: id,
-                user_id: userId
             }
         });
         if (!inventory) {
@@ -168,12 +150,11 @@ export async function updateInventory(id, userId, data) {
  * @param {number} userId - ID del usuario.
  * @returns {object|null} - Registro eliminado o null si no se encontró o no pertenece al usuario.
  */
-export async function deleteInventory(id, userId) {
+export async function deleteInventory(id) {
     try {
         const inventory = await Inventory.findOne({
             where: {
-                id: id,
-                user_id: userId
+                id: id
             }
         });
         if (!inventory) {

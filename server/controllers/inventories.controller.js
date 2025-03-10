@@ -6,14 +6,13 @@ export default {
 
 	newInventoryRegister: async (req, res) => {
 		try {
-			const { product_id, user_id, change } = req.body;
+			const { product_id, change } = req.body;
 
-			if (!product_id || !user_id || change === undefined) {
-				return res.status(400).json({ error: 'Los campos product_id, user_id y change son requeridos.' });
+			if (!product_id || change === undefined) {
+				return res.status(400).json({ error: 'Los campos product_id y change son requeridos.' });
 			}
 			const newInventory = await createNewInventory({
 				product_id,
-				user_id,
 				change,
 			});
 
@@ -28,14 +27,8 @@ export default {
 	},
 
 	allInventoryRegisters: async (req, res) => {
-		try {
-			// Suponiendo que el id del usuario viene desde la sesión (req.user) o, en su defecto, desde la query
-			const userId = req.user ? req.user.id : req.query.user_id;
-			if (!userId) {
-				return res.status(400).json({ message: 'No se proporcionó el id del usuario.' });
-			}
-			
-			const inventories = await getAllInventories(userId);
+		try {			
+			const inventories = await getAllInventories();
 
 			if (!inventories) {
 				return res.status(404).json({ message: 'Registros de inventarios no encontrados o no pertenecen al usuario.' });
@@ -61,14 +54,9 @@ export default {
 		try {
 			// Extrae el id del registro de inventario desde la URL
 			const { id } = req.params;
-			// Suponiendo que el id del usuario viene desde la sesión (req.user) o, en su defecto, desde la query
-			const userId = req.user ? req.user.id : req.query.user_id;
-			if (!userId) {
-				return res.status(400).json({ message: 'No se proporcionó el id del usuario.' });
-			}
-			
+						
 			// Llama a la función de servicio para obtener el registro del inventario
-			const inventory = await getInventoryById(id, userId);
+			const inventory = await getInventoryById(id);
 			if (!inventory) {
 				return res.status(404).json({ message: 'Registro de inventario no encontrado o no pertenece al usuario.' });
 			}
@@ -86,39 +74,6 @@ export default {
 		} catch (error) {
 			console.error('Error al obtener el registro de inventario:', error);
 			res.status(500).json({ message: 'Error al obtener el registro de inventario', error });
-		}
-	},
-
-	updateUser: async (req, res) => {
-		try {
-			const { dni, name, lastnames, phone, email } = req.body;
-			const newData = {
-				name,
-				lastnames,
-				phone,
-				email
-			};
-			const user = await updateOneUser(dni, newData);
-			return res.status(201).json({
-				data: user,
-				message: "Datos del usuario modificado"
-			});
-		} catch (error) {
-			res.status(500).json({ message: 'Error al actualizar el usuario', error })
-		}
-	},
-
-	deleteUser: async (req, res) => {
-		try {
-			const { dni } = req.body;
-			const user = await deleteUser(dni);
-			return res.status(201).json({
-				data: user,
-				message: "El usuario ha sido eliminado"
-			});
-
-		} catch (error) {
-			res.status(500).json({ message: 'Error al eliminar el usuario', error })
 		}
 	}
 }

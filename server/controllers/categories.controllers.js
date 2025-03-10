@@ -7,17 +7,11 @@ export default {
     newCategory: async (req, res) => {
         try {
             const { category } = req.body;
-            const userId = req.authData?.id;
-
-            if (!userId) {
-                return res.status(400).json({ message: 'No se proporcionó el usuario.' });
-            }
 
             if (category === undefined) {
                 return res.status(400).json({ error: 'El campo categoría es requerido.' });
             }
             const newCategory = await createNewCategory({
-                user_id: userId,
                 category,
             });
 
@@ -37,13 +31,7 @@ export default {
 
     allCategories: async (req, res) => {
         try {
-            const userId = req.userId ? req.userId : null;
-
-            if (!userId) {
-                return res.status(400).json({ message: 'No se proporcionó el usuario.' });
-            }
-
-            const categories = await getAllCategories(userId);
+            const categories = await getAllCategories();
 
             if (!categories || categories.length === 0) {
                 return res.status(404).json({ message: 'Categorías no encontradas o no pertenecen al usuario.' });
@@ -70,17 +58,8 @@ export default {
             // Extrae el id del registro de inventario desde la URL
             const { category } = req.params;
 
-            // Suponiendo que el id del usuario viene desde la sesión (req.user) o, en su defecto, desde la query
-            const userId = req.authData ? req.authData.id : null;
-
-            if (!userId) {
-                return res.status(400).json({ message: 'No se proporcionó el id del usuario.' });
-            }
-
-            const data = { category, userId };
-
             // Llama a la función de servicio para obtener la categoría
-            const categoryFound = await getOneCategory(data);
+            const categoryFound = await getOneCategory(category);
 
             if (!categoryFound) {
                 return res.status(404).json({ message: 'Categoría no encontrada o no pertenece al usuario.' });
@@ -104,15 +83,7 @@ export default {
             // Extrae el id del registro de inventario desde la URL
             const { category } = req.params;
 
-            const userId = req.authData ? req.authData.id : null;
-
-            if (!userId) {
-                return res.status(400).json({ message: 'No se proporcionó el id del usuario.' });
-            }
-
-            const data = { category, userId };
-
-            const categoryToDelete = await deleteCategory(data);
+            const categoryToDelete = await deleteCategory(category);
 
             return res.status(201).json({
                 data: categoryToDelete,

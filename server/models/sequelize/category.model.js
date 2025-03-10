@@ -26,14 +26,6 @@ export const Category = connection.define('Category', {
         primaryKey: true,
         autoIncrement: true
     },
-    user_id: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        references: {
-            model: 'users', // Referencia a la tabla 'users'
-            key: 'id'       // Referencia a la columna 'id' de la tabla 'users'
-        }
-    },
     category: {
         type: DataTypes.STRING(255),
         allowNull: false,
@@ -43,22 +35,6 @@ export const Category = connection.define('Category', {
     tableName: 'categories',
     timestamps: false
 });
-
-/**
- * Relación: Una categoría pertenece a un usuario.
- *
- * @description Establece la relación "belongsTo" entre Category y User, usando 'user_id' como clave foránea.
- * @see {@link User}
- */
-Category.belongsTo(User, { foreignKey: 'user_id' });
-
-/**
- * Relación: Un usuario tiene muchas categorías.
- *
- * @description Establece la relación "hasMany" entre User y Category, usando 'user_id' como clave foránea.
- * @see {@link Category}
- */
-User.hasMany(Category, { foreignKey: 'user_id', onDelete: 'CASCADE' });
 
 /**
  * Crea una nueva categoría.
@@ -75,7 +51,7 @@ export async function createNewCategory(data) {
     try {
         const existCategory = await Category.findOne({
             where: {
-                [Op.and]: [{ user_id: data.user_id }, { category: data.category }]
+                category: data.category
             }
         });
         if (existCategory) {
@@ -103,7 +79,6 @@ export async function getAllCategories(userId) {
     try {
         // Obtener todas las categorías asociadas al usuario
         const categories = await Category.findAll({
-            where: { user_id: userId },
             raw: true,
             order: [['category', 'ASC']]
         });
@@ -129,9 +104,7 @@ export async function getAllCategories(userId) {
 export async function getOneCategory(data) {
     try {
         const category = await Category.findOne({
-            where: {
-                [Op.and]: [{ user_id: data.user_id }, { category: data.category }]
-            }
+            where: { category: data.category }
         });
         if (!category) {
             return null;
@@ -157,9 +130,7 @@ export async function getOneCategory(data) {
 export async function deleteCategory(data) {
     try {
         const category = await Category.findOne({
-            where: {
-                [Op.and]: [{ user_id: data.user_id }, { category: data.category }]
-            }
+            where: { category: data.category }
         });
         if (category) {
             await category.destroy();
