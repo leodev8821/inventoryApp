@@ -1,14 +1,16 @@
-import { useState, useContext } from 'react';
+import { useState, useContext, useEffect } from 'react';
 import { useToast } from '../context/ToastContext.jsx';
 import { AuthContext } from '../context/AuthContext.jsx';
 import useFetch from './useFetch.js';
 import useNavigation from "./useNavigation.js";
 
-const useNewProductForm = () => {
+const useProductForm = (productId) => {
     const { notifySuccess, notifyError } = useToast();
     const { fetchData } = useFetch();
     const { navigate } = useNavigation();
     const { user } = useContext(AuthContext);
+    const [errors, setErrors] = useState({});
+    const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState({
         category_id: '',
         bar_code: '',
@@ -18,8 +20,43 @@ const useNewProductForm = () => {
         sell_price: 0.0,
         image_url: ''
     });
-    const [errors, setErrors] = useState({});
-    const [loading, setLoading] = useState(false);
+
+
+    useEffect(() => {
+        const fetchProductData = async () => {
+            setLoading(true);
+            try {
+                const token = sessionStorage.getItem("authToken");
+                const response = await fetchData({
+                    endpoint: `/products/${productId}`,
+                    method: "GET",
+                    authorization: `${token}`
+                });
+
+                if (response?.data) {
+                    setFormData({
+                        id: response.data.id,
+                        category_id: response.data.category_id,
+                        bar_code: response.data.bar_code,
+                        product_name: response.data.product_name,
+                        description: response.data.description,
+                        buy_price: parseFloat(response.data.buy_price),
+                        sell_price: parseFloat(response.data.sell_price),
+                        image_url: response.data.image_url
+                    });
+                }
+            } catch (error) {
+                console.error("Error fetching product data:", error);
+                notifyError('Error al cargar el producto', { position: 'top-center' });
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        if (productId) {
+            fetchProductData();
+        }
+    }, [productId]);
 
     const handleBack = () => {
         navigate(-1);
@@ -42,7 +79,7 @@ const useNewProductForm = () => {
         }
     };
 
-    const handleNewProduct = async (data) => {
+    const handleSubmit = async () => {
         if (!user) {
             setErrors({ user: 'Usuario no autenticado' });
             notifyError('No se encontró información del usuario.', { position: 'top-center' });
@@ -85,26 +122,26 @@ const useNewProductForm = () => {
         try {
             const token = sessionStorage.getItem("authToken");
 
+            const endpoint = productId 
+                ? `/products/${productId}`
+                : '/products/new-product';
+
+            const method = productId ? 'PUT' : 'POST';
+
             const response = await fetchData({
-                endpoint: '/products/new-product',
-                method: 'POST',
+                endpoint,
+                method,
                 authorization: `${token}`,
-                body: data
+                body: formData
             });
 
-            setFormData({
-                category_id: '',
-                bar_code: '',
-                product_name: '',
-                description: '',
-                buy_price: 0.0,
-                sell_price: 0.0,
-                image_url: ''
-            });
+            if (response?.ok) {
+                const message = productId
+                    ? 'Producto actualizado correctamente'
+                    : 'Nuevo producto creado';
 
-            if (response?.newProduct) {
-                notifySuccess('Nuevo producto creado', { autoClose:1000, position: 'top-center' });
-                setTimeout(() => navigate(-1), 2000);
+                notifySuccess(message, { autoClose: 500, position: 'top-center' });
+                setTimeout(() => navigate(-1), 1000);
             } else {
                 setErrors({ server: response?.error || 'Error al crear la categoría' });
                 notifyError(response?.error || 'Error desconocido', { position: 'top-center' });
@@ -119,6 +156,6 @@ const useNewProductForm = () => {
         }
 
     };
-    return { formData, errors, loading, handleBack, handleChange, handleNewProduct, handleSelectBlur };
+    return { formData, errors, loading, handleBack, handleChange, handleSubmit, handleSelectBlur };
 };
-export default useNewProductForm;
+export default useProductForm;

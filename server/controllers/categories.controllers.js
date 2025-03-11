@@ -16,16 +16,21 @@ export default {
             });
 
             if (!newCategory) {
-				return res.status(409).json({ message: 'Categoría ya existe en la BD' });
-			}
+                return res.status(409).json({ message: 'Categoría ya existe en la BD' });
+            }
 
             res.status(201).json({
+                ok: true,
                 message: 'Nueva categoría creada',
                 newCategory: newCategory.category
             });
         } catch (error) {
             console.error(error);
-            return res.status(500).json({ error: 'Error al crear la categoría.' });
+            return res.status(500).json({
+                ok: false,
+                message: 'Error al crear la categoría.',
+                error: error.message
+            });
         }
     },
 
@@ -44,12 +49,17 @@ export default {
             }));
 
             res.status(200).json({
+                ok: true,
                 message: 'Categorías obtenidas correctamente.',
                 data: formattedResponse,
             });
         } catch (error) {
             console.error('Error al obtener las categorías:', error);
-            res.status(500).json({ message: 'Error interno al obtener las categorías.', error: error.message });
+            res.status(500).json({
+				ok: false,
+                message: 'Error interno al obtener las categorías.', 
+                error: error.message 
+            });
         }
     },
 
@@ -71,7 +81,11 @@ export default {
                 category: categoryFound.category
             };
 
-            res.status(200).json(resp);
+            res.status(200).json({
+				ok: true,
+                message: 'Categoría obtenida correctamente.',
+                data: resp
+            });
         } catch (error) {
             console.error('Error al obtener el registro de inventario:', error);
             res.status(500).json({ message: 'Error al obtener el registro de inventario', error });
@@ -86,12 +100,16 @@ export default {
             const categoryToDelete = await deleteCategory(category);
 
             return res.status(201).json({
+				ok: true,
+                message: "la categoría ha sido eliminada",
                 data: categoryToDelete,
-                message: "la categoría ha sido eliminada"
             });
 
         } catch (error) {
-            res.status(500).json({ message: 'Error al eliminar la categoría', error })
+            res.status(500).json({ 
+				ok: false,
+                message: 'Error al eliminar la categoría', error 
+            })
         }
     }
 }

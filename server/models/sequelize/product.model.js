@@ -140,7 +140,7 @@ export async function createNewProduct(data) {
  */
 export async function getAllProducts() {
     try {
-        return await Product.findAll();
+        return await Product.findAll({raw: true});
     } catch (error) {
         console.error('Error al obtener productos:', error);
         throw new Error(`Error al obtener productos: ${error.message}`);

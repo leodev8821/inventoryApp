@@ -26,10 +26,11 @@ router.post('/categories/new-category', decodeUserMiddleware, verifyLogin, categ
 router.get('/categories/all-categories', decodeUserMiddleware, verifyLogin, category.allCategories);
 
 // Products
-router.post('/products/new-product', decodeUserMiddleware, verifyLogin, product.newProduct);
-router.get('/products/all-products/:category_id',decodeUserMiddleware, verifyLogin,  product.allProductsByCategory);
 router.get('/products/all-products',decodeUserMiddleware, verifyLogin, product.allProducts);
+router.post('/products/new-product', decodeUserMiddleware, verifyLogin, product.newProduct);
 router.put('/products/:product_id',decodeUserMiddleware, verifyPermitRoles,  product.updateProduct);
+router.get('/products/:product_id',decodeUserMiddleware, verifyPermitRoles,  product.getOneProductByID);
+router.get('/products/all-products/:category_id',decodeUserMiddleware, verifyLogin,  product.allProductsByCategory);
 router.delete('/products/delete/:product_id',decodeUserMiddleware, verifyPermitRoles,  product.deleteProduct);
 
 // Roles

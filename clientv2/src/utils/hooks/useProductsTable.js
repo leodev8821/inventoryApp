@@ -86,11 +86,11 @@ const useProductsTable = () => {
         try {
             setLoadingAction(true);
 
-            // Obtenemos los bar_codes de los productos seleccionados
+            // Eliminamos cada producto seleccionado
             const deletePromises = productIds.map(id => {
                 const token = sessionStorage.getItem("authToken");
                 return fetchData({
-                    endpoint: `/products/delete/${id}`, // Usar id real de la base de datos
+                    endpoint: `/products/delete/${id}`,
                     method: 'DELETE',
                     authorization: `${token}`
                 });

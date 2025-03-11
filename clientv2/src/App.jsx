@@ -6,7 +6,7 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import AppLayout from './pages/Dashboard';
 import NewCategoryForm from "./components/NewCategoryForm";
-import NewProductForm from "./components/NewProductForm";
+import ProductForm from "./components/ProductForm";
 import ProductTable from "./components/ProductsTable";
 import LogoutMessage from "./components/LogoutMessage";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
@@ -22,8 +22,9 @@ const App = () => {
                 <Route index element={<Login />} />
                 <Route path="dashboard/register-user" element={<Register />} />
                 <Route path="dashboard/all-products" element={<ProductTable />} />
+                <Route path="products/edit/:id" element={<ProductForm />} />
                 <Route path="dashboard/new-category" element={<NewCategoryForm />} />
-                <Route path="dashboard/new-product" element={<NewProductForm />} />
+                <Route path="dashboard/new-product" element={<ProductForm />} />
                 <Route path="dashboard/logout" element={<LogoutMessage />} />
               </Route>
             </Routes>

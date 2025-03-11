@@ -9,7 +9,7 @@ import { AuthContext } from '../utils/context/AuthContext';
 import useNavigation from "../utils/hooks/useNavigation";
 import Register from './Register';
 import NewCategoryForm from "../components/NewCategoryForm";
-import NewProductForm from "../components/NewProductForm";
+import ProductForm from "../components/ProductForm";
 import ProductTable from "../components/ProductsTable";
 import ProhibitMessage from '../components/ProhibitMessage';
 

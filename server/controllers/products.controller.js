@@ -39,11 +39,36 @@ export default {
 			}
 
 			res.status(201).json({
+				ok: true,
 				message: 'Nuevo producto creado',
 				newProduct: newProduct
 			});
 		} catch (error) {
 			res.status(500).json({ message: 'Error al crear producto', error })
+		}
+	},
+
+	getOneProductByID: async (req, res) => {
+		try {
+			const { product_id } = req.params;
+
+			const product = await getOneProduct(product_id);
+
+			if (!product) {
+				return res.status(404).json({
+					ok: false,
+					message: "Producto no encontrado"
+				});
+			}
+
+			res.status(200).json({
+				ok: true,
+				message: 'Producto encontrado',
+				data: product
+			});
+
+		} catch (error) {
+			res.status(500).json({ message: 'Error al listar productos', error })
 		}
 	},
 
@@ -65,7 +90,11 @@ export default {
 			}));
 
 			// Enviar la respuesta combinada
-			res.status(201).json(resp)
+			res.status(201).json({
+				ok: true,
+				message: 'Productos obtenidos correctamente',
+				data: resp
+			});
 
 		} catch (error) {
 			res.status(500).json({ message: 'Error al listar productos', error })
@@ -76,8 +105,8 @@ export default {
 		try {
 			const products = await getAllProducts();
 
-			const resp = products.map((product, i) => ({
-				id: `${i + 1}`,
+			const resp = products.map((product) => ({
+				id: product.id,
 				category_id: product.category_id,
 				bar_code: product.bar_code,
 				product_name: product.product_name,
@@ -88,6 +117,7 @@ export default {
 			}));
 
 			res.status(200).json({
+				ok: true,
 				message: 'Productos obtenidos correctamente.',
 				data: resp,
 			});
@@ -111,16 +141,6 @@ export default {
 				sell_price,
 				image_url
 			};
-
-			const existing = await getOneProduct(bar_code);
-
-			if(existing){
-				return res.status(409).json({
-					ok: false,
-					message: 'Código de Barras ya está en uso' 
-				});
-			}
-
 
 			const modifiedProduct = await updateOneProduct(product_id, newData);
 

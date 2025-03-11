@@ -1,4 +1,5 @@
 import React, { useContext, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 import {
     TextField,
     Button,
@@ -19,41 +20,43 @@ import {
     Grid2
 } from '@mui/material';
 import useCategoryData from '../utils/hooks/useCategoryData.js';
-import useNewProductForm from '../utils/hooks/useNewProductForm.js';
+import useProductForm from '../utils/hooks/useProductForm.js';
 import ProhibitMessage from './ProhibitMessage.jsx';
-import { AuthContext } from '../utils/context/AuthContext';
+import { AuthContext } from '../utils/context/AuthContext.jsx';
 
-const NewProductForm = () => {
-    const { formData, errors, loading, handleBack, handleChange, handleSelectBlur, handleNewProduct } = useNewProductForm();
+const ProductForm = () => {
+    const { id } = useParams();
+    const { formData, errors, loading, handleBack, handleChange, handleSelectBlur, handleSubmit } = useProductForm(id);
     const { categories } = useCategoryData();
-
     const { user } = useContext(AuthContext);
-    
-        useEffect(() => {
-            if (!user) {
-                const timer = setTimeout(() => {
-                    handleBack();
-                }, 2000);
-    
-                return () => clearTimeout(timer);
-            }
-        }, [user, handleBack]);
-    
+
+    useEffect(() => {
         if (!user) {
-            return (
-                <ProhibitMessage />
-            )
+            const timer = setTimeout(() => {
+                handleBack();
+            }, 2000);
+
+            return () => clearTimeout(timer);
         }
+    }, [user, handleBack]);
+
+    if (!user) {
+        return (
+            <ProhibitMessage />
+        )
+    }
+
+    if (loading) <CircularProgress size={24} />;
 
     return (
         <Container maxWidth="sm">
 
             <Box sx={{ marginTop: 8, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
 
-
                 <Typography component="h1" variant="h5">
-                    Nuevo Producto
+                    {id ? 'Editar Producto' : 'Nuevo Producto'}
                 </Typography>
+
                 <Card sx={{ width: '100%', marginTop: 3 }}>
                     <CardContent>
                         <Box component="form" noValidate sx={{ mt: 1 }}>
@@ -88,7 +91,7 @@ const NewProductForm = () => {
 
                                     <Grid2 size={{ xs: 12 }}>
                                         <Divider sx={{ my: 2 }}>
-                                            Nuevo Producto
+                                            {id ? 'Producto Actual' : 'Nuevo Producto'}
                                         </Divider>
                                     </Grid2>
 
@@ -192,20 +195,18 @@ const NewProductForm = () => {
                                 </Grid2>
 
                                 <Grid2 size={{ xs: 12 }}>
-                                    {errors && Object.keys(errors).length > 0 && loading &&(
+                                    {errors && Object.keys(errors).length > 0 && loading && (
                                         <FormHelperText error>Tiene errores en el formulario</FormHelperText>
                                     )}
                                     <Button
                                         fullWidth
                                         variant="contained"
                                         sx={{ mt: 3, mb: 2 }}
-                                        onClick={() => handleNewProduct(formData)}
+                                        onClick={handleSubmit}
                                         disabled={loading}
                                     >
-                                        {loading ? <CircularProgress size={24} /> : 'Registrar'}
+                                        {loading ? <CircularProgress size={24} /> : (id ? 'Actualizar' : 'Registrar')}
                                     </Button>
-
-
                                 </Grid2>
                             </Grid2>
                         </Box>
@@ -215,4 +216,4 @@ const NewProductForm = () => {
         </Container>
     );
 };
-export default NewProductForm;
+export default ProductForm;

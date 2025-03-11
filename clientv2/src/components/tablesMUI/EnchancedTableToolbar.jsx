@@ -55,14 +55,14 @@ const EnchancedTableToolbar = ({ numSelected, onEdit, onDelete }) => {
                 >
                     <Tooltip title="Editar">
                         <IconButton
-                            onClick={onEdit} // Añade el handler
-                            disabled={numSelected !== 1} // Solo habilita para 1 selección
+                            onClick={onEdit}
+                            disabled={numSelected !== 1}
                         >
                             <Edit />
                         </IconButton>
                     </Tooltip>
                     <Tooltip title="Eliminar">
-                        <IconButton onClick={onDelete}> {/* Añade el handler */}
+                        <IconButton onClick={onDelete}>
                             <Delete />
                         </IconButton>
                     </Tooltip>

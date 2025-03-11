@@ -39,12 +39,14 @@ export default {
 			console.log("¡Inserción de los datos a MongoBD finalizada!");
 
 			return res.status(201).json({
+				ok: true,
 				message: `Todos los municipios han sido creados.`,
 				towns: towns.length
 			});
 
 		} catch (error) {
 			res.status(500).json({
+				ok: false,
 				message: 'Error al crear los municipios en la base de datos.',
 				error: error.message
 			});
@@ -71,6 +73,7 @@ export default {
 			});
 
 			return res.status(200).json({
+				ok: true,
 				message: `Todas los pueblos y tipos de vía han sido recuperados.`,
 				provinces,
 				towns,
@@ -79,6 +82,7 @@ export default {
 
 		} catch (error) {
 			res.status(500).json({
+				ok: false,
 				message: 'Error al obtener los pueblos y tipos de vía de la base de datos.',
 				error: error.message
 			});
