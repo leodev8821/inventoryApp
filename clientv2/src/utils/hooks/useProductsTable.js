@@ -31,8 +31,8 @@ const useProductsTable = () => {
         { field: 'bar_code', headerName: 'Código de Barras' },
         { field: 'product_name', headerName: 'Nombre' },
         { field: 'description', headerName: 'Descripción' },
-        { field: 'buy_price', headerName: 'Precio Compra', type: 'number' },
-        { field: 'sell_price', headerName: 'Precio Venta', type: 'number' }
+        { field: 'buy_price', headerName: 'Precio Compra (€)', type: 'number' },
+        { field: 'sell_price', headerName: 'Precio Venta (€)', type: 'number' }
     ], []);
 
     // Filas con formato consistente
@@ -68,6 +68,14 @@ const useProductsTable = () => {
     const handleDelete = async () => {
         if (!selected.length) return;
 
+        // Obtenemos los ids de los productos seleccionados
+        const productIds = selected.map(id => id);
+
+        if (productIds.length === 0) {
+            alert('No se encontraron productos válidos para eliminar');
+            return;
+        }
+
         // Confirmación antes de eliminar
         const confirmDelete = window.confirm(
             `¿Estás seguro de eliminar ${selected.length} producto(s)?`
@@ -78,11 +86,11 @@ const useProductsTable = () => {
         try {
             setLoadingAction(true);
 
-            // Eliminar múltiples productos en paralelo
-            const deletePromises = selected.map(id => async () => {
+            // Obtenemos los bar_codes de los productos seleccionados
+            const deletePromises = productIds.map(id => {
                 const token = sessionStorage.getItem("authToken");
-                const data = await fetchData({
-                    endpoint: `inventory-app/v1/products/${id}`,
+                return fetchData({
+                    endpoint: `/products/delete/${id}`, // Usar id real de la base de datos
                     method: 'DELETE',
                     authorization: `${token}`
                 });
@@ -91,8 +99,13 @@ const useProductsTable = () => {
             await Promise.all(deletePromises);
 
             setSelected([]);
-            notifySuccess("Te has registrado con éxito", { position: "top-center" });
-            setTimeout(() => navigate('/dashboard/all-products'), 1000);
+
+            // Notificar éxito por cada producto eliminado
+            selected.forEach(id => {
+                notifySuccess(`Producto con ID ${id} eliminado con éxito`, { position: "top-center" });
+            });
+
+            setTimeout(() => navigate('/dashboard/all-products'), 500);
         } catch (error) {
             console.error('Error deleting products:', error);
             alert('Error al eliminar los productos');
@@ -107,7 +120,7 @@ const useProductsTable = () => {
         loading,
         errors: { errorProduct, errorCategory },
         loadingAction,
-        selected, 
+        selected,
         setSelected,
         handleEdit,
         handleDelete

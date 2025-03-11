@@ -1,4 +1,4 @@
-import { createNewInventory, getAllInventories, getInventoryById, updateInventory } from '../models/sequelize/inventory.model.js';
+import { createNewInventory, getAllInventories, getInventoryByProductId, updateInventory } from '../models/sequelize/inventory.model.js';
 import { getOneProduct } from '../models/sequelize/product.model.js';
 
 /* ------------- FUNCTIONS ----------------*/
@@ -7,12 +7,6 @@ export default {
 
 	newRegister: async (req, res) => {
 		try {
-			/*
-			id: Int
-			product_id: Int
-			quantity: Int
-			value: decimal
-			isVisible: bool*/
 			const product_id = req.params;
 			const { quantity, isVisible } = req.body;
 
@@ -46,13 +40,7 @@ export default {
 	},
 
 	allInventoryRegisters: async (req, res) => {
-		try {			
-			/*
-			id: Int
-			product_id: Int
-			quantity: Int
-			value: decimal
-			isVisible: bool*/
+		try {
 			const inventories = await getAllInventories();
 
 			if (!inventories) {
@@ -75,36 +63,71 @@ export default {
 		}
 	},
 
-	/**TODO */
-	updateQuantity: async (req, res) => {
+	updateRegisterQuantity: async (req, res) => {
 		try {
-			/*
-			id: Int
-			product_id: Int
-			quantity: Int
-			value: decimal
-			isVisible: bool*/
 			const product_id = req.params;
-			const { quantity, isVisible } = req.body;
-
-			const product = await getOneProduct(product_id);
+			const { quantity } = req.body;
 						
 			// Llama a la función de servicio para obtener el registro del inventario
-			const inventory = await getInventoryById(id);
+			const inventory = await getInventoryByProductId(product_id);
 			if (!inventory) {
-				return res.status(404).json({ message: 'Registro de inventario no encontrado o no pertenece al usuario.' });
+				return res.status(404).json({ 
+					ok: false,
+					message: 'Registro de inventario no encontrado o no pertenece al usuario.' 
+				});
 			}
+
+			const newQuantity = await updateInventory(product_id, quantity)
 			
 			// Formatea la respuesta
-			const resp = {
-				inventory: inventory.id,
-				user: inventory.user_id,
-				product: inventory.product_id,
-				change: inventory.change,
-				created: inventory.createdAt
+			const modifiedRegister = {
+				id: newQuantity.id,
+				product_id: newQuantity.product_id,
+				quantity: newQuantity.quantity,
+				value: newQuantity.value,
+				isVisible: newQuantity.isVisible
 			};
 			
-			res.status(200).json(resp);
+			res.status(200).json({
+				ok: true,
+				message: "Producto modificado",
+				data: modifiedRegister
+			});
+		} catch (error) {
+			console.error('Error al obtener el registro de inventario:', error);
+			res.status(500).json({ message: 'Error al obtener el registro de inventario', error });
+		}
+	},
+
+	deleteRegister: async (req, res) => {
+		try {
+			const product_id = req.params;
+						
+			// Llama a la función para obtener el registro del inventario
+			const inventory = await getInventoryByProductId(product_id);
+			if (!inventory) {
+				return res.status(404).json({ 
+					ok: false,
+					message: 'Registro de inventario no encontrado o no pertenece al usuario.' 
+				});
+			}
+
+			const deletedRegister = await updateInventory(product_id, { "isVisible":false})
+			
+			// Formatea la respuesta
+			const modifiedRgister = {
+				id: deletedRegister.id,
+				product_id: deletedRegister.product_id,
+				quantity: deletedRegister.quantity,
+				value: deletedRegister.value,
+				isVisible: deletedRegister.isVisible
+			};
+			
+			res.status(200).json({
+				ok: true,
+				message: "Registro eliminado",
+				data: modifiedRgister
+			});
 		} catch (error) {
 			console.error('Error al obtener el registro de inventario:', error);
 			res.status(500).json({ message: 'Error al obtener el registro de inventario', error });

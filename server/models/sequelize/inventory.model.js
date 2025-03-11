@@ -73,9 +73,8 @@ Product.hasMany(Inventory, { foreignKey: 'product_id', onDelete: 'CASCADE' });
  */
 export async function createNewInventory(data) {
     try {
-        // Aquí puedes agregar validaciones adicionales si es necesario.
-        const newInventory = await Inventory.create(data);
-        return newInventory.dataValues;
+        const newRegister = await Inventory.create(data);
+        return newRegister.dataValues;
     } catch (error) {
         console.error('Error al crear el registro de inventario:', error);
         throw new Error('Error al crear el registro de inventario en la base de datos.');
@@ -89,8 +88,8 @@ export async function createNewInventory(data) {
  */
 export async function getAllInventories() {
     try {
-        const inventories = await Inventory.findAll();
-        return inventories.map(inventory => inventory.dataValues);
+        const registers = await Inventory.findAll({raw: true});
+        return registers.map(register => register);
     } catch (error) {
         console.error('Error al obtener los registros de inventario:', error);
         throw new Error('Error al obtener los registros de inventario de la base de datos.');
@@ -103,17 +102,18 @@ export async function getAllInventories() {
  * @param {number} userId - ID del usuario.
  * @returns {object|null} - Registro encontrado o null si no existe o no pertenece al usuario.
  */
-export async function getInventoryById(id) {
+export async function getInventoryByProductId(productID) {
     try {
-        const inventory = await Inventory.findOne({
+        const register = await Inventory.findOne({
             where: {
-                id: id
-            }
+                product_id: productID,
+            },
+            raw: true
         });
-        if (!inventory) {
+        if (!register) {
             return null;
         }
-        return inventory.dataValues;
+        return register;
     } catch (error) {
         console.error('Error al obtener el registro de inventario:', error);
         throw new Error('Error al obtener el registro de inventario de la base de datos.');
@@ -127,22 +127,27 @@ export async function getInventoryById(id) {
  * @param {object} data - Datos a actualizar (por ejemplo, product_id, change).
  * @returns {object|null} - Registro actualizado o null si no se encontró o no pertenece al usuario.
  */
-export async function updateInventory(id, data) {
+export async function updateInventory(productID, data) {
     try {
-        const inventory = await Inventory.findOne({
+        const register = await Inventory.findOne({
             where: {
                 id: id,
-            }
+            },
+            raw: true
         });
-        if (!inventory) {
+
+        if (!register) {
             return null;
         }
+
         // Actualiza solo los campos que se envían en el objeto "data"
-        if (data.product_id !== undefined) inventory.product_id = data.product_id;
-        if (data.change !== undefined) inventory.change = data.change;
-        // Nota: usualmente no se actualiza el user_id ya que indica el dueño del registro.
-        await inventory.save();
-        return inventory.dataValues;
+        if (data.quantity !== undefined) register.quantity = data.quantity;
+        if (data.isVisible !== undefined) register.isVisible = data.isVisible;
+
+        await register.save({where: {
+            id: productID
+        }});
+        return register;
     } catch (error) {
         console.error('Error al actualizar el registro de inventario:', error);
         throw new Error('Error al actualizar el registro de inventario en la base de datos.');
@@ -157,16 +162,19 @@ export async function updateInventory(id, data) {
  */
 export async function deleteInventory(id) {
     try {
-        const inventory = await Inventory.findOne({
+        const register = await Inventory.findOne({
             where: {
                 id: id
-            }
+            },
+            raw: true
         });
-        if (!inventory) {
+        if (!register) {
             return null;
         }
-        await inventory.destroy();
-        return inventory.dataValues;
+        register.isVisible = false;
+
+        await register.save();
+        return register;
     } catch (error) {
         console.error('Error al eliminar el registro de inventario:', error);
         throw new Error('Error al eliminar el registro de inventario en la base de datos.');

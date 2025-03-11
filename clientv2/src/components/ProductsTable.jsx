@@ -50,8 +50,6 @@ const ProductTable = () => {
         width: col.width
     }));
 
-
-
     const handleRequestSort = (event, property) => {
         const isAsc = orderBy === property && order === 'asc';
         setOrder(isAsc ? 'desc' : 'asc');

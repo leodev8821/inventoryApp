@@ -144,7 +144,8 @@ export default {
 	deleteProduct: async (req, res) => {
 		try {
 			const { product_id } = req.params;
-			const existingProduct = await getProductById(product_id);
+			const existingProduct = await getOneProduct(product_id);
+
 
 			if (!existingProduct) {
 				return res.status(404).json({
@@ -152,6 +153,8 @@ export default {
 					message: "Producto no encontrado"
 				});
 			}
+
+			await deleteProduct(product_id)
 
 			return res.status(200).json({
 				ok: true,

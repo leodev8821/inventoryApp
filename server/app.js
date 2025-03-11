@@ -20,7 +20,7 @@ app.use(cors())
 
 app.use(cookieParser());
 
-app.use(router)
+app.use('/inventory-app/v1', router)
 
 const port = process.env.PORT || 3001
 

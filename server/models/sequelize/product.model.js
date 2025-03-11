@@ -185,7 +185,8 @@ export async function getOneProduct(data) {
                     { product_name: data },
                     { bar_code: data }
                 ]
-            }, raw: true
+            }, 
+            raw: true
         });
 
         if (!product) {
@@ -217,6 +218,7 @@ export async function updateOneProduct(data, newData) {
                     { bar_code: data },
                 ],
             },
+            raw: true
         });
 
         if (!product) {
@@ -224,10 +226,10 @@ export async function updateOneProduct(data, newData) {
         }
 
         await Product.update(newData, {
-            where: { id: product.id },
+            where: { id: product.id }
         });
 
-        return { ...product.dataValues, ...newData };
+        return { ...product, ...newData };
     } catch (error) {
         console.error('Error al actualizar producto:', error);
         throw new Error('Error al actualizar producto en la base de datos.');

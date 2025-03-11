@@ -12,35 +12,33 @@ const router = Router();
 
 
 // BBDD MongoDB
-router.get('/inventory-app/v1/address/create-all-towns', address.createAllTownsAndProvinces);
-router.get('/inventory-app/v1/address/all-address-data', address.getAddressData);
-
-/* 
-//LOPD
-router.get('/inventory-app/v1/generic/lopd', comms.lopdGet) */
+router.get('/address/create-all-towns', address.createAllTownsAndProvinces);
+router.get('/address/all-address-data', address.getAddressData);
 
 // BBDD MySQL
 
 //Users
-router.post('/inventory-app/v1/user/login', user.loginUser);
-router.post('/inventory-app/v1/user/create-new-user', decodeUserMiddleware, verifyPermitRoles, user.registerUser);
+router.post('/user/login', user.loginUser);
+router.post('/user/create-new-user', decodeUserMiddleware, verifyPermitRoles, user.registerUser);
 
 // Categories
-router.post('/inventory-app/v1/categories/new-category', decodeUserMiddleware, verifyLogin, category.newCategory);
-router.get('/inventory-app/v1/categories/all-categories', decodeUserMiddleware, verifyLogin, category.allCategories);
+router.post('/categories/new-category', decodeUserMiddleware, verifyLogin, category.newCategory);
+router.get('/categories/all-categories', decodeUserMiddleware, verifyLogin, category.allCategories);
 
 // Products
-router.post('/inventory-app/v1/products/new-product', decodeUserMiddleware, verifyLogin, product.newProduct);
-router.get('/inventory-app/v1/products/all-products/:category_id',decodeUserMiddleware, verifyLogin,  product.allProductsByCategory);
-router.get('/inventory-app/v1/products/all-products',decodeUserMiddleware, verifyLogin, product.allProducts);
-router.put('/inventory-app/v1/products/:product_id',decodeUserMiddleware, verifyPermitRoles,  product.updateProduct);
-router.delete('/inventory-app/v1/products/:product_id',decodeUserMiddleware, verifyPermitRoles,  product.deleteProduct);
+router.post('/products/new-product', decodeUserMiddleware, verifyLogin, product.newProduct);
+router.get('/products/all-products/:category_id',decodeUserMiddleware, verifyLogin,  product.allProductsByCategory);
+router.get('/products/all-products',decodeUserMiddleware, verifyLogin, product.allProducts);
+router.put('/products/:product_id',decodeUserMiddleware, verifyPermitRoles,  product.updateProduct);
+router.delete('/products/delete/:product_id',decodeUserMiddleware, verifyPermitRoles,  product.deleteProduct);
 
 // Roles
-router.get('/inventory-app/v1/roles/all-roles', decodeUserMiddleware, verifyPermitRoles, role.allRoles);
+router.get('/roles/all-roles', decodeUserMiddleware, verifyPermitRoles, role.allRoles);
 
 //Inventories
-router.post('/inventory-app/v1/inventory/create-register/:product_id', decodeUserMiddleware, inventory.newRegister);
-router.post('/inventory-app/v1/inventory/all-registers', inventory.allInventoryRegisters);
+router.get('/inventory/all-registers', decodeUserMiddleware, verifyLogin,  inventory.allInventoryRegisters);
+router.post('/inventory/create-register/:product_id', decodeUserMiddleware, verifyLogin, inventory.newRegister);
+router.put('/inventory/change-quantity/:product_id', decodeUserMiddleware, verifyLogin, inventory.updateRegisterQuantity);
+router.put('/inventory/delete-register/:product_id', decodeUserMiddleware, verifyLogin, inventory.deleteRegister);
 
 export { router };
