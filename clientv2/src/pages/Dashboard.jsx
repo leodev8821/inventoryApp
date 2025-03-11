@@ -15,7 +15,7 @@ import ProhibitMessage from '../components/ProhibitMessage';
 
 const AppLayout = () => {
   const { toggleType } = useContext(RouteContext);
-  const { user, logout } = useContext(AuthContext);
+  const { user } = useContext(AuthContext);
   const location = useLocation();
   const { navigate } = useNavigation();
 

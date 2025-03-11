@@ -189,22 +189,6 @@ const NewProductForm = () => {
                                         error={Boolean(errors.image_url)}
                                         helperText={errors.image_url}
                                     />
-
-                                    <TextField
-                                        margin="normal"
-                                        size="small"
-                                        required
-                                        fullWidth
-                                        id="quantity"
-                                        name="quantity"
-                                        label="Cantidad"
-                                        type="number"
-                                        value={formData.quantity}
-                                        onChange={handleChange}
-                                        onBlur={handleSelectBlur}
-                                        error={Boolean(errors.quantity)}
-                                        helperText={errors.quantity}
-                                    />
                                 </Grid2>
 
                                 <Grid2 size={{ xs: 12 }}>

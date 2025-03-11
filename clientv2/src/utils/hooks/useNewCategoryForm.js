@@ -55,8 +55,9 @@ const useNewCategoryForm = () => {
 
             if (response?.newCategory) {
                 notifySuccess('Nueva categoría creada', { position: 'top-center' });
+                setFormData({ category: '' });
 
-                setTimeout(() => navigate(-1), 2000);
+                setTimeout(() => navigate(-1), 1000);
             } else {
                 setErrors({ server: response?.error || 'Error al crear la categoría' });
                 notifyError(response?.error || 'Error desconocido', { position: 'top-center' });

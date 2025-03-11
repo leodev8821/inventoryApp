@@ -33,6 +33,8 @@ router.get('/inventory-app/v1/categories/all-categories', decodeUserMiddleware, 
 router.post('/inventory-app/v1/products/new-product', decodeUserMiddleware, verifyLogin, product.newProduct);
 router.get('/inventory-app/v1/products/all-products/:category_id',decodeUserMiddleware, verifyLogin,  product.allProductsByCategory);
 router.get('/inventory-app/v1/products/all-products',decodeUserMiddleware, verifyLogin, product.allProducts);
+router.put('/inventory-app/v1/products/:product_id',decodeUserMiddleware, verifyPermitRoles,  product.updateProduct);
+router.delete('/inventory-app/v1/products/:product_id',decodeUserMiddleware, verifyPermitRoles,  product.deleteProduct);
 
 // Roles
 router.get('/inventory-app/v1/roles/all-roles', decodeUserMiddleware, verifyPermitRoles, role.allRoles);

@@ -69,10 +69,6 @@ export const Product = connection.define('Product', {
     image_url: {
         type: DataTypes.STRING(255),
         allowNull: true
-    },
-    quantity: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
     }
 },
     {
@@ -205,7 +201,6 @@ export async function getOneProduct(data) {
 /**
  * Actualiza un producto.
  * @param {object} data - Datos para buscar el producto.
- * @param {number} data.user_id - ID del usuario.
  * @param {number} data.category_id - ID de la categoría.
  * @param {string} data.searchValue - Nombre o código de barras del producto.
  * @param {object} newData - Datos a actualizar.
@@ -216,14 +211,10 @@ export async function updateOneProduct(data, newData) {
     try {
         const product = await Product.findOne({
             where: {
-                [Op.and]: [
-                    { category_id: data.category_id },
-                    {
-                        [Op.or]: [
-                            { product_name: data.searchValue },
-                            { bar_code: data.searchValue },
-                        ],
-                    },
+                [Op.or]: [
+                    { id: data },
+                    { product_name: data },
+                    { bar_code: data },
                 ],
             },
         });
@@ -256,15 +247,12 @@ export async function deleteProduct(data) {
     try {
         const product = await Product.findOne({
             where: {
-                [Op.and]: [
-                    { category_id: data.category_id },
-                    {
-                        [Op.or]: [
-                            { product_name: data.searchValue },
-                            { bar_code: data.searchValue },
-                        ],
-                    },
+                [Op.or]: [
+                    { id: data},
+                    { product_name: data},
+                    { bar_code: data },
                 ],
+
             },
         });
 
@@ -272,7 +260,7 @@ export async function deleteProduct(data) {
             return false;
         }
 
-        await Product.update({ deletedAt: new Date() }, {
+        await Product.destroy({
             where: { id: product.id },
         });
 

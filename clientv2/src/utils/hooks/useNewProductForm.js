@@ -16,8 +16,7 @@ const useNewProductForm = () => {
         description: '',
         buy_price: 0.0,
         sell_price: 0.0,
-        image_url: '',
-        quantity: ''
+        image_url: ''
     });
     const [errors, setErrors] = useState({});
     const [loading, setLoading] = useState(false);
@@ -100,12 +99,11 @@ const useNewProductForm = () => {
                 description: '',
                 buy_price: 0.0,
                 sell_price: 0.0,
-                image_url: '',
-                quantity: ''
+                image_url: ''
             });
 
             if (response?.newProduct) {
-                notifySuccess('Nueva producto creado', { autoClose:2000, position: 'top-center' });
+                notifySuccess('Nuevo producto creado', { autoClose:1000, position: 'top-center' });
                 setTimeout(() => navigate(-1), 2000);
             } else {
                 setErrors({ server: response?.error || 'Error al crear la categoría' });

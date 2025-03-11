@@ -1,8 +1,9 @@
-import { createNewProduct, getAllProducts, getAllProductsByCategory } from '../models/sequelize/product.model.js';
+import { createNewProduct, getAllProducts, getAllProductsByCategory, updateOneProduct, deleteProduct, getOneProduct } from '../models/sequelize/product.model.js';
 import { getOneCategory } from '../models/sequelize/category.model.js';
 import dotenv from 'dotenv';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
+import { ok } from 'assert';
 
 // Obtener la ruta absoluta del directorio del proyecto
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -20,7 +21,7 @@ export default {
 
 	newProduct: async (req, res) => {
 		try {
-			const { category_id, bar_code, product_name, description, buy_price, sell_price, image_url, quantity } = req.body;
+			const { category_id, bar_code, product_name, description, buy_price, sell_price, image_url } = req.body;
 
 			const data = {
 				category_id: category_id,
@@ -29,8 +30,7 @@ export default {
 				description,
 				buy_price,
 				sell_price,
-				image_url,
-				quantity
+				image_url
 			};
 			const newProduct = await createNewProduct(data);
 
@@ -61,8 +61,7 @@ export default {
 				description: product.description,
 				buy_price: product.buy_price,
 				sell_price: product.sell_price,
-				image_url: product.image_url,
-				quantity: product.quantity
+				image_url: product.image_url
 			}));
 
 			// Enviar la respuesta combinada
@@ -85,123 +84,159 @@ export default {
 				description: product.description,
 				buy_price: product.buy_price,
 				sell_price: product.sell_price,
-				image_url: product.image_url,
-				quantity: product.quantity
+				image_url: product.image_url
 			}));
 
 			res.status(200).json({
-                message: 'Productos obtenidos correctamente.',
-                data: resp,
-            });
+				message: 'Productos obtenidos correctamente.',
+				data: resp,
+			});
 
 		} catch (error) {
 			res.status(500).json({ message: 'Error al listar productos', error })
 		}
 	},
-/*
-	oneProduct: async (req, res) => {
-		try {
-			// Obtener los datos del cuerpo de la solicitud
-			const { login_data } = req.body
-			const user = await getOneUser(login_data);
 
-			// Enviar la respuesta combinada
-			res.status(201).json({
-				message: 'Usuario encontrado',
-				username: `${user.username}`,
-				full_name: (`${user.first_name} ${user.last_names}`),
-				address: user.address,
-				email: user.email
-			})
-		} catch (error) {
-			res.status(500).json({ message: 'Error al listar el usuario', error })
-		}
-	},
-
-	updateUser: async (req, res) => {
+	updateProduct: async (req, res) => {
 		try {
-			const { dni, name, lastnames, phone, email } = req.body;
+			const { product_id } = req.params;
+			const { category_id, bar_code, product_name, description, buy_price, sell_price, image_url } = req.body;
+
 			const newData = {
-				name,
-				lastnames,
-				phone,
-				email
+				category_id,
+				bar_code,
+				product_name,
+				description,
+				buy_price,
+				sell_price,
+				image_url
 			};
-			const user = await updateOneUser(dni, newData);
-			return res.status(201).json({
-				data: user,
-				message: "Datos del usuario modificado"
-			});
-		} catch (error) {
-			res.status(500).json({ message: 'Error al actualizar el usuario', error })
-		}
-	},
 
-	deleteUser: async (req, res) => {
-		try {
-			const { dni } = req.body;
-			const user = await deleteUser(dni);
-			return res.status(201).json({
-				data: user,
-				message: "El usuario ha sido eliminado"
-			});
+			const existing = await getOneProduct(bar_code);
 
-		} catch (error) {
-			res.status(500).json({ message: 'Error al eliminar el usuario', error })
-		}
-	},
-	/*
-	//KAN-28
-	updatePass: async (req, res) => {
-		try {
-			//Recogemos los datos del request
-			const { email } = req.body;
-
-			// Validamos que el email no sea nulo.
-			if (!email) {
-				return res
-					.status(400)
-					.json({ message: "El campo email es obligatorio" });
-			}
-
-			// Crear un arreglo con los valores para buscar el usuario.
-			const values = ["students", "email", email];
-
-			// Llamar a la función getAlumns para verificar si el usuario existe.
-			const infoAlum = await crudMysql.getAlumn(values);
-
-			// Si el usuario no existe, devolver un mensaje de error.
-			if (infoAlum.length === 0) {
-				return res.status(400).json({ message: "Usuario no encontrado" });
-			}
-
-			// Si el usuario EXISTE, se genera el token.
-			sign({ email }, "secretkey", { expiresIn: "15m" }, (err, token) => {
-				if (err) {
-					return res
-						.status(500)
-						.json({ message: "Error al generar el token", error: err });
-				}
-
-				// Responder con el token
-				return res.status(200).json({
-					message:
-						"Usuario encontrado. Aquí está el token para cambiar la contraseña.",
-					token: `Bearer ${token}`,
+			if(existing){
+				return res.status(409).json({
+					ok: false,
+					message: 'Código de Barras ya está en uso' 
 				});
+			}
+
+
+			const modifiedProduct = await updateOneProduct(product_id, newData);
+
+			if (!modifiedProduct) {
+				return res.status(404).json({
+					ok: false,
+					message: "Producto no encontrado"
+				});
+			}
+
+			return res.status(200).json({
+				ok: true,
+				message: "Producto modificado correctamente",
+				data: modifiedProduct,
 			});
-		} catch (e) {
-			console.log("Error en updatePass: ", e);
-			res.status(500).json({ message: "Error en el servidor", error: e });
+		} catch (error) {
+			res.status(500).json({ message: 'Error al actualizar el producto', error })
 		}
 	},
 
+	deleteProduct: async (req, res) => {
+		try {
+			const { product_id } = req.params;
+			const existingProduct = await getProductById(product_id);
+
+			if (!existingProduct) {
+				return res.status(404).json({
+					ok: false,
+					message: "Producto no encontrado"
+				});
+			}
+
+			return res.status(200).json({
+				ok: true,
+				message: "El producto ha sido eliminado"
+			});
+
+		} catch (error) {
+			res.status(500).json({ message: 'Error al eliminar el producto', error })
+		}
+	},
 	/*
-		Ticket de Jira: KAN-29 
-		Nombre: Rafa 
-		Fecha: 22/01/25
-		Descripcion: Funcionalidad confirmar nuevo correo funcional
-	*/
+		oneProduct: async (req, res) => {
+			try {
+				// Obtener los datos del cuerpo de la solicitud
+				const { login_data } = req.body
+				const product = await getOneproduct(login_data);
+	
+				// Enviar la respuesta combinada
+				res.status(201).json({
+					message: 'producto encontrado',
+					productname: `${product.productname}`,
+					full_name: (`${product.first_name} ${product.last_names}`),
+					address: product.address,
+					email: product.email
+				})
+			} catch (error) {
+				res.status(500).json({ message: 'Error al listar el producto', error })
+			}
+		},
+	
+		
+	
+		
+		/*
+		//KAN-28
+		updatePass: async (req, res) => {
+			try {
+				//Recogemos los datos del request
+				const { email } = req.body;
+	
+				// Validamos que el email no sea nulo.
+				if (!email) {
+					return res
+						.status(400)
+						.json({ message: "El campo email es obligatorio" });
+				}
+	
+				// Crear un arreglo con los valores para buscar el producto.
+				const values = ["students", "email", email];
+	
+				// Llamar a la función getAlumns para verificar si el producto existe.
+				const infoAlum = await crudMysql.getAlumn(values);
+	
+				// Si el producto no existe, devolver un mensaje de error.
+				if (infoAlum.length === 0) {
+					return res.status(400).json({ message: "producto no encontrado" });
+				}
+	
+				// Si el producto EXISTE, se genera el token.
+				sign({ email }, "secretkey", { expiresIn: "15m" }, (err, token) => {
+					if (err) {
+						return res
+							.status(500)
+							.json({ message: "Error al generar el token", error: err });
+					}
+	
+					// Responder con el token
+					return res.status(200).json({
+						message:
+							"producto encontrado. Aquí está el token para cambiar la contraseña.",
+						token: `Bearer ${token}`,
+					});
+				});
+			} catch (e) {
+				console.log("Error en updatePass: ", e);
+				res.status(500).json({ message: "Error en el servidor", error: e });
+			}
+		},
+	
+		/*
+			Ticket de Jira: KAN-29 
+			Nombre: Rafa 
+			Fecha: 22/01/25
+			Descripcion: Funcionalidad confirmar nuevo correo funcional
+		*/
 	/*
 	confirmPass: async (req, res) => {
 
