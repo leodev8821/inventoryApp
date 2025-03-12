@@ -6,7 +6,6 @@ import user from '../controllers/users.controller.js';
 import product from '../controllers/products.controller.js';
 import category from '../controllers/categories.controllers.js';
 import inventory from '../controllers/inventories.controller.js';
-//import token from '../utils/verifyToken.js';
 
 const router = Router();
 

@@ -60,7 +60,7 @@ export default {
 		const sequelize = getSequelizeConf();
 		try {
 			await sequelize.authenticate();
-			console.log('Conexión establecida correctamente.');
+			console.log('✅ MySQL conectado');
 
 			//await associations.setUpAssociations(); // configura las asociaciones de las tablas
 
@@ -70,7 +70,7 @@ export default {
 			await Category.sync();
 			await Product.sync();
 			await Inventory.sync();
-			console.log('Modelos sincronizados con la base de datos.');
+			console.log('✅ Modelos sincronizados con la base de datos.');
 
 			// Insertar roles si la tabla está vacía
 			const roleCount = await Role.count();
@@ -82,9 +82,9 @@ export default {
 					{ role: 4 }
 				];
 				await Role.bulkCreate(rolesToInsert);
-				console.log('Roles iniciales insertados.');
+				console.log('✅ Roles iniciales insertados.');
 			} else {
-				console.log('Los roles ya existen, no se insertaron nuevos registros.');
+				console.log('⚠️ Los roles ya existen, no se insertaron nuevos registros.');
 			}
 
 			//Insertar usuario superUser
@@ -102,11 +102,12 @@ export default {
 					isVisible: MY_SUDO_VISIBLE
 				};
 				await User.create(sudoUser)
+				console.log('✅ Superusuario creado');
 			} else {
-				console.log('Superusuario ya existe');
+				console.log('⚠️ Superusuario ya existe');
 			}
 		} catch (error) {
-			console.error('No se pudo conectar a la base de datos:', error);
+			console.error('❌ Error de conexión a MySQL:', err);
 		}
 	}
 }

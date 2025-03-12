@@ -1,34 +1,28 @@
+/** 
+ * @author          Leonardo Caicedo, aka Leodev
+ * @fileoverview    Módulo que define y gestiona el modelo de Producto.
+ * @module          product.model
+ */
 import { DataTypes, Op } from 'sequelize';
 import { getSequelizeConf } from '../../database/mysql.js';
 import { Category } from './category.model.js';
-import { User } from './user.model.js';
 
+/**
+ * Conexión a la base de datos.
+ */
 const connection = getSequelizeConf();
-
-
-/**
- * @typedef {object} ProductAttributes
- * @property {number} id - ID único del producto.
- * @property {number} user_id - ID del usuario que creó el producto.
- * @property {number} category_id - ID de la categoría del producto.
- * @property {string} bar_code - Código de barras del producto (único).
- * @property {string} product_name - Nombre del producto (único).
- * @property {string} description - Descripción del producto.
- * @property {number} buy_price - Precio de compra del producto.
- * @property {number} sell_price - Precio de venta del producto.
- * @property {string|null} image_url - URL de la imagen del producto (opcional).
- * @property {Date} createdAt - Fecha de creación del registro.
- * @property {Date} updatedAt - Fecha de última actualización del registro.
- */
-
-/**
- * @typedef {import('sequelize').Model<ProductAttributes>} ProductInstance
- */
 
 /**
  * Definición del modelo Producto.
- *
- * @type {import('sequelize').ModelStatic<ProductInstance>}
+ * @typedef {object} ProductAttributes
+ * @property {number} id - ID único del producto.
+ * @property {number} category_id - ID de la categoría a la que pertenece el producto.
+ * @property {string} bar_code - Código de barras del producto.
+ * @property {string} product_name - Nombre del producto.
+ * @property {string} description - Descripción del producto.
+ * @property {number} buy_price - Precio de compra del producto.
+ * @property {number} sell_price - Precio de venta del producto.
+ * @property {string|null} image_url - URL de la imagen del producto.
  */
 export const Product = connection.define('Product', {
     id: {
@@ -94,13 +88,19 @@ Category.hasMany(Product, { foreignKey: 'category_id', onDelete: 'CASCADE' });
 
 /**
  * Crea un nuevo producto.
- * @param {object} data - Datos del producto.
- * @param {number} data.user_id - ID del usuario.
- * @param {number} data.category_id - ID de la categoría.
- * @param {string} data.product_name - Nombre del producto.
+ *
+ * @async
+ * @function createNewProduct
+ * @param {object} data - Datos del nuevo producto.
+ * @param {number} data.category_id - ID de la categoría del producto.
  * @param {string} data.bar_code - Código de barras del producto.
- * @returns {Promise<object|null>} - Producto creado o null si ya existe.
- * @throws {Error} - Error al crear el producto.
+ * @param {string} data.product_name - Nombre del producto.
+ * @param {string} data.description - Descripción del producto.
+ * @param {number} data.buy_price - Precio de compra del producto.
+ * @param {number} data.sell_price - Precio de venta del producto.
+ * @param {string|null} data.image_url - URL de la imagen del producto.
+ * @returns {Promise<ProductAttributes|null>} - El nuevo producto creado o null si ya existe.
+ * @throws {Error} - Lanza un error si hay un problema al consultar la base de datos.
  */
 export async function createNewProduct(data) {
     try {
@@ -115,7 +115,8 @@ export async function createNewProduct(data) {
                         ]
                     }
                 ]
-            }
+            },
+            raw: true
         });
 
         if (existProduct) {
@@ -131,16 +132,16 @@ export async function createNewProduct(data) {
 };
 
 /**
- * Obtiene todos los productos de un usuario.
- * @param {object} data - Datos para filtrar los productos.
- * @param {number} data.user_id - ID del usuario.
- * @param {number} data.category_id - ID de la categoría.
- * @returns {Promise<Array<object>>} - Lista de productos.
- * @throws {Error} - Error al obtener los productos.
+ * Obtiene todos los productos.
+ *
+ * @async
+ * @function getAllProducts
+ * @returns {Promise<ProductAttributes[]>} - Lista de todos los productos.
+ * @throws {Error} - Lanza un error si hay un problema al consultar la base de datos.
  */
 export async function getAllProducts() {
     try {
-        return await Product.findAll({raw: true});
+        return await Product.findAll({ raw: true });
     } catch (error) {
         console.error('Error al obtener productos:', error);
         throw new Error(`Error al obtener productos: ${error.message}`);
@@ -148,19 +149,22 @@ export async function getAllProducts() {
 };
 
 /**
- * Obtiene todos los productos de un usuario y categoría.
- * @param {object} data - Datos para filtrar los productos.
- * @param {number} data.user_id - ID del usuario.
- * @param {number} data.category_id - ID de la categoría.
- * @returns {Promise<Array<object>>} - Lista de productos.
- * @throws {Error} - Error al obtener los productos.
+ * Obtiene todos los productos por categoría.
+ *
+ * @async
+ * @function getAllProductsByCategory
+ * @param {object} data - Datos para filtrar los productos por categoría.
+ * @param {number} data.category_id - ID de la categoría para filtrar los productos.
+ * @returns {Promise<ProductAttributes[]>} - Lista de productos filtrados por categoría.
+ * @throws {Error} - Lanza un error si hay un problema al consultar la base de datos.
  */
 export async function getAllProductsByCategory(data) {
     try {
         return await Product.findAll({
             where: {
                 category_id: data.category_id
-            }
+            },
+            raw: true
         });
     } catch (error) {
         console.error('Error al obtener productos:', error);
@@ -169,12 +173,13 @@ export async function getAllProductsByCategory(data) {
 };
 
 /**
- * Obtiene un producto por nombre o código de barras.
- * @param {object} data - Datos del producto.
- * @param {number} data.category_id - ID de la categoría.
- * @param {string} data.searchValue - Nombre o código de barras del producto.
- * @returns {Promise<object|null>} - Producto encontrado o null.
- * @throws {Error} - Error al obtener el producto.
+ * Obtiene un producto por ID, nombre o código de barras.
+ *
+ * @async
+ * @function getOneProduct
+ * @param {string|number} data - ID, nombre o código de barras del producto a buscar.
+ * @returns {Promise<ProductAttributes|null>} - El producto encontrado o null si no existe.
+ * @throws {Error} - Lanza un error si hay un problema al consultar la base de datos.
  */
 export async function getOneProduct(data) {
     try {
@@ -185,7 +190,7 @@ export async function getOneProduct(data) {
                     { product_name: data },
                     { bar_code: data }
                 ]
-            }, 
+            },
             raw: true
         });
 
@@ -200,13 +205,14 @@ export async function getOneProduct(data) {
 };
 
 /**
- * Actualiza un producto.
- * @param {object} data - Datos para buscar el producto.
- * @param {number} data.category_id - ID de la categoría.
- * @param {string} data.searchValue - Nombre o código de barras del producto.
- * @param {object} newData - Datos a actualizar.
- * @returns {Promise<object|null>} - El producto actualizado o null.
- * @throws {Error} - Lanza un error si hay un problema con la base de datos.
+ * Actualiza un producto por ID, nombre o código de barras.
+ *
+ * @async
+ * @function updateOneProduct
+ * @param {string|number} data - ID, nombre o código de barras del producto a actualizar.
+ * @param {object} newData - Datos para actualizar el producto.
+ * @returns {Promise<ProductAttributes|null>} - El producto actualizado o null si no existe.
+ * @throws {Error} - Lanza un error si hay un problema al consultar la base de datos.
  */
 export async function updateOneProduct(data, newData) {
     try {
@@ -231,30 +237,29 @@ export async function updateOneProduct(data, newData) {
 
         return { ...product, ...newData };
     } catch (error) {
-        console.error('Error al actualizar producto:', error);
-        throw new Error('Error al actualizar producto en la base de datos.');
+        console.error('Error al actualizar producto:', error.message);
+        throw new Error(`Error al actualizar producto en la base de datos: ${error.message}`);
     }
 };
 
 /**
- * Elimina un producto lógicamente.
- * @param {object} data - Datos para buscar el producto.
- * @param {number} data.user_id - ID del usuario.
- * @param {number} data.category_id - ID de la categoría.
- * @param {string} data.searchValue - Nombre o código de barras del producto.
- * @returns {Promise<boolean>} - True si se eliminó, false si no.
- * @throws {Error} - Lanza un error si hay un problema con la base de datos.
+ * Elimina un producto por ID, nombre o código de barras.
+ *
+ * @async
+ * @function deleteProduct
+ * @param {string|number} data - ID, nombre o código de barras del producto a eliminar.
+ * @returns {Promise<boolean>} - `true` si el producto fue eliminado, `false` si no se encontró.
+ * @throws {Error} - Lanza un error si hay un problema al consultar la base de datos.
  */
 export async function deleteProduct(data) {
     try {
         const product = await Product.findOne({
             where: {
                 [Op.or]: [
-                    { id: data},
-                    { product_name: data},
+                    { id: data },
+                    { product_name: data },
                     { bar_code: data },
                 ],
-
             },
         });
 
@@ -269,6 +274,6 @@ export async function deleteProduct(data) {
         return true;
     } catch (error) {
         console.error('Error al eliminar producto:', error);
-        throw new Error('Error al eliminar producto de la base de datos.');
+        throw new Error(`Error al eliminar producto de la base de datos: ${error.message}`);
     }
 };

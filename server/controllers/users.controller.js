@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import bcrypt from 'bcryptjs';
+import { ok } from 'assert';
 
 // Obtener la ruta absoluta del directorio del proyecto
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -29,21 +30,30 @@ export default {
 			const { login_data, password } = req.body;
 
 			if (!login_data || !password) {
-				return res.status(400).json({ error: 'Faltan credenciales' });
+				return res.status(400).json({ 
+					ok: false,
+					error: 'Faltan credenciales' 
+				});
 			}
 
 			const user = await getOneUser(login_data);
 
 			//verificar usuario
 			if (!user) {
-				return res.status(404).json({ error: 'Usuario no encontrado.' });
+				return res.status(404).json({ 
+					ok: false,
+					error: 'Usuario no encontrado.' 
+				});
 			}
 
 			//Verificar contraseña
 			const validPass = await bcrypt.compare(password, user.pass);
 
 			if (!validPass) {
-				return res.status(401).json({ message: 'Credenciales incorrectas' });
+				return res.status(401).json({ 
+					ok: false, 
+					message: 'Credenciales incorrectas' 
+				});
 			}
 
 			// Datos que irán en el token
@@ -60,17 +70,24 @@ export default {
 			try {
 				const tokenResponse = await tokenUtils.signJwt(payload);
 				res.status(200).json({
+					ok: true,
 					message: tokenResponse.message,
 					token: tokenResponse.token
 				});
 			} catch (error) {
 				console.error('Error al generar el token:', error);
-				return res.status(500).json({ error: 'Error al generar el token', details: error });
+				return res.status(500).json({ 
+					ok: false,
+					error: 'Error al generar el token', details: error 
+				});
 			}
 
 		} catch (error) {
 			console.error('Error en loginUser:', error);
-			res.status(500).json({ message: 'Error en loginUser', error: error.message });
+			res.status(500).json({ 
+				ok: false, 
+				message: 'Error en loginUser', error: error.message 
+			});
 		}
 	},
 
@@ -80,7 +97,10 @@ export default {
 			const { role_id, username, first_name, last_names, email, pass, address } = req.body;
 
 			if(role_id === sudoRole) {
-				return res.status(403).json({ message: 'No tienes autorización para crear este tipo de usuario'})
+				return res.status(403).json({ 
+					ok: false,
+					message: 'No tienes autorización para crear este tipo de usuario'
+				})
 			}
 
 			const data = {
@@ -97,10 +117,14 @@ export default {
 			const newUser = await createNewUser(data);
 
 			if (!newUser) {
-				return res.status(409).json({ message: 'Usuario ya existe en la BD' });
+				return res.status(409).json({
+					ok: false, 
+					message: 'Usuario ya existe en la BD' 
+				});
 			}
 
 			res.status(201).json({
+				ok: true,
 				message: 'Nuevo usuario creado',
 				full_name: (`${newUser.first_name} ${newUser.last_names}`),
 				dni: newUser.dni,
@@ -108,7 +132,10 @@ export default {
 				email: newUser.email
 			});
 		} catch (error) {
-			res.status(500).json({ message: 'Error al crear usuario', error })
+			res.status(500).json({ 
+				ok: false,
+				message: 'Error al crear usuario', error 
+			})
 		}
 	},
 
@@ -125,21 +152,29 @@ export default {
 			}));
 
 			// Enviar la respuesta combinada
-			res.status(201).json(resp)
+			res.status(201).json({ 
+				ok: true,
+				message: 'Usuarios encontrados',
+				data: resp
+			})
 
 		} catch (error) {
-			res.status(500).json({ message: 'Error al listar usuarios', error })
+			res.status(500).json({ 
+				ok: false, 
+				message: 'Error al listar usuarios', error 
+			})
 		}
 	},
 
 	oneUser: async (req, res) => {
 		try {
 			// Obtener los datos del cuerpo de la solicitud
-			const { login_data } = req.body
-			const user = await getOneUser(login_data);
+			const { userId } = req.params;
+			const user = await getOneUser(userId);
 
 			// Enviar la respuesta combinada
 			res.status(201).json({
+				ok: true,
 				message: 'Usuario encontrado',
 				username: `${user.username}`,
 				full_name: (`${user.first_name} ${user.last_names}`),
@@ -147,126 +182,55 @@ export default {
 				email: user.email
 			})
 		} catch (error) {
-			res.status(500).json({ message: 'Error al listar el usuario', error })
+			res.status(500).json({
+				ok: true,
+				message: 'Error al listar el usuario', error 
+			})
 		}
 	},
 
 	updateUser: async (req, res) => {
 		try {
-			const { dni, name, lastnames, phone, email } = req.body;
+			const { userId } = req.params;
+			const { username, first_name, last_names, address, email } = req.body;
 			const newData = {
-				name,
-				lastnames,
-				phone,
+				username,
+				first_name,
+				last_names,
+				address,
 				email
 			};
-			const user = await updateOneUser(dni, newData);
+			const user = await updateOneUser(userId, newData);
 			return res.status(201).json({
+				ok: true,
+				message: "Datos del usuario modificado",
 				data: user,
-				message: "Datos del usuario modificado"
 			});
 		} catch (error) {
-			res.status(500).json({ message: 'Error al actualizar el usuario', error })
+			res.status(500).json({
+				ok: false,
+				message: 'Error al actualizar el usuario', error 
+			})
 		}
 	},
 
 	deleteUser: async (req, res) => {
 		try {
-			const { dni } = req.body;
-			const user = await deleteUser(dni);
+			const { userId } = req.params;
+			const user = await deleteUser(userId);
 			return res.status(201).json({
-				data: user,
-				message: "El usuario ha sido eliminado"
+				ok: true,
+				message: "El usuario ha sido eliminado",
+				data: user
 			});
 
 		} catch (error) {
-			res.status(500).json({ message: 'Error al eliminar el usuario', error })
-		}
-	},
-	/*
-	//KAN-28
-	updatePass: async (req, res) => {
-		try {
-			//Recogemos los datos del request
-			const { email } = req.body;
-
-			// Validamos que el email no sea nulo.
-			if (!email) {
-				return res
-					.status(400)
-					.json({ message: "El campo email es obligatorio" });
-			}
-
-			// Crear un arreglo con los valores para buscar el usuario.
-			const values = ["students", "email", email];
-
-			// Llamar a la función getAlumns para verificar si el usuario existe.
-			const infoAlum = await crudMysql.getAlumn(values);
-
-			// Si el usuario no existe, devolver un mensaje de error.
-			if (infoAlum.length === 0) {
-				return res.status(400).json({ message: "Usuario no encontrado" });
-			}
-
-			// Si el usuario EXISTE, se genera el token.
-			sign({ email }, "secretkey", { expiresIn: "15m" }, (err, token) => {
-				if (err) {
-					return res
-						.status(500)
-						.json({ message: "Error al generar el token", error: err });
-				}
-
-				// Responder con el token
-				return res.status(200).json({
-					message:
-						"Usuario encontrado. Aquí está el token para cambiar la contraseña.",
-					token: `Bearer ${token}`,
-				});
-			});
-		} catch (e) {
-			console.log("Error en updatePass: ", e);
-			res.status(500).json({ message: "Error en el servidor", error: e });
-		}
-	},
-
-	/*
-		Ticket de Jira: KAN-29 
-		Nombre: Rafa 
-		Fecha: 22/01/25
-		Descripcion: Funcionalidad confirmar nuevo correo funcional
-	*/
-	/*
-	confirmPass: async (req, res) => {
-
-		try {
-			verify(req.params.token, 'secretkey', (err, token) => {
-				//Si hay un error repondemos con él
-				if (err) {
-					console.log("Error en validating token: ", err);
-					return res
-						.status(500)
-						.json({ message: "Error al validar el token", error: err });
-					//Si es verificado...
-				} else {
-					//Extraemos el email del payload
-					const { email } = token;
-
-					//Actualizamos la base de datos
-					const values = ['students', 'pass', req.body.pass, 'email', email];
-					crudMysql.updateAlumnValue(values);
-
-					// Enviamos la respuesta exitosa
-
-					console.log("Contraseña actualizada correctamente");
-					return res.status(500).json({ message: 'Contraseña actualizada correctamente.' });
-				}
+			res.status(500).json({
+				ok: false, 
+				message: 'Error al eliminar el usuario', error 
 			})
-		} catch (e) {
-			console.log("Error en updatePass: ", e);
-			res.status(500).json({ message: "Error en el servidor", error: e });
 		}
-
-	}*/
+	},
+	
+	// TODO: Implementar función para cambiar contraseña, confirmar cuenta, recuperar contraseña
 }
-
-// PASS RECOVER

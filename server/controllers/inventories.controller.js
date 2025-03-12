@@ -11,13 +11,19 @@ export default {
 			const { quantity, isVisible } = req.body;
 
 			if (!product_id || quantity === undefined || isVisible === undefined) {
-				return res.status(400).json({ error: 'Los campos Cantidad y Visibilidad son requeridos.' });
+				return res.status(400).json({
+					ok: false,
+					message: 'Los campos Cantidad y Visibilidad son requeridos.'
+				});
 			}
 
 			const product = await getOneProduct(product_id);
 			
 			if (!product) {
-				return res.status(404).json({ error: 'No se encuentra el producto' });
+				return res.status(404).json({
+					ok: false,
+					message: 'No se encuentra el producto',
+				});
 			}
 
 			const value = quantity * product.buy_price;
@@ -30,12 +36,17 @@ export default {
 			});
 
 			res.status(201).json({
+				ok: true,
 				message: 'Nuevo registro de inventario creado',
-				newInventory
+				data: newInventory
 			});
 		} catch (error) {
 			console.error(error);
-			return res.status(500).json({ error: 'Error al crear el registro de inventario.' });
+			return res.status(500).json({
+				ok: false,
+				message: "Error al crear el registro de inventario.",
+				error: error.message 
+			});
 		}
 	},
 
@@ -44,7 +55,10 @@ export default {
 			const inventories = await getAllInventories();
 
 			if (!inventories) {
-				return res.status(404).json({ message: 'Registros de inventarios no encontrados' });
+				return res.status(404).json({
+					ok: false,
+					message: 'Registros de inventarios no encontrados'
+				});
 			}
 			
 			// Formatea la respuesta
@@ -56,10 +70,18 @@ export default {
 				isVisible: inventories.isVisible
 			};
 			
-			res.status(200).json(resp);
+			res.status(200).json({
+				ok: true,
+				message: 'Registros de inventarios encontrados',
+				data: resp
+			});
 		} catch (error) {
 			console.error('Error al obtener los registros de inventarios:', error);
-			res.status(500).json({ message: 'Error al obtener los registros de inventarios', error });
+			res.status(500).json({
+				ok: false,
+				message: 'Error al obtener los registros de inventarios', 
+				error: error.message
+			});
 		}
 	},
 
@@ -95,7 +117,11 @@ export default {
 			});
 		} catch (error) {
 			console.error('Error al obtener el registro de inventario:', error);
-			res.status(500).json({ message: 'Error al obtener el registro de inventario', error });
+			res.status(500).json({
+				ok: false,
+				message: 'Error al obtener el registro de inventario',
+				error: error.message 
+			});
 		}
 	},
 
@@ -130,7 +156,11 @@ export default {
 			});
 		} catch (error) {
 			console.error('Error al obtener el registro de inventario:', error);
-			res.status(500).json({ message: 'Error al obtener el registro de inventario', error });
+			res.status(500).json({
+				ok: false,
+				message: 'Error al obtener el registro de inventario',
+				error: error.message
+			});
 		}
 	}
 }

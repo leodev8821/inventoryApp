@@ -1,24 +1,16 @@
 import puppeteer from 'puppeteer';
 
 /**
- * Extrae información detallada de los municipios desde una tabla específica en https://www.ign.es/web/ane-datos-geograficos/-/datos-geograficos/datosPoblacion?tipoBusqueda=municipios.
+ * Extrae información detallada de los municipios desde una tabla específica en 
+ * https://www.ign.es/web/ane-datos-geograficos/-/datos-geograficos/datosPoblacion?tipoBusqueda=municipios.
  *
  * @async
  * @function getTownsInfo
  * @param {string} link - URL de la página que contiene la tabla con la información de los municipios.
- * @returns {Promise<Array<{ town: string, province: string, INE_code: string }>>} - Una promesa que resuelve en un array de objetos, donde cada objeto contiene el nombre del municipio, la provincia y el código INE.
+ * @returns {Promise<Array<{ town: string, province: string, INE_code: string }>>} - Una promesa que resuelve en un array de objetos, 
+ * donde cada objeto contiene el nombre del municipio, la provincia y el código INE.
  *
  * @throws {Error} - Lanza un error si ocurre un problema durante el proceso de scraping o si la estructura de la página no coincide con lo esperado.
- *
- * @example
- * const townsInfo = await getTownsInfo('https://www.ign.es/web/ane-datos-geograficos/-/datos-geograficos/datosPoblacion?tipoBusqueda=municipios');
- * console.log(townsInfo);
- * // [
- * //   { town: 'Abengibre', province: 'Albacete', INE_code: '02001' },
- * //   { town: 'Alatoz', province: 'Albacete', INE_code: '02002' },
- * //   { town: 'Albacete', province: 'Albacete', INE_code: '02003' },
- * //   ...
- * // ]
  */
 const getTownsInfo = async (link) => {
     let browser;
@@ -50,9 +42,9 @@ const getTownsInfo = async (link) => {
         towns.shift(); // Elimina el primer elemento que no es un municipio
 
         return towns;
-    } catch (e) {
-        console.error(`${e}`);
-        throw new Error('Error en la función getTownsInfo');
+    } catch (error) {
+        console.error(`❌ Error al hacer scraping de municipios: ${error.message}`);
+        throw new Error(`Error al hacer scraping de municipios: ${error.message}`);
     } finally {
         if (browser) await browser.close();
     }
@@ -63,39 +55,29 @@ const getTownsInfo = async (link) => {
  *
  * @async
  * @function scrapeSpainsTowns
- * @returns {Promise<Array<{ municipio: string, provincia: string, cod_INE: string }>>} - Una promesa que resuelve en un array de objetos, donde cada objeto contiene el nombre del municipio, la provincia y el código INE.
+ * @returns {Promise<Array<{ municipio: string, provincia: string, cod_INE: string }>>} - Una promesa que resuelve en un array de objetos, 
+ * donde cada objeto contiene el nombre del municipio, la provincia y el código INE.
  *
- * @throws {Error} - Lanza un error si ocurre un problema durante el proceso de scraping, incluyendo errores al obtener la información de la página del IGN o si la estructura de la página no coincide con lo esperado.
+ * @throws {Error} - Lanza un error si ocurre un problema durante el proceso de scraping, incluyendo errores al obtener la información de la 
+ * página del IGN o si la estructura de la página no coincide con lo esperado.
  *
- * @example
- * scrapeSpainsTowns()
- * .then(townsInfo => console.log(townsInfo))
- * .catch(error => console.error("Error:", error));
- *
- * // Salida esperada:
- * // [
- * //   { municipio: 'Abengibre', provincia: 'Albacete', cod_INE: '02001' },
- * //   { municipio: 'Alatoz', provincia: 'Albacete', cod_INE: '02002' },
- * //   { municipio: 'Albacete', provincia: 'Albacete', cod_INE: '02003' },
- * //   ...
- * // ]
  */
 export async function scrapeSpainsTownsAndProvinces() {
     try {
         let allTowns = [];
 
-        console.log("Obteniendo información de las provincias y sus municipios...");
+        console.log("⏳ Obteniendo información de las provincias y sus municipios...");
 
         const towns = await getTownsInfo('https://www.ign.es/web/ane-datos-geograficos/-/datos-geograficos/datosPoblacion?tipoBusqueda=municipios');
         allTowns = allTowns.concat(towns);
 
-        console.log("Información de las provincias y sus municipios obtenida correctamente.");
+        console.log("✅ Información de las provincias y sus municipios obtenida correctamente.");
 
         return {
             towns: allTowns
         };
-    } catch (e) {
-        console.error("Error en scrapeSpainsTownsAndProvinces:", e);
-        throw new Error('Error en la función scrapeSpainsTownsAndProvinces');
+    } catch (error) {
+        console.error("❌ Error al hacer scraping: ", error.message);
+        throw new Error(`Error al hacer scraping: ${error.message}`);
     }
 }

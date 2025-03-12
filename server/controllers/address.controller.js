@@ -21,22 +21,13 @@ export default {
 
 		try {
 
-			/*{
-			towns: allTowns,
-			provinces: provinces
-			}*/
-
 			const { towns } = await scrapeSpainsTownsAndProvinces();
-
-			//await mongo.connectToMongo();
-
-			console.log("Preparado para insertar datos de municipios en MongoBD...");
 
 			for (const town of towns) {
 				await createTown(town);
 			}
 
-			console.log("¡Inserción de los datos a MongoBD finalizada!");
+			console.log("✅ ¡Inserción de pueblos y provincias a MongoBD finalizada!");
 
 			return res.status(201).json({
 				ok: true,
@@ -58,10 +49,8 @@ export default {
 			let provinces = [];
 			let uniqueProvinces = new Set(); // Usamos un Set para asegurar provincias únicas fácilmente
 
-			console.log('Recuperando todos los pueblos...');
+			// Obtener todos los pueblos y tipos de vía
 			const towns = await getAllSpainTowns();
-
-			console.log('Recuperando los tipos de vías...');
 			const types = await getAllAddressTypes();
 
 			// Extraer provincias únicas
@@ -87,7 +76,5 @@ export default {
 				error: error.message
 			});
 		}
-
 	},
-
 }

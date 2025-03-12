@@ -1,24 +1,21 @@
-import { DataTypes, Op } from 'sequelize';
-import { User } from './user.model.js';
+/** 
+ * @author          Leonardo Caicedo, aka Leodev
+ * @fileoverview    Módulo que define y gestiona el modelo de Categoría.
+ * @module          category.model
+ */
+import { DataTypes } from 'sequelize';
 import { getSequelizeConf } from '../../database/mysql.js';
 
+/**
+ * Conexión a la base de datos.
+ */
 const connection = getSequelizeConf();
 
 /**
+ * Definición del modelo Categoría.
  * @typedef {object} CategoryAttributes
  * @property {number} id - ID único de la categoría.
- * @property {number} user_id - ID del usuario al que pertenece la categoría.
  * @property {string} category - Nombre de la categoría (debe ser único por usuario).
- */
-
-/**
- * @typedef {import('sequelize').Model<CategoryAttributes>} CategoryInstance
- */
-
-/**
- * Definición del modelo Categoría.
- *
- * @type {import('sequelize').ModelStatic<CategoryInstance>}
  */
 export const Category = connection.define('Category', {
     id: {
@@ -42,9 +39,8 @@ export const Category = connection.define('Category', {
  * @async
  * @function createNewCategory
  * @param {object} data - Datos de la nueva categoría.
- * @param {number} data.user_id - ID del usuario propietario de la categoría.
  * @param {string} data.category - Nombre de la categoría.
- * @returns {Promise<object|null>} - La nueva categoría creada (objeto) o null si ya existe.
+ * @returns {Promise<CategoryAttributes|null>} - La nueva categoría creada (objeto) o null si ya existe.
  * @throws {Error} - Lanza un error si hay un problema al consultar la base de datos.
  */
 export async function createNewCategory(data) {
@@ -52,7 +48,7 @@ export async function createNewCategory(data) {
         const existCategory = await Category.findOne({
             where: {
                 category: data.category
-            }
+            }, raw: true
         });
         if (existCategory) {
             return null;
@@ -60,22 +56,20 @@ export async function createNewCategory(data) {
         const newCategory = await Category.create(data);
         return newCategory.dataValues;
     } catch (error) {
-        console.error('Error al crear la categoría:', error);
-        throw new Error('Error al crear la categoría en la base de datos.');
+        console.error('Error al crear la categoría:', error.message);
+        throw new Error(`Error al crear la categoría en la base de datos: ${error.message}`);
     }
 };
 
 /**
- * Obtiene todas las categorías de un usuario.
+ * Obtiene todas las categorías.
  *
  * @async
  * @function getAllCategories
- * @param {object} data - Datos para filtrar las categorías.
- * @param {number} data.user_id - ID del usuario para filtrar las categorías.
- * @returns {Promise<Array<object>>} - Lista de todas las categorías del usuario.
+ * @returns {Promise<CategoryAttributes[]>} - Lista de todas las categorías.
  * @throws {Error} - Lanza un error si hay un problema al consultar la base de datos.
  */
-export async function getAllCategories(userId) {
+export async function getAllCategories() {
     try {
         // Obtener todas las categorías asociadas al usuario
         const categories = await Category.findAll({
@@ -83,46 +77,45 @@ export async function getAllCategories(userId) {
             order: [['category', 'ASC']]
         });
 
-        return categories; // Devuelve directamente el array de categorías
+        return categories;
     } catch (error) {
-        console.error('Error al obtener las categorías:', error);
-        throw new Error('Error al obtener las categorías de la base de datos.');
+        console.error('Error al obtener las categorías:', error.message);
+        throw new Error(`Error al obtener las categorías de la base de datos: ${error.message}`);
     }
 }
 
 /**
- * Obtiene una categoría por nombre y usuario.
+ * Obtiene una categoría por nombre.
  *
  * @async
  * @function getOneCategory
  * @param {object} data - Datos de la categoría a buscar.
- * @param {number} data.user_id - ID del usuario propietario de la categoría.
  * @param {string} data.category - Nombre de la categoría a buscar.
- * @returns {Promise<object|null>} - La categoría encontrada (objeto) o null si no existe.
+ * @returns {Promise<CategoryAttributes|null>} - La categoría encontrada (objeto) o null si no existe.
  * @throws {Error} - Lanza un error si hay un problema al consultar la base de datos.
  */
 export async function getOneCategory(data) {
     try {
         const category = await Category.findOne({
-            where: { category: data.category }
+            where: { category: data.category },
+            raw: true
         });
         if (!category) {
             return null;
         }
-        return category.dataValues;
+        return category;
     } catch (error) {
         console.error(`Error al buscar la categoría "${data.category}":`, error.message);
-        throw new Error('Error al obtener la categoría de la base de datos.');
+        throw new Error(`Error al obtener la categoría de la base de datos: ${error.message}`);
     }
 };
 
 /**
- * Elimina una categoría por nombre y usuario.
+ * Elimina una categoría por nombre.
  *
  * @async
  * @function deleteCategory
  * @param {object} data - Datos de la categoría a eliminar.
- * @param {number} data.user_id - ID del usuario propietario de la categoría.
  * @param {string} data.category - Nombre de la categoría a eliminar.
  * @returns {Promise<boolean>} - True si la categoría fue eliminada, false si no.
  * @throws {Error} - Lanza un error si hay un problema al consultar la base de datos.
@@ -132,6 +125,7 @@ export async function deleteCategory(data) {
         const category = await Category.findOne({
             where: { category: data.category }
         });
+
         if (category) {
             await category.destroy();
             return true;
@@ -139,7 +133,7 @@ export async function deleteCategory(data) {
             return false;
         }
     } catch (error) {
-        console.error('Error al eliminar la categoría:', error);
-        throw new Error('Error al eliminar la categoría de la base de datos.');
+        console.error('Error al eliminar la categoría:', error.message);
+        throw new Error(`Error al eliminar la categoría de la base de datos: ${error.message}`);
     }
 }

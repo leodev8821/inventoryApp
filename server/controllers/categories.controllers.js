@@ -9,23 +9,27 @@ export default {
             const { category } = req.body;
 
             if (category === undefined) {
-                return res.status(400).json({ error: 'El campo categoría es requerido.' });
+                return res.status(400).json({
+                    ok: false,
+                    message: 'El campo categoría es requerido.' 
+                });
             }
-            const newCategory = await createNewCategory({
-                category,
-            });
+            const newCategory = await createNewCategory({ category });
 
             if (!newCategory) {
-                return res.status(409).json({ message: 'Categoría ya existe en la BD' });
+                return res.status(409).json({
+                    ok: false,
+                    message: 'Categoría ya existe en la BD' 
+                });
             }
 
             res.status(201).json({
                 ok: true,
                 message: 'Nueva categoría creada',
-                newCategory: newCategory.category
+                data: newCategory.category
             });
         } catch (error) {
-            console.error(error);
+            console.error(error.message);
             return res.status(500).json({
                 ok: false,
                 message: 'Error al crear la categoría.',
@@ -39,7 +43,10 @@ export default {
             const categories = await getAllCategories();
 
             if (!categories || categories.length === 0) {
-                return res.status(404).json({ message: 'Categorías no encontradas o no pertenecen al usuario.' });
+                return res.status(404).json({
+                    ok: false,
+                    message: 'Categorías no encontradas' 
+                });
             }
 
             // Formatea la respuesta
@@ -54,7 +61,7 @@ export default {
                 data: formattedResponse,
             });
         } catch (error) {
-            console.error('Error al obtener las categorías:', error);
+            console.error('Error al obtener las categorías:', error.message);
             res.status(500).json({
 				ok: false,
                 message: 'Error interno al obtener las categorías.', 
@@ -65,14 +72,15 @@ export default {
 
     oneCategory: async (req, res) => {
         try {
-            // Extrae el id del registro de inventario desde la URL
             const { category } = req.params;
 
-            // Llama a la función de servicio para obtener la categoría
             const categoryFound = await getOneCategory(category);
 
             if (!categoryFound) {
-                return res.status(404).json({ message: 'Categoría no encontrada o no pertenece al usuario.' });
+                return res.status(404).json({
+                    ok: false,
+                    message: 'Categoría no encontrada' 
+                });
             }
 
             // Formatea la respuesta
@@ -87,28 +95,32 @@ export default {
                 data: resp
             });
         } catch (error) {
-            console.error('Error al obtener el registro de inventario:', error);
-            res.status(500).json({ message: 'Error al obtener el registro de inventario', error });
+            console.error('Error al obtener el registro de inventario:', error.message);
+            res.status(500).json({
+                ok: false,
+                message: 'Error al obtener el registro de inventario',
+                error: error.message
+            });
         }
     },
 
     deleteCategory: async (req, res) => {
         try {
-            // Extrae el id del registro de inventario desde la URL
             const { category } = req.params;
 
             const categoryToDelete = await deleteCategory(category);
 
             return res.status(201).json({
 				ok: true,
-                message: "la categoría ha sido eliminada",
+                message: "La categoría ha sido eliminada",
                 data: categoryToDelete,
             });
 
         } catch (error) {
             res.status(500).json({ 
 				ok: false,
-                message: 'Error al eliminar la categoría', error 
+                message: 'Error al eliminar la categoría',
+                error: error.message
             })
         }
     }

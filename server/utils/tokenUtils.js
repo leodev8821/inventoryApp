@@ -44,7 +44,7 @@ const tokenUtils = {
             const decoded = jwt.verify(token, SECRET_KEY);
             return decoded;
         } catch (error) {
-            console.error('Error al verificar token:', error.message);
+            console.error('❌ Error al verificar token:', error.message);
             return null;
         }
     },

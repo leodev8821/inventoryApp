@@ -1,29 +1,25 @@
-import { DataTypes, Op } from 'sequelize';
+/** 
+ * @author          Leonardo Caicedo, aka Leodev
+ * @fileoverview    Módulo que define y gestiona el modelo de Rol.
+ * @module          role.model
+ */
+import { DataTypes } from 'sequelize';
 import { getSequelizeConf } from '../../database/mysql.js';
-import dotenv from 'dotenv';
-import { join, dirname } from 'path';
-import { fileURLToPath } from 'url';
 
+/**
+ * Conexión a la base de datos.
+ */
 const connection = getSequelizeConf();
 
 /**
+ * Atributos del modelo Rol.
  * @typedef {object} RoleAttributes
- * @property {number} id - ID único de la Rol.
+ * @property {number} id - ID único del Rol.
  * @property {number} role - ID del rol al que pertenece (mas alto, mas permisos).
  * 1 - Empleado
  * 2 - Encargado
  * 3 - Administrador
  * 4 - SuperUser (*^*)
- */
-
-/**
- * @typedef {import('sequelize').Model<RoleAttributes>} RoleInstance
- */
-
-/**
- * Definición del modelo Rol.
- *
- * @type {import('sequelize').ModelStatic<RoleInstance>}
  */
 export const Role = connection.define('Role', {
     id: {
@@ -42,7 +38,12 @@ export const Role = connection.define('Role', {
 });
 
 /**
- * Obtiene todos los Roles de un usuario.
+ * Obtiene todos los Roles.
+ *
+ * @async
+ * @function getAllRoles
+ * @returns {Promise<RoleAttributes[]>} - Lista de todos los roles.
+ * @throws {Error} - Lanza un error si hay un problema al consultar la base de datos.
  */
 export async function getAllRoles() {
     try {
@@ -51,7 +52,7 @@ export async function getAllRoles() {
         });
         return roles;
     } catch (error) {
-        console.error('Error al obtener los Roles:', error);
-        throw new Error('Error al obtener los Roles de la base de datos.');
+        console.error('Error al obtener los Roles:', error.message);
+        throw new Error(`Error al obtener los Roles de la base de datos: ${error.message}`);
     }
 }

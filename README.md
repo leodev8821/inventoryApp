@@ -1,29 +1,16 @@
 # inventoryApp
 Final course Project
 
-# Configurar Nginx
-  1. Instala Nginx en tu sistema.
-
-  2. Edita el archivo de configuración de Nginx (generalmente en /etc/nginx/nginx.conf o /etc/nginx/sites-available/default).
-
-  3. Agrega la siguiente configuración:
-
-
-        server {
-            listen 80;
-            server_name inventoryapp.net;
-
-            location / {
-                proxy_pass http://localhost:3002;
-                proxy_set_header Host $host;
-                proxy_set_header X-Real-IP $remote_addr;
-                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-                proxy_set_header X-Forwarded-Proto $scheme;
-            }
-        }
-
-  4. Reinicia Nginx:
-
-  5. sudo systemctl restart nginx
-
-  6. Ahora, puedes acceder a la aplicación en: http://inventoryapp.net
+# Puntos a cumplir
+    * Se debe entregar una aplicación completa MERN, añadiendo MySQL, con las siguientes condiciones: 
+    * Uso de al menos un contexto en React y un custom hook
+    * Elegir entre los dos tipos: Inventario o Aplicación de Librería, Películas, Música o similar.
+    * Uso de JWT.
+    * Debe usar MongoDB, con un mínimo de 2 colecciones, para una parte de los datos y MySQL, con un mínimo de dos tablas, para otra.
+    * Debe haber un uso correcto de Git y GitHub.
+    * Código comentado.
+    * Codificación en inglés (variables, contantes, naming...), no necesario para comentarios, pero se deja libre elección en esto.
+    * Se debe usar Swagger, JSDoc y diagramas de diseño (ER y mínimo un diagrama de Casos de Uso por rol y uno de Secuencia), para documentar.
+    * Uso de JEST (para al menos dos funciones) y Selenium o Cypress (para una de las vistas)
+    * Realización de una prueba de carga al login con JMeter (mínimo 50 usuarios haciendo login a la vez)
+    * Realización de un pdf con la documentación del proyecto, diagramas y descripción breve, extensión mínima 5 páginas.

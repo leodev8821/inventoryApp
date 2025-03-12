@@ -1,27 +1,25 @@
+/** 
+ * @author          Leonardo Caicedo, aka Leodev
+ * @fileoverview    Módulo que define y gestiona el modelo de Inventario.
+ * @module          inventory.model
+ */
 import { DataTypes } from 'sequelize';
 import { getSequelizeConf } from '../../database/mysql.js';
-import { getOneUser, User } from './user.model.js';
-import { getOneProduct, Product } from './product.model.js';
+import { Product } from './product.model.js';
 
+/**
+ * Conexión a la base de datos.
+ */
 const connection = getSequelizeConf();
 
 /**
+ * Definición del modelo Inventario.
  * @typedef {object} InventoryAttributes
- * @property {number} id - ID único de la entrada de inventario.
- * @property {number} product_id - ID del producto al que se asocia el movimiento.
- * @property {number} user_id - ID del usuario que realizó el cambio.
- * @property {number} change - Variación en la cantidad (puede ser positiva o negativa).
- * @property {Date} createdAt - Fecha en la que se registró el movimiento.
- */
-
-/**
- * @typedef {import('sequelize').Model<InventoryAttributes>} InventoryInstance
- */
-
-/**
- * Definición del modelo Inventory.
- *
- * @type {import('sequelize').ModelStatic<InventoryInstance>}
+ * @property {number} id - ID único del registro de inventario.
+ * @property {number} product_id - ID del producto asociado.
+ * @property {number} quantity - Cantidad en inventario.
+ * @property {number} value - Valor de los productos en inventario.
+ * @property {boolean} isVisible - Indica si el registro es visible.
  */
 export const Inventory = connection.define('Inventory', {
     id: {
@@ -54,7 +52,7 @@ export const Inventory = connection.define('Inventory', {
     }
 }, {
     tableName: 'inventories',
-    timestamps: false // Solo se registra la fecha de creación
+    timestamps: false
 });
 
 // Definición de relaciones
@@ -64,43 +62,55 @@ Inventory.belongsTo(Product, { foreignKey: 'product_id', onDelete: 'CASCADE' });
 // Un producto puede tener muchos registros en el inventario.
 Product.hasMany(Inventory, { foreignKey: 'product_id', onDelete: 'CASCADE' });
 
-
-// CRUD Operations
 /**
- * Crea un nuevo registro de inventario para un usuario.
- * @param {object} data - Datos para crear el registro (debe incluir product_id, user_id y change).
- * @returns {object|null} - Devuelve el registro creado o null en caso de error de validación.
+ * Crea un nuevo registro de inventario.
+ *
+ * @async
+ * @function createNewInventory
+ * @param {object} data - Datos del nuevo registro de inventario.
+ * @param {number} data.product_id - ID del producto asociado.
+ * @param {number} data.quantity - Cantidad en inventario.
+ * @param {number} data.value - Valor del producto en inventario.
+ * @param {boolean} data.isVisible - Indica si el registro es visible.
+ * @returns {Promise<InventoryAttributes>} - El nuevo registro de inventario creado.
+ * @throws {Error} - Lanza un error si hay un problema al consultar la base de datos.
  */
 export async function createNewInventory(data) {
     try {
         const newRegister = await Inventory.create(data);
         return newRegister.dataValues;
     } catch (error) {
-        console.error('Error al crear el registro de inventario:', error);
-        throw new Error('Error al crear el registro de inventario en la base de datos.');
+        console.error('Error al crear el registro de inventario:', error.message);
+        throw new Error(`Error al crear el registro de inventario de la base de datos. ${error.message}`);
     }
 };
 
 /**
- * Obtiene todos los registros de inventario de un usuario específico.
- * @param {number} userId - ID del usuario.
- * @returns {Array} - Lista de registros de inventario.
+ * Obtiene todos los registros de inventario.
+ *
+ * @async
+ * @function getAllInventories
+ * @returns {Promise<InventoryAttributes[]>} - Lista de todos los registros de inventario.
+ * @throws {Error} - Lanza un error si hay un problema al consultar la base de datos.
  */
 export async function getAllInventories() {
     try {
         const registers = await Inventory.findAll({raw: true});
         return registers.map(register => register);
     } catch (error) {
-        console.error('Error al obtener los registros de inventario:', error);
-        throw new Error('Error al obtener los registros de inventario de la base de datos.');
+        console.error('Error al obtener los registros de inventario:', error.message);
+        throw new Error(`Error al obtener los registros de inventario de la base de datos. ${error.message}`);
     }
 };
 
 /**
- * Obtiene un registro de inventario por su ID, asegurándose de que pertenezca al usuario.
- * @param {number} id - ID del registro de inventario.
- * @param {number} userId - ID del usuario.
- * @returns {object|null} - Registro encontrado o null si no existe o no pertenece al usuario.
+ * Obtiene un registro de inventario por ID de producto.
+ *
+ * @async
+ * @function getInventoryByProductId
+ * @param {number} productID - ID del producto para buscar el registro de inventario.
+ * @returns {Promise<InventoryAttributes|null>} - El registro de inventario encontrado o null si no existe.
+ * @throws {Error} - Lanza un error si hay un problema al consultar la base de datos.
  */
 export async function getInventoryByProductId(productID) {
     try {
@@ -115,17 +125,22 @@ export async function getInventoryByProductId(productID) {
         }
         return register;
     } catch (error) {
-        console.error('Error al obtener el registro de inventario:', error);
-        throw new Error('Error al obtener el registro de inventario de la base de datos.');
+        console.error('Error al obtener el registro de inventario:', error.message);
+        throw new Error(`Error al obtener el registro de inventario de la base de datos: ${error.message}`);
     }
 };
 
 /**
- * Actualiza un registro de inventario por su ID, asegurándose de que pertenezca al usuario.
- * @param {number} id - ID del registro a actualizar.
- * @param {number} userId - ID del usuario.
- * @param {object} data - Datos a actualizar (por ejemplo, product_id, change).
- * @returns {object|null} - Registro actualizado o null si no se encontró o no pertenece al usuario.
+ * Actualiza un registro de inventario por ID de producto.
+ *
+ * @async
+ * @function updateInventory
+ * @param {number} productID - ID del producto para actualizar el registro de inventario.
+ * @param {object} data - Datos para actualizar el registro de inventario.
+ * @param {number} data.quantity - Nueva cantidad en inventario.
+ * @param {boolean} data.isVisible - Nuevo valor para la visibilidad del registro.
+ * @returns {Promise<InventoryAttributes|null>} - El registro de inventario actualizado o null si no existe.
+ * @throws {Error} - Lanza un error si hay un problema al consultar la base de datos.
  */
 export async function updateInventory(productID, data) {
     try {
@@ -150,15 +165,18 @@ export async function updateInventory(productID, data) {
         return register;
     } catch (error) {
         console.error('Error al actualizar el registro de inventario:', error);
-        throw new Error('Error al actualizar el registro de inventario en la base de datos.');
+        throw new Error(`Error al actualizar el registro de inventario en la base de datos: ${error.message}`);
     }
 };
 
 /**
- * Elimina un registro de inventario por su ID, asegurándose de que pertenezca al usuario.
- * @param {number} id - ID del registro a eliminar.
- * @param {number} userId - ID del usuario.
- * @returns {object|null} - Registro eliminado o null si no se encontró o no pertenece al usuario.
+ * Elimina un registro de inventario por ID.
+ *
+ * @async
+ * @function deleteInventory
+ * @param {number} id - ID del registro de inventario a eliminar.
+ * @returns {Promise<InventoryAttributes|null>} - El registro de inventario eliminado o null si no existe.
+ * @throws {Error} - Lanza un error si hay un problema al consultar la base de datos.
  */
 export async function deleteInventory(id) {
     try {
@@ -177,6 +195,6 @@ export async function deleteInventory(id) {
         return register;
     } catch (error) {
         console.error('Error al eliminar el registro de inventario:', error);
-        throw new Error('Error al eliminar el registro de inventario en la base de datos.');
+        throw new Error(`Error al eliminar el registro de inventario en la base de datos: ${error.message}`);
     }
 };
