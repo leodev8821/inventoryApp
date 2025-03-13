@@ -16,7 +16,7 @@ const useProductData = () => {
                 authorization: `${token}`
             });
 
-            if (!data) {
+            if (!data?.data) {
                 setErrorProduct("Error en la petición: No se recibió respuesta.");
                 console.error("Fetch Error: No response received.");
                 return;

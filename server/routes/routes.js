@@ -37,7 +37,6 @@ router.get('/roles/all-roles', decodeUserMiddleware, verifyPermitRoles, role.all
 
 //Inventories
 router.get('/inventory/all-registers', decodeUserMiddleware, verifyLogin,  inventory.allInventoryRegisters);
-router.post('/inventory/create-register/:product_id', decodeUserMiddleware, verifyLogin, inventory.newRegister);
 router.put('/inventory/change-quantity/:product_id', decodeUserMiddleware, verifyLogin, inventory.updateRegisterQuantity);
 router.put('/inventory/delete-register/:product_id', decodeUserMiddleware, verifyLogin, inventory.deleteRegister);
 

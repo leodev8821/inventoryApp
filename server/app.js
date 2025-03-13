@@ -38,7 +38,7 @@ const startServer = async () => {
 
         // Iniciar servidor
         const HOST = process.env.SERVER_HOST || 'localhost';
-        const PORT = parseInt(process.env.SERVER_PORT, 10) || 3000;
+        const PORT = parseInt(process.env.SERVER_PORT, 10) || 3001;
         const server = app.listen(PORT, () => {
             console.log(`🚀 Servidor en http://${HOST}:${PORT}`);
         });

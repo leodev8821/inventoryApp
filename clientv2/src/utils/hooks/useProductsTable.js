@@ -24,7 +24,7 @@ const useProductsTable = () => {
         }
     }, [products, categories, user]);
 
-    // Columnas básicas sin configuración de DataGrid
+    // Columnas
     const columns = useMemo(() => [
         { field: 'id', headerName: 'ID', type: 'number' },
         { field: 'category', headerName: 'Categoría' },
@@ -35,7 +35,7 @@ const useProductsTable = () => {
         { field: 'sell_price', headerName: 'Precio Venta (€)', type: 'number' }
     ], []);
 
-    // Filas con formato consistente
+    // Filas
     const rows = useMemo(() => {
         if (!products || !categories) return [];
 

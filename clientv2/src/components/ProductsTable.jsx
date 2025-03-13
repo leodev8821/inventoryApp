@@ -10,8 +10,6 @@ import {
     TableRow,
     TablePagination,
     Checkbox,
-    Switch,
-    FormControlLabel
 } from '@mui/material';
 import useProductsTable from '../utils/hooks/useProductsTable';
 import { AuthContext } from '../utils/context/AuthContext';
@@ -19,7 +17,6 @@ import ProhibitMessage from './ProhibitMessage';
 import EnchancedTableHead from './tablesMUI/EnchancedTableHead';
 import EnchancedTableToolbar from './tablesMUI/EnchancedTableToolbar';
 import useNavigation from '../utils/hooks/useNavigation';
-
 
 
 const ProductTable = () => {
@@ -39,7 +36,6 @@ const ProductTable = () => {
     const [order, setOrder] = useState('asc');
     const [orderBy, setOrderBy] = useState('id');
     const [page, setPage] = useState(0);
-    const [dense, setDense] = useState(false);
     const [rowsPerPage, setRowsPerPage] = useState(5);
 
     const headCells = columns.map(col => ({
@@ -84,8 +80,6 @@ const ProductTable = () => {
         setPage(0);
     };
 
-    const handleChangeDense = (event) => setDense(event.target.checked);
-
     const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
 
     const sortedRows = useMemo(() =>
@@ -128,7 +122,7 @@ const ProductTable = () => {
                 <TableContainer>
                     <Table
                         sx={{ minWidth: 750 }}
-                        size={dense ? 'small' : 'medium'}
+                        size='small'
                         aria-labelledby="tablaProductos"
                     >
                         <EnchancedTableHead
@@ -172,7 +166,7 @@ const ProductTable = () => {
                                 );
                             })}
                             {emptyRows > 0 && (
-                                <TableRow style={{ height: (dense ? 33 : 53) * emptyRows }}>
+                                <TableRow style={{ height: 33 * emptyRows }}>
                                     <TableCell colSpan={headCells.length + 1} />
                                 </TableRow>
                             )}
@@ -196,11 +190,6 @@ const ProductTable = () => {
                     <CircularProgress />
                 </Box>
             )}
-            <FormControlLabel
-                control={<Switch checked={dense} onChange={handleChangeDense} />}
-                label="Densidad compacta"
-                sx={{ ml: 2 }}
-            />
         </Box>
     );
 };

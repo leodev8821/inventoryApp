@@ -34,13 +34,18 @@ export default {
             }));
             
             res.status(200).json({
+                ok: true,
                 message: 'Roles obtenidos correctamente.',
                 data: formattedResponse,
             });
 
         } catch (error) {
-            console.error('Error en allRoles:', error);
-            res.status(500).json({ message: 'Error en allRoles', error: error.message });
+            console.error('Error en allRoles:', error.message);
+			res.status(500).json({
+				ok:false,
+				message: 'Error en allRoles', 
+				error: error.message
+			})
         }
     }
 }

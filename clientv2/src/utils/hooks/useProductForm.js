@@ -144,7 +144,7 @@ const useProductForm = (productId) => {
                 setTimeout(() => navigate(-1), 1000);
             } else {
                 setErrors({ server: response?.error || 'Error al crear la categoría' });
-                notifyError(response?.error || 'Error desconocido', { position: 'top-center' });
+                notifyError(response?.error.message || 'Error desconocido', { position: 'top-center' });
             }
 
 

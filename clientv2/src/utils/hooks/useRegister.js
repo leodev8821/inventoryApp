@@ -100,14 +100,16 @@ const useRegister = () => {
             });
 
             if (response) {
-                notifySuccess("Te has registrado con éxito", { position: "top-center" });
-                setTimeout(() => navigate('/'), 2000);
+                notifySuccess("Usuario registrado con éxito", { position: "top-center" });
+                setTimeout(() => navigate(-1), 2000);
             } else {
-                throw new Error("Error al crear usuario");
+                setErrors({ server: response?.error || 'Error al crear la categoría' });
+                notifyError(response?.error.message || 'Error desconocido', { position: 'top-center' });
             }
         } catch (err) {
-            notifyError("Error al registrar el usuario", { position: "top-right" });
-            console.error(err.message)
+            console.error(err.message? err.message : 'Error desconocido');
+            notifyError(`Error al registrar el usuario: ${err.message}`, { position: "top-right" });
+            setErrors(err.message? err.message : 'Error desconocido');
         } finally {
             setLoading(false);
         }

@@ -5,6 +5,7 @@ import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import bcrypt from 'bcryptjs';
 import { ok } from 'assert';
+import e from 'express';
 
 // Obtener la ruta absoluta del directorio del proyecto
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -30,9 +31,9 @@ export default {
 			const { login_data, password } = req.body;
 
 			if (!login_data || !password) {
-				return res.status(400).json({ 
+				return res.status(400).json({
 					ok: false,
-					error: 'Faltan credenciales' 
+					error: 'Faltan credenciales'
 				});
 			}
 
@@ -40,9 +41,9 @@ export default {
 
 			//verificar usuario
 			if (!user) {
-				return res.status(404).json({ 
+				return res.status(404).json({
 					ok: false,
-					error: 'Usuario no encontrado.' 
+					error: 'Usuario no encontrado.'
 				});
 			}
 
@@ -50,9 +51,9 @@ export default {
 			const validPass = await bcrypt.compare(password, user.pass);
 
 			if (!validPass) {
-				return res.status(401).json({ 
-					ok: false, 
-					message: 'Credenciales incorrectas' 
+				return res.status(401).json({
+					ok: false,
+					error: 'Credenciales incorrectas'
 				});
 			}
 
@@ -75,18 +76,20 @@ export default {
 					token: tokenResponse.token
 				});
 			} catch (error) {
-				console.error('Error al generar el token:', error);
-				return res.status(500).json({ 
+				console.error('Error al generar el token:', error.message);
+				return res.status(500).json({
 					ok: false,
-					error: 'Error al generar el token', details: error 
+					message: 'Error al generar el token',
+					error: error.message
 				});
 			}
 
 		} catch (error) {
 			console.error('Error en loginUser:', error);
-			res.status(500).json({ 
-				ok: false, 
-				message: 'Error en loginUser', error: error.message 
+			res.status(500).json({
+				ok: false,
+				message: 'Error en loginUser',
+				error: error.message
 			});
 		}
 	},
@@ -96,10 +99,10 @@ export default {
 
 			const { role_id, username, first_name, last_names, email, pass, address } = req.body;
 
-			if(role_id === sudoRole) {
-				return res.status(403).json({ 
+			if (role_id === sudoRole) {
+				return res.status(403).json({
 					ok: false,
-					message: 'No tienes autorización para crear este tipo de usuario'
+					error: 'No tienes autorización para crear este tipo de usuario'
 				})
 			}
 
@@ -118,23 +121,28 @@ export default {
 
 			if (!newUser) {
 				return res.status(409).json({
-					ok: false, 
-					message: 'Usuario ya existe en la BD' 
+					ok: false,
+					error: 'Usuario ya existe en la BD'
 				});
+			}
+
+			const resp = {
+				full_name: (`${newUser.first_name} ${newUser.last_names}`),
+				dni: newUser.dni,
+				phone: newUser.phone,
+				email: newUser.email
 			}
 
 			res.status(201).json({
 				ok: true,
 				message: 'Nuevo usuario creado',
-				full_name: (`${newUser.first_name} ${newUser.last_names}`),
-				dni: newUser.dni,
-				phone: newUser.phone,
-				email: newUser.email
+				data: resp
 			});
 		} catch (error) {
-			res.status(500).json({ 
+			res.status(500).json({
 				ok: false,
-				message: 'Error al crear usuario', error 
+				message: 'Error al crear usuario',
+				error: error.message
 			})
 		}
 	},
@@ -152,16 +160,17 @@ export default {
 			}));
 
 			// Enviar la respuesta combinada
-			res.status(201).json({ 
+			res.status(201).json({
 				ok: true,
 				message: 'Usuarios encontrados',
 				data: resp
 			})
 
 		} catch (error) {
-			res.status(500).json({ 
-				ok: false, 
-				message: 'Error al listar usuarios', error 
+			res.status(500).json({
+				ok: false,
+				message: 'Error al listar usuarios',
+				error: error.message
 			})
 		}
 	},
@@ -172,19 +181,24 @@ export default {
 			const { userId } = req.params;
 			const user = await getOneUser(userId);
 
-			// Enviar la respuesta combinada
-			res.status(201).json({
-				ok: true,
-				message: 'Usuario encontrado',
+			const resp = {
 				username: `${user.username}`,
 				full_name: (`${user.first_name} ${user.last_names}`),
 				address: user.address,
 				email: user.email
+			};
+
+			// Enviar la respuesta combinada
+			res.status(201).json({
+				ok: true,
+				message: 'Usuario encontrado',
+				data: resp
 			})
 		} catch (error) {
 			res.status(500).json({
 				ok: true,
-				message: 'Error al listar el usuario', error 
+				message: 'Error al listar el usuario',
+				error: error.message
 			})
 		}
 	},
@@ -209,7 +223,8 @@ export default {
 		} catch (error) {
 			res.status(500).json({
 				ok: false,
-				message: 'Error al actualizar el usuario', error 
+				message: 'Error al actualizar el usuario',
+				error: error.message
 			})
 		}
 	},
@@ -226,11 +241,12 @@ export default {
 
 		} catch (error) {
 			res.status(500).json({
-				ok: false, 
-				message: 'Error al eliminar el usuario', error 
+				ok: false,
+				message: 'Error al eliminar el usuario',
+				error: error.message
 			})
 		}
 	},
-	
+
 	// TODO: Implementar función para cambiar contraseña, confirmar cuenta, recuperar contraseña
 }

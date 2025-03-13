@@ -13,7 +13,7 @@ export default {
 			if (!product_id || quantity === undefined || isVisible === undefined) {
 				return res.status(400).json({
 					ok: false,
-					message: 'Los campos Cantidad y Visibilidad son requeridos.'
+					error: 'Los campos Cantidad y Visibilidad son requeridos.'
 				});
 			}
 
@@ -22,7 +22,7 @@ export default {
 			if (!product) {
 				return res.status(404).json({
 					ok: false,
-					message: 'No se encuentra el producto',
+					error: 'No se encuentra el producto',
 				});
 			}
 
@@ -57,18 +57,18 @@ export default {
 			if (!inventories) {
 				return res.status(404).json({
 					ok: false,
-					message: 'Registros de inventarios no encontrados'
+					error: 'Registros de inventarios no encontrados'
 				});
 			}
 			
 			// Formatea la respuesta
-			const resp = {
-				inventory: inventories.id,
-				product: inventories.product_id,
-				quantity: inventories.quantity,
-				value: inventories.value,
-				isVisible: inventories.isVisible
-			};
+			const resp = inventories.map(inventory => ({
+				id: inventory.id,
+				product: inventory.product_id,
+				quantity: inventory.quantity,
+				value: inventory.value,
+				isVisible: inventory.isVisible
+			}));
 			
 			res.status(200).json({
 				ok: true,
@@ -89,21 +89,29 @@ export default {
 		try {
 			const product_id = req.params;
 			const { quantity } = req.body;
-						
+
 			// Llama a la función de servicio para obtener el registro del inventario
-			const inventory = await getInventoryByProductId(product_id);
+			const inventory = await getInventoryByProductId(product_id.product_id);
 			if (!inventory) {
 				return res.status(404).json({ 
 					ok: false,
-					message: 'Registro de inventario no encontrado o no pertenece al usuario.' 
+					message: 'Registro de inventario no encontrado' 
 				});
 			}
 
-			const newQuantity = await updateInventory(product_id, quantity)
+			const product = await getOneProduct(product_id.product_id);
+
+			const value = quantity * product.buy_price;
+
+			const dataToSave = {
+				quantity,
+				value
+			}
+
+			const newQuantity = await updateInventory(product_id.product_id, dataToSave)
 			
 			// Formatea la respuesta
 			const modifiedRegister = {
-				id: newQuantity.id,
 				product_id: newQuantity.product_id,
 				quantity: newQuantity.quantity,
 				value: newQuantity.value,

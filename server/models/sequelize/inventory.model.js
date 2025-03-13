@@ -95,7 +95,7 @@ export async function createNewInventory(data) {
  */
 export async function getAllInventories() {
     try {
-        const registers = await Inventory.findAll({raw: true});
+        const registers = await Inventory.findAll({ raw: true });
         return registers.map(register => register);
     } catch (error) {
         console.error('Error al obtener los registros de inventario:', error.message);
@@ -115,9 +115,7 @@ export async function getAllInventories() {
 export async function getInventoryByProductId(productID) {
     try {
         const register = await Inventory.findOne({
-            where: {
-                product_id: productID,
-            },
+            where: { product_id: productID },
             raw: true
         });
         if (!register) {
@@ -131,22 +129,23 @@ export async function getInventoryByProductId(productID) {
 };
 
 /**
- * Actualiza un registro de inventario por ID de producto.
+ * Actualiza un registro de inventario por ID del producto.
  *
  * @async
  * @function updateInventory
- * @param {number} productID - ID del producto para actualizar el registro de inventario.
- * @param {object} data - Datos para actualizar el registro de inventario.
- * @param {number} data.quantity - Nueva cantidad en inventario.
- * @param {boolean} data.isVisible - Nuevo valor para la visibilidad del registro.
- * @returns {Promise<InventoryAttributes|null>} - El registro de inventario actualizado o null si no existe.
- * @throws {Error} - Lanza un error si hay un problema al consultar la base de datos.
+ * @param {number} productID - ID del producto cuyo registro de inventario se actualizará.
+ * @param {object} data - Objeto con los datos a actualizar en el registro de inventario.
+ * @param {number} [data.quantity] - Nueva cantidad en inventario (opcional).
+ * @param {number} [data.value] - Nuevo valor del producto en inventario (opcional).
+ * @param {boolean} [data.isVisible] - Nuevo valor para la visibilidad del registro (opcional).
+ * @returns {Promise<object|null>} - El registro de inventario actualizado (objeto) o null si no se encuentra.
+ * @throws {Error} - Lanza un error si hay un problema al actualizar el registro de inventario en la base de datos.
  */
 export async function updateInventory(productID, data) {
     try {
         const register = await Inventory.findOne({
             where: {
-                id: id,
+                id: productID,
             },
             raw: true
         });
@@ -155,16 +154,16 @@ export async function updateInventory(productID, data) {
             return null;
         }
 
-        // Actualiza solo los campos que se envían en el objeto "data"
-        if (data.quantity !== undefined) register.quantity = data.quantity;
-        if (data.isVisible !== undefined) register.isVisible = data.isVisible;
-
-        await register.save({where: {
-            id: productID
-        }});
+        await Inventory.update(
+            data,
+            {
+                where: {
+                    product_id: productID
+                }
+            });
         return register;
     } catch (error) {
-        console.error('Error al actualizar el registro de inventario:', error);
+        console.error('Error al actualizar el registro de inventario:', error.message);
         throw new Error(`Error al actualizar el registro de inventario en la base de datos: ${error.message}`);
     }
 };

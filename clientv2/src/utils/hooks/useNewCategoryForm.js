@@ -53,7 +53,7 @@ const useNewCategoryForm = () => {
                 body: { category: data.category }
             });
 
-            if (response?.newCategory) {
+            if (response?.ok) {
                 notifySuccess('Nueva categoría creada', { position: 'top-center' });
                 setFormData({ category: '' });
 
@@ -64,8 +64,9 @@ const useNewCategoryForm = () => {
             }
 
         } catch (err) {
-            console.error("Error al crear la categoría:", err);
-            setErrors("An error occurred during handleNewCategory.");
+            console.error("❗ Error al crear la categoría: ", err.message);
+            notifyError(err.message || 'Error desconocido', { position: 'top-center' });
+            setErrors(`❗  Error: ${err.message}`);
         } finally {
             setLoading(false);
         }

@@ -8,6 +8,7 @@ import AppLayout from './pages/Dashboard';
 import NewCategoryForm from "./components/NewCategoryForm";
 import ProductForm from "./components/ProductForm";
 import ProductTable from "./components/ProductsTable";
+import InventoryTables from "./components/InventoryTables";
 import LogoutMessage from "./components/LogoutMessage";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
@@ -21,6 +22,7 @@ const App = () => {
               <Route path="/" element={<AppLayout />}>
                 <Route index element={<Login />} />
                 <Route path="dashboard/register-user" element={<Register />} />
+                <Route path="dashboard/inventories-tables" element={<InventoryTables />} />
                 <Route path="dashboard/all-products" element={<ProductTable />} />
                 <Route path="products/edit/:id" element={<ProductForm />} />
                 <Route path="dashboard/new-category" element={<NewCategoryForm />} />

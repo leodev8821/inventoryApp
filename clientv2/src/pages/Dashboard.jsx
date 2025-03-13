@@ -28,6 +28,7 @@ const AppLayout = () => {
     if (isAuthenticated) {
       return [
         { kind: 'header', title: 'Navegación' },
+        { segment: 'dashboard/inventories-tables', title: 'Inventarios', icon: <List /> },
         { segment: 'dashboard/all-products', title: 'Todos los Productos', icon: <List /> },
         { segment: 'dashboard/new-category', title: 'Crear Categoría', icon: <AddCircle /> },
         { segment: 'dashboard/new-product', title: 'Crear Producto', icon: <AddCircle /> },

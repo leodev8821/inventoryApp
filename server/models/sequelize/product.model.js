@@ -87,7 +87,7 @@ Product.belongsTo(Category, { foreignKey: 'category_id' });
 Category.hasMany(Product, { foreignKey: 'category_id', onDelete: 'CASCADE' });
 
 /**
- * Crea un nuevo producto.
+ * Crea un nuevo producto y un registro de inventario inicial para él.
  *
  * @async
  * @function createNewProduct
@@ -99,8 +99,8 @@ Category.hasMany(Product, { foreignKey: 'category_id', onDelete: 'CASCADE' });
  * @param {number} data.buy_price - Precio de compra del producto.
  * @param {number} data.sell_price - Precio de venta del producto.
  * @param {string|null} data.image_url - URL de la imagen del producto.
- * @returns {Promise<ProductAttributes|null>} - El nuevo producto creado o null si ya existe.
- * @throws {Error} - Lanza un error si hay un problema al consultar la base de datos.
+ * @returns {Promise<ProductAttributes|null>} - El nuevo producto creado (objeto) o null si ya existe un producto con el mismo nombre o código de barras en la misma categoría.
+ * @throws {Error} - Lanza un error si hay un problema al consultar la base de datos o al crear el registro de inventario.
  */
 export async function createNewProduct(data) {
     try {
@@ -124,6 +124,9 @@ export async function createNewProduct(data) {
         }
 
         const newProduct = await Product.create(data);
+
+        await newProduct.createInventory({});
+
         return newProduct.dataValues;
     } catch (error) {
         console.error('Error al crear producto:', error);
