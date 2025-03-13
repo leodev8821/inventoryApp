@@ -107,7 +107,7 @@ export default {
 				console.log('⚠️ Superusuario ya existe');
 			}
 		} catch (error) {
-			console.error('❌ Error de conexión a MySQL:', err);
+			console.error('❌ Error de conexión a MySQL:', error.message);
 		}
 	}
 }

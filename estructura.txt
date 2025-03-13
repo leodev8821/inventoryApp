@@ -1,0 +1,27 @@
+inventoryApp/
+├── clientv2/
+│   ├── models/
+│   │   └── Book.js
+│   ├── controllers/
+│   │   └── bookController.js
+│   ├── routes/
+│   │   └── bookRoutes.js
+│   └── server.js
+├── server/
+│   ├── models/
+│   │   └── Book.js
+│   ├── controllers/
+│   │   └── bookController.js
+│   ├── routes/
+│   │   └── bookRoutes.js
+│   └── server.js
+├── docker-compose.yml
+├── src/
+│   ├── models/
+│   │   └── Book.js
+│   ├── controllers/
+│   │   └── bookController.js
+│   ├── routes/
+│   │   └── bookRoutes.js
+│   └── server.js
+├── package.json

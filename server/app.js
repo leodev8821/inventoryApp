@@ -53,7 +53,7 @@ const startServer = async () => {
         await initializeDB(HOST,PORT);
 
     } catch (error) {
-        console.error("❌ Error crítico al iniciar la aplicación:", error);
+        console.error("❌ Error crítico al iniciar la aplicación:", error.message);
         process.exit(1); // Finalizar la aplicación si hay un error crítico
     }
 };
