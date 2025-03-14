@@ -10,7 +10,9 @@ Final course Project
     ✅ Debe haber un uso correcto de Git y GitHub.
     ⏳ Código comentado.
     ✅ Codificación en inglés (variables, contantes, naming...), no necesario para comentarios, pero se deja libre elección en esto.
-    ⚠️ Se debe usar Swagger, JSDoc y diagramas de diseño (ER y mínimo un diagrama de Casos de Uso por rol y uno de Secuencia), para documentar.
-    ⚠️ Uso de JEST (para al menos dos funciones) y Selenium o Cypress (para una de las vistas)
+    ✅ Se debe usar Swagger, JSDoc
+    ⚠️ Diagramas de diseño (ER y mínimo un diagrama de Casos de Uso por rol y uno de Secuencia), para documentar.
+    ⚠️ Uso de JEST (para al menos dos funciones)
+    ✅ Selenium o Cypress (para una de las vistas)
     ⚠️ Realización de una prueba de carga al login con JMeter (mínimo 50 usuarios haciendo login a la vez)
     ⚠️ Realización de un pdf con la documentación del proyecto, diagramas y descripción breve, extensión mínima 5 páginas.

@@ -5,38 +5,12 @@
  */
 import axios from 'axios';
 import InitConfig from '../models/mongoose/InitConfig.model.js';
-import mongoose from 'mongoose';
-import { readFile } from 'fs/promises';
-import { dirname, join } from 'path';
+import { loadAddressTypes } from './loadAddressTypes.js';
+import { dirname } from 'path';
 import { fileURLToPath } from 'url';
 
 // Obtener ruta del directorio actual
 const __dirname = dirname(fileURLToPath(import.meta.url));
-
-// Función para cargar tipos de dirección desde JSON
-const loadAddressTypes = async () => {
-    try {
-        // Leer archivo JSON
-        const filePath = join(__dirname, 'address-type.json');
-        const rawData = await readFile(filePath, 'utf-8');
-        const addressTypes = JSON.parse(rawData);
-
-        // Mapear datos al esquema (convertir _id de string a ObjectId)
-        const formattedData = addressTypes.map(({ _id, type, abr }) => ({
-            _id: new mongoose.Types.ObjectId(_id?.$oid || _id),
-            type,
-            abr
-        }));
-
-        // Insertar en MongoDB
-        await mongoose.model('AddressType').insertMany(formattedData);
-        console.log('✅ Tipos de dirección cargados desde JSON');
-
-    } catch (error) {
-        console.error('❌ Error en loadAddressTypes:', error.message);
-        throw error;
-    }
-};
 
 /**
  * Inicializa la base de datos verificando si ya ha sido configurada previamente.
@@ -71,7 +45,7 @@ export const initializeDB = async (host,port) => {
 
         if (!configAddressTypes) {
             console.log('⚙️ Cargando tipos de dirección...');
-            await loadAddressTypes();
+            await loadAddressTypes(__dirname, 'address-type.json');
 
             await InitConfig.create({
                 key: 'address_types_initialized',
