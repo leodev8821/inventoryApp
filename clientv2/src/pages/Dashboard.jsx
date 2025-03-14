@@ -1,17 +1,12 @@
 import React, { useContext, useEffect, useMemo } from 'react';
 import { AppProvider, DashboardLayout } from '@toolpad/core';
-import { Box, IconButton, Card, CardContent, CircularProgress, Typography } from '@mui/material';
+import { Box, IconButton } from '@mui/material';
 import { createTheme } from '@mui/material/styles';
-import { Logout, List, AddCircle, Inventory2, Login, HowToReg } from '@mui/icons-material';
+import { Logout, List, Category, AddCircle, Inventory2, Login, HowToReg } from '@mui/icons-material';
 import { Outlet, useLocation } from 'react-router-dom';
 import { RouteContext } from '../utils/context/RouteContext';
 import { AuthContext } from '../utils/context/AuthContext';
 import useNavigation from "../utils/hooks/useNavigation";
-import Register from './Register';
-import NewCategoryForm from "../components/NewCategoryForm";
-import ProductForm from "../components/ProductForm";
-import ProductTable from "../components/ProductsTable";
-import ProhibitMessage from '../components/ProhibitMessage';
 
 const AppLayout = () => {
   const { toggleType } = useContext(RouteContext);
@@ -27,12 +22,15 @@ const AppLayout = () => {
   const navigation = useMemo(() => {
     if (isAuthenticated) {
       return [
-        { kind: 'header', title: 'Navegación' },
-        { segment: 'dashboard/inventories-tables', title: 'Inventarios', icon: <List /> },
+        { kind: 'header', title: 'Gestión' },
+        { segment: 'dashboard/inventories-tables', title: 'Inventarios', icon: <Inventory2 /> },
         { segment: 'dashboard/all-products', title: 'Todos los Productos', icon: <List /> },
-        { segment: 'dashboard/new-category', title: 'Crear Categoría', icon: <AddCircle /> },
+        { segment: 'dashboard/new-category', title: 'Crear Categoría', icon: <Category /> },
         { segment: 'dashboard/new-product', title: 'Crear Producto', icon: <AddCircle /> },
+        { kind: 'divider' },
+        { kind: 'header', title: 'Usuarios' },
         { segment: 'dashboard/register-user', title: 'Registrar nuevo Usuario', icon: <HowToReg /> },
+        { kind: 'divider' },
         { kind: 'header', title: 'Logout' },
         { segment: 'dashboard/logout', title: 'Logout', icon: <Logout />},
          
@@ -74,6 +72,11 @@ const AppLayout = () => {
         navigate: (to) => navigate(to)
       }}
       theme={myTheme}
+      branding={{
+        logo: <img src="/logo2.webp" alt="InventoryApp logo" />,
+        title: 'InventoryApp',
+        homeUrl: '/dashboard/inventories-tables',
+      }}
     >
       <DashboardLayout
         branding={{
