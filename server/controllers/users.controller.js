@@ -32,6 +32,8 @@ export default {
 		try {
 			const { login_data, password } = req.body;
 
+			console.log(login_data)
+
 			if (!login_data || !password) {
 				return res.status(400).json({
 					ok: false,
