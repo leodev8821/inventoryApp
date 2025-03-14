@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: mongoose/spainTowns.model.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: mongoose/spainTowns.model.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/** 
+ * @author          Leonardo Caicedo, aka Leodev
+ * @fileoverview    Módulo que define y gestiona el modelo de SpainTown.
+ * @module          spainTowns.model
+ */
+import mongoose from "mongoose";
+
+/**
+ * Esquema para el municipio español.
+ * 
+ * @typedef {object} SpainTownAttributes
+ * @property {string} town - Nombre del municipio.
+ * @property {string} province - Nombre de la provincia.
+ * @property {string} INE_code - Código INE del municipio.
+ */
+export const spainTownSchema = new mongoose.Schema({
+    town: String,
+    province: String,
+    INE_code: String
+});
+
+/**
+ * Modelo para el municipio español.
+ */
+const spainTown = mongoose.model('Spain_Towns', spainTownSchema);
+
+/**
+ * Crea un nuevo municipio español.
+ *
+ * @async
+ * @function createTown
+ * @param {SpainTownAttributes} data - Datos del nuevo municipio.
+ * @returns {Promise&lt;SpainTownAttributes>} - El municipio creado.
+ * @throws {Error} - Lanza un error si hay un problema al crear el municipio.
+ */
+export async function createTown(data) {
+    try {
+        const newSpainTown = new spainTown(data);
+        return await newSpainTown.save();
+    } catch (error) {
+        console.error('Error al crear la población:', error.message);
+        throw new Error(`Error al crear la población: ${error.message}`);
+    }
+}
+
+/**
+ * Obtiene todos los municipios españoles.
+ *
+ * @async
+ * @function getAllSpainTowns
+ * @returns {Promise&lt;SpainTownAttributes[]>} - Lista de todos los municipios.
+ * @throws {Error} - Lanza un error si hay un problema al obtener los municipios.
+ */
+export async function getAllSpainTowns() {
+    try {
+        return await spainTown.find();
+    } catch (error) {
+        console.error('Error al obtener Municipios:', error.message);
+        throw new Error(`Error al obtener Municipios: ${error.message}`);
+    }
+}
+
+/**
+ * Obtiene un municipio español por abreviatura.
+ *
+ * @async
+ * @function getSpainTownByEmail
+ * @param {string} abr - Abreviatura del municipio a buscar.
+ * @returns {Promise&lt;SpainTownAttributes|null>} - El municipio encontrado o null si no existe.
+ * @throws {Error} - Lanza un error si hay un problema al buscar el municipio.
+ */
+export async function getSpainTownByEmail(abr) {
+    try {
+        const spainTown = await spainTown.findOne({ abr });
+        return spainTown ?? null;
+    } catch (error) {
+        console.error('Error al buscar Municipio:', error.message);
+        throw new Error(`Error al buscar Municipio: ${error.message}`);
+    }
+}
+
+/**
+ * Actualiza un municipio español por ID.
+ *
+ * @async
+ * @function updateSpainTown
+ * @param {string} id - ID del municipio a actualizar.
+ * @param {SpainTownAttributes} updateData - Datos para actualizar el municipio.
+ * @returns {Promise&lt;SpainTownAttributes|null>} - El municipio actualizado o null si no existe.
+ * @throws {Error} - Lanza un error si hay un problema al actualizar el municipio.
+ */
+export async function updateSpainTown(id, updateData) {
+    try {
+        const updatedspainTown = await spainTown.findByIdAndUpdate(id, updateData, { new: true });
+        return updatedspainTown ?? null;
+    } catch (error) {
+        console.error('Error al actualizar Municipio:', error.message);
+        throw new Error(`Error al actualizar Municipio: ${error.message}`);
+    }
+}
+
+/**
+ * Elimina un municipio español por ID.
+ *
+ * @async
+ * @function deleteSpainTown
+ * @param {string} id - ID del municipio a eliminar.
+ * @returns {Promise&lt;boolean>} - `true` si el municipio fue eliminado, `false` si no se encontró.
+ * @throws {Error} - Lanza un error si hay un problema al eliminar el municipio.
+ */
+export async function deleteSpainTown(id) {
+    try {
+        const deletedSpainTown = await spainTown.findByIdAndDelete(id);
+        return deletedSpainTown ? true : false;
+    } catch (error) {
+        console.error('Error al eliminar Municipio:', error.message);
+        throw new Error(`Error al eliminar Municipio: ${error.message}`);
+    }
+}</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="addressType.module_model.html">addressType.model</a></li><li><a href="category.module_model.html">category.model</a></li><li><a href="initConfig.module_model.html">initConfig.model</a></li><li><a href="inventory.module_model.html">inventory.model</a></li><li><a href="product.module_model.html">product.model</a></li><li><a href="role.module_model.html">role.model</a></li><li><a href="spainTowns.module_model.html">spainTowns.model</a></li><li><a href="user.module_model.html">user.model</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Fri Mar 14 2025 10:58:24 GMT+0100 (Central European Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

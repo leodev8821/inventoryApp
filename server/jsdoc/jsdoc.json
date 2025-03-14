@@ -1,0 +1,17 @@
+{
+    "plugins": [],
+    "source": {
+        "include": ["./models/sequelize", "./models/mongoose"], 
+        "includePattern": ".js$", 
+        "excludePattern": "(node_modules|docs)" 
+    },
+    "templates": {
+        "cleverLinks": false,
+        "monospaceLinks": false
+    },
+    "opts": {
+        "recurse": true, 
+        "destination": "./jsdoc/docs", 
+        "template": ""
+    }
+}
