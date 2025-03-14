@@ -16,8 +16,113 @@ router.get('/address/all-address-data', address.getAddressData);
 
 // BBDD MySQL
 
-//Users
+/** -------------------- USERS ------------------------------------------------ */
+/**
+ * @swagger
+ * /user/login:
+ *   post:
+ *     tags:
+ *       - Users
+ *     summary: Inicia sesión de usuario y genera token JWT
+ *     description: >
+ *       Autentica al usuario usando email/username y contraseña.
+ *       Devuelve un token JWT para autenticación en siguientes requests.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - login_data
+ *               - password
+ *             properties:
+ *               login_data:
+ *                 type: string
+ *                 description: Email o nombre de usuario
+ *                 example: "user@example.com"
+ *               password:
+ *                 type: string
+ *                 format: password
+ *                 example: "SecurePassword123"
+ *     responses:
+ *       200:
+ *         description: Login exitoso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 ok:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: "Token generado exitosamente"
+ *                 token:
+ *                   type: string
+ *                   example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+ *                 user:
+ *                   $ref: '#/components/schemas/User'
+ *       400:
+ *         description: Credenciales faltantes
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 ok:
+ *                   type: boolean
+ *                   example: false
+ *                 error:
+ *                   type: string
+ *                   example: "Faltan credenciales"
+ *       401:
+ *         description: Credenciales inválidas
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 ok:
+ *                   type: boolean
+ *                   example: false
+ *                 error:
+ *                   type: string
+ *                   example: "Credenciales incorrectas"
+ *       404:
+ *         description: Usuario no encontrado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 ok:
+ *                   type: boolean
+ *                   example: false
+ *                 error:
+ *                   type: string
+ *                   example: "Usuario no encontrado."
+ *       500:
+ *         description: Error interno del servidor
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 ok:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: "Error en loginUser"
+ *                 error:
+ *                   type: string
+ *                   example: "Mensaje de error detallado"
+ *     security: []
+ */
 router.post('/user/login', user.loginUser);
+
 router.post('/user/create-new-user', decodeUserMiddleware, verifyPermitRoles, user.registerUser);
 
 // Categories

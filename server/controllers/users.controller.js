@@ -4,8 +4,6 @@ import dotenv from 'dotenv';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import bcrypt from 'bcryptjs';
-import { ok } from 'assert';
-import e from 'express';
 
 // Obtener la ruta absoluta del directorio del proyecto
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -21,10 +19,14 @@ const sudoRole = parseInt(process.env.SUDO_ROLE);
 
 export default {
 	/**
-	 * Login de usuario
-	 * @param {*} req --> Request
-	 * @param {*} res --> Response
-	 * @returns {*} --> Mensaje de éxito o error
+	 * Inicia sesión de un usuario y genera un token de autenticación.
+	 *
+	 * @async
+	 * @function loginUser
+	 * @param {object} req - Objeto de solicitud de Express.
+	 * @param {object} res - Objeto de respuesta de Express.
+	 * @returns {Promise<void>} - Envía una respuesta JSON.
+	 * @throws {Error} - Lanza un error si hay un problema durante el inicio de sesión o la generación del token.
 	 */
 	loginUser: async (req, res) => {
 		try {
@@ -94,6 +96,16 @@ export default {
 		}
 	},
 
+	/**
+	 * Registra un nuevo usuario.
+	 *
+	 * @async
+	 * @function registerUser
+	 * @param {object} req - Objeto de solicitud de Express.
+	 * @param {object} res - Objeto de respuesta de Express.
+	 * @returns {Promise<void>} - Envía una respuesta JSON.
+	 * @throws {Error} - Lanza un error si hay un problema durante el registro del usuario.
+	 */
 	registerUser: async (req, res) => {
 		try {
 
@@ -147,6 +159,16 @@ export default {
 		}
 	},
 
+	/**
+	 * Obtiene todos los usuarios.
+	 *
+	 * @async
+	 * @function allUsers
+	 * @param {object} req - Objeto de solicitud de Express.
+	 * @param {object} res - Objeto de respuesta de Express.
+	 * @returns {Promise<void>} - Envía una respuesta JSON.
+	 * @throws {Error} - Lanza un error si hay un problema al listar los usuarios.
+	 */
 	allUsers: async (req, res) => {
 		try {
 			const users = await getAllUsers();
@@ -175,6 +197,16 @@ export default {
 		}
 	},
 
+	/**
+	 * Obtiene un usuario por ID.
+	 *
+	 * @async
+	 * @function oneUser
+	 * @param {object} req - Objeto de solicitud de Express.
+	 * @param {object} res - Objeto de respuesta de Express.
+	 * @returns {Promise<void>} - Envía una respuesta JSON.
+	 * @throws {Error} - Lanza un error si hay un problema al obtener el usuario.
+	 */
 	oneUser: async (req, res) => {
 		try {
 			// Obtener los datos del cuerpo de la solicitud
@@ -203,6 +235,16 @@ export default {
 		}
 	},
 
+	/**
+	 * Actualiza un usuario por ID.
+	 *
+	 * @async
+	 * @function updateUser
+	 * @param {object} req - Objeto de solicitud de Express.
+	 * @param {object} res - Objeto de respuesta de Express.
+	 * @returns {Promise<void>} - Envía una respuesta JSON.
+	 * @throws {Error} - Lanza un error si hay un problema al actualizar el usuario.
+	 */
 	updateUser: async (req, res) => {
 		try {
 			const { userId } = req.params;
@@ -229,6 +271,16 @@ export default {
 		}
 	},
 
+	/**
+	 * Elimina un usuario por ID.
+	 *
+	 * @async
+	 * @function deleteUser
+	 * @param {object} req - Objeto de solicitud de Express.
+	 * @param {object} res - Objeto de respuesta de Express.
+	 * @returns {Promise<void>} - Envía una respuesta JSON.
+	 * @throws {Error} - Lanza un error si hay un problema al eliminar el usuario.
+	 */
 	deleteUser: async (req, res) => {
 		try {
 			const { userId } = req.params;

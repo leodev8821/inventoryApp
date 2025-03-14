@@ -1,5 +1,7 @@
 import express, { json, urlencoded } from 'express';
 import cors from 'cors';
+import swaggerUI from 'swagger-ui-express';
+import swaggerDocs from './swagger/swaggerOptions.js';
 import mysql from './database/mysql.js'
 import mongo from './database/mongo.js';
 import { initializeDB } from './utils/configMongoDB.js';
@@ -17,6 +19,9 @@ app.use(json())
 app.use(urlencoded({ extended: false }))
 app.use(cors())
 app.use(cookieParser());
+
+// Configurar Swagger
+app.use('/inventory-app/v1/docs', swaggerUI.serve, swaggerUI.setup(swaggerDocs));
 
 // Configurar rutas
 app.use('/inventory-app/v1', router);
